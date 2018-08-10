@@ -191,7 +191,7 @@ export default class MainScreen extends Component<{}>{
                       renderItem={item => (
                         <TouchableHighlight style = {{height:40,width:100,backgroundColor:'#2fdab8'}}
                           underlayColor = 'transparent'
-                          onPress = {()=>this.props.navigation.navigate('category',{sub:item.sub_cat})}>
+                          onPress = {()=>this.props.navigation.navigate('cms',{sub:item.sub_cat})}>
                           <View style = {{width:'100%',height:'100%',justifyContent:'center',alignItems:'center'}}>
                             <Text style = {{color:'#fff',fontWeight:'bold'}}>{item.name}</Text>
                           </View>

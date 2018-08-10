@@ -22,17 +22,19 @@ export default class Wallet extends Component<{}>{
         this.setState({
           access_token : value
         })
-        console.warn('access_token',this.state.access_token);
+        this.getPoints();
       } else {
         this.setState({
           error_screen : true
-        })
-      }
-      this.getPoints();
+          })
+        }
       } catch (error) {
     }
   }
   getPoints(){
+    this.setState({
+      show : true
+    })
     var url = config.API_URL+'user/points'
     fetch(url, {
       headers : new Headers({
@@ -60,13 +62,14 @@ export default class Wallet extends Component<{}>{
           })
         }
         console.warn('points',this.state.points);
+      } else {
+        this.setState({
+          show : false
+        })
       }
     })
   }
   componentWillMount(){
-    this.setState({
-      show : true
-    })
     this._getAccessToken();
   }
   render(){

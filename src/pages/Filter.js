@@ -61,18 +61,19 @@ export default class Filter extends Component<{}>{
     this.getFilterData(params)
   }
   postFilterData(){
+    console.warn('pricemin',this.state.min);
     let cat_name = []
     let brand_name = []
     let spec_name = []
     let price = '';
     price = '['+'min='+this.state.min+','+'max='+this.state.max+']'
-    var url = this.state.url+'&'+'&'+'brand='+this.state.selected_brand+'&'+'specs='+this.state.arr+'&'+'&'+'price[min]='+'&'+
-      this.state.Min+'&'+'price[max]'+this.state.max
+    var url = this.state.url+'&'+'&'+'brand='+this.state.selected_brand+'&'+'specs='+this.state.arr+'&'+'&'+'price[min]='+this.state.min+'&'+'price[max]'+this.state.max
     console.log('url',url);
     fetch(url)
      .then((response)=>response.json())
      .catch((error)=>console.warn(error))
      .then((response)=>{
+       console.warn('response',response);
        if (response.data.length!=0) {
          this.props.navigation.navigate('filter_page',{data:response,url:this.state.url});
        }

@@ -92,12 +92,13 @@ export default class wishList extends Component<{}>{
     this._getAccessToken();
   }
   render(){
+    const {goBack} = this.props.navigation
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
           <View style = {styles.menuView}>
             <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.navigate('mainscreen')}>
+              onPress = {()=>goBack()}>
               <MaterialIcons
                 name='arrow-back'
                 size={22}

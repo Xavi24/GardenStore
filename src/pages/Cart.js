@@ -245,52 +245,10 @@ export default class Cart extends Component<{}>{
                     </View>
                     )}
                   />
-                <View style = {{width:'100%',padding:15}}>
-                  <Text style = {{fontSize:16}}>PRICE DETAILS</Text>
-                </View>
-                <View style = {styles.detailsView}>
-                    <View style = {{flexDirection:'row',width:'100%',justifyContent:'space-between',padding:5}}>
-                      <Text style = {{fontSize:16}}>Total</Text>
-                      <View style = {{flexDirection:'row'}}>
-                        <Text style = {{fontSize:16}}>Rs.</Text>
-                        <Text style = {{fontSize:16}}>19,389</Text>
-                      </View>
-                    </View>
-                    <View style = {{flexDirection:'row',width:'100%',justifyContent:'space-between',padding:5}}>
-                      <Text style = {{fontSize:16}}>Discount</Text>
-                      <View style = {{flexDirection:'row'}}>
-                        <Text style = {{fontSize:16}}>Rs.</Text>
-                        <Text style = {{fontSize:16,color:'#0cb038'}}>19,89</Text>
-                      </View>
-                    </View>
-                    <View style = {{flexDirection:'row',width:'100%',justifyContent:'space-between',padding:5}}>
-                      <Text style = {{fontSize:16}}>Sub Total</Text>
-                      <View style = {{flexDirection:'row'}}>
-                        <Text style = {{fontSize:16}}>Rs.</Text>
-                        <Text style = {{fontSize:16}}>19,389</Text>
-                      </View>
-                    </View>
-                    <View style = {{flexDirection:'row',width:'100%',justifyContent:'space-between',padding:5}}>
-                      <Text style = {{fontSize:16}}>Estimated Tax</Text>
-                      <View style = {{flexDirection:'row'}}>
-                        <Text style = {{fontSize:16}}>Rs.</Text>
-                        <Text style = {{fontSize:16}}>389</Text>
-                      </View>
-                    </View>
-                    <View style = {{flexDirection:'row',width:'100%',justifyContent:'space-between',padding:5}}>
-                      <Text style = {{fontSize:16}}>Delivery</Text>
-                      <View style = {{flexDirection:'row'}}>
-                        <Text style = {{fontSize:16,color:'#0cb038'}}>FREE</Text>
-                      </View>
-                    </View>
-                    <View style = {{flexDirection:'row',width:'100%',justifyContent:'space-between',padding:5,marginTop:20}}>
-                      <Text style = {{fontSize:18,fontWeight:'bold',color:'#000'}}>Total Payable</Text>
-                      <View style = {{flexDirection:'row'}}>
-                        <Text style = {{fontSize:18,fontWeight:'bold',color:'#000'}}>Rs.</Text>
-                        <Text style = {{fontSize:18,color:'#000',fontWeight:'bold'}}>19,893</Text>
-                      </View>
-                    </View>
-                </View>
+
+
+
+
               </View>
             </ScrollView>
             <View style = {styles.footer}>
@@ -350,7 +308,7 @@ export default class Cart extends Component<{}>{
             visible = {this.state.emptyScreen}>
             <View style = {styles.toolbar}>
               <TouchableHighlight underlayColor = 'transparent'
-                onPress = {()=>{this.props.navigation.navigate('mainscreen')}}>
+                onPress = {()=>goBack()}>
                 <MaterialIcons
                   name='arrow-back'
                   size={22}

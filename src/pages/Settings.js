@@ -4,12 +4,15 @@ import {View,
         TouchableHighlight,
         StyleSheet,
         ScrollView,
-        AsyncStorage
+        AsyncStorage,
+        BackAndroid,
+        BackHandler
   } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import config from '../API/config'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import {Thumbnail} from 'native-base'
+import AnimatedHideView from 'react-native-animated-hide-view'
 
 export default class Settings extends Component<{}>{
   constructor(props){
@@ -17,13 +20,16 @@ export default class Settings extends Component<{}>{
     this.state = {
       access_token : '',
       userAction : '',
-      name : '',
+      name : 'GardenStore User',
       number : '',
       email : '',
       gender : '',
-      profileName : ''
+      profileName : '!',
+      login_cnfrm_screen : false,
+      change_password_View_height : 0,
     }
   }
+
   async _removeAccessToken() {
     this.setState({
       access_token : '',
@@ -48,7 +54,8 @@ export default class Settings extends Component<{}>{
      if (value !== null) {
        this.setState({
          access_token : value,
-         userAction : 'Logout'
+         userAction : 'Logout',
+         change_password_View_height : 65
        })
        this.getProfile();
        console.warn('access_token',this.state.access_token);
@@ -91,7 +98,17 @@ export default class Settings extends Component<{}>{
  }
  componentWillMount(){
    this._getAccessToken();
- }
+   // BackHandler.addEventListener('hardwareBackPress', function() {
+   //   const { dispatch, navigation, nav } = this.props;
+   //          dispatch({ type: 'Navigation/BACK' });
+   //          return true;
+   //      }.bind(this));
+  }
+
+componentWillUnmount() {
+  BackHandler.removeEventListener('hardwareBackPress');
+}
+
   render(){
     const {goBack} = this.props.navigation
     return(
@@ -130,7 +147,15 @@ export default class Settings extends Component<{}>{
                     style = {{color:'#369'}}>
                   </MaterialIcons>
                   <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
-                  onPress = {()=> this.props.navigation.navigate('profile')}>Profile</Text>
+                  onPress = {()=>{
+                    if (this.state.access_token!='') {
+                      this.props.navigation.navigate('profile')
+                    } else {
+                      this.setState({
+                        login_cnfrm_screen:true
+                      })
+                    }
+                  }}>Profile</Text>
                 </View>
               </View>
               <View style = {{width:'100%',height:65,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
@@ -153,7 +178,7 @@ export default class Settings extends Component<{}>{
                   <Text style = {{fontSize:16,color:'#369',marginLeft:30}}>Contact Us</Text>
                 </View>
               </View>
-              <View style = {{width:'100%',height:65,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
+              <View style = {{width:'100%',height:this.state.change_password_View_height,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
                 <View style = {{width:'85%',flexDirection:'row'}}>
                   <MaterialIcons
                       name='vpn-key'
@@ -186,6 +211,28 @@ export default class Settings extends Component<{}>{
             </View>
           </ScrollView>
         </View>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
+          visible = {this.state.login_cnfrm_screen}>
+          <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+            <View style = {{width:'100%',height:'80%'}}></View>
+            <View style = {{width:'95%',height:'15%',backgroundColor:'rgba(00, 00, 00, 0.7)',alignItems:'center',justifyContent:'center',
+              borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+              <Text style = {{color:'#fff',fontWeight:'bold',fontSize:16,textAlign:'center'}}>Seems like you are not a member in here</Text>
+              <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10,flexDirection:'row'}}>
+                <View style = {{width:'60%',paddingLeft:10}}>
+                  <Text style = {{color:'#369',fontWeight:'bold',fontSize:14}}
+                    onPress = {()=>this.setState({login_cnfrm_screen:false})}>Cancel</Text>
+                </View>
+                <View style = {{width:'30%',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                  <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
+                    onPress = {()=>this.props.navigation.navigate('reg')}>Sign Up</Text>
+                  <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
+                    onPress = {()=>this.props.navigation.navigate('logn')}>Log In</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
       </View>
     );
   }

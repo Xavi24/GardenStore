@@ -62,7 +62,8 @@ export default class Details extends Component<{}>{
       video : '',
       measurementData : [],
       show : false,
-      custom_nav_data : []
+      custom_nav_data : [],
+      login_cnfrm_screen : false
     }
   }
   addMyrating(rating){
@@ -145,6 +146,7 @@ export default class Details extends Component<{}>{
   async _getAccessToken(){
     try {
       const value = await AsyncStorage.getItem('token');
+      console.warn('value',value);
       if (value !== null) {
         this.setState({
           access_token : value
@@ -188,7 +190,8 @@ export default class Details extends Component<{}>{
           prize:this.state.prize,
           img:this.state.header_image,
           product:this.state.product_id,
-          vendor:this.state.vendor_id
+          vendor:this.state.vendor_id,
+          measurements : []
         })
       }
     })
@@ -471,7 +474,15 @@ export default class Details extends Component<{}>{
                         <View style = {{marginLeft:5,justifyContent:'center',alignItems:'center'}}>
                           <View style = {styles.function_icon_view}>
                             <TouchableHighlight underlayColor = 'transparent'
-                              onPress = {()=>this.setState({ratingView:true})}>
+                              onPress = {()=>{
+                                if (this.state.access_token!='') {
+                                  this.setState({ratingView:true})
+                                } else {
+                                  this.setState({
+                                    login_cnfrm_screen : true
+                                  })
+                                }
+                              }}>
                               <MaterialIcons
                                 name='star-border'
                                 size={25}
@@ -493,7 +504,15 @@ export default class Details extends Component<{}>{
                                 style = {{position:'absolute'}}>
                                 <TouchableHighlight
                                   underlayColor = 'transparent'
-                                  onPress = {()=>this.addToWishList()}>
+                                  onPress = {()=>{
+                                    if (this.state.access_token!='') {
+                                      this.addToWishList()
+                                    } else {
+                                      this.setState({
+                                        login_cnfrm_screen:true
+                                      })
+                                    }
+                                  }}>
                                   <MaterialIcons
                                     name='favorite'
                                     size={25}
@@ -502,11 +521,13 @@ export default class Details extends Component<{}>{
                                 </TouchableHighlight>
                               </AnimatedHideView>
                             </View>
-                            <MaterialIcons
-                              name='share'
-                              size={25}
-                              style = {{color:'#ffffff'}}>
-                            </MaterialIcons>
+                            <TouchableHighlight underlayColor = 'transparent'>
+                              <MaterialIcons
+                                name='share'
+                                size={25}
+                                style = {{color:'#ffffff'}}>
+                              </MaterialIcons>
+                            </TouchableHighlight>
                             <View>
                               <TouchableHighlight underlayColor = 'transparent'
                                 onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
@@ -538,18 +559,18 @@ export default class Details extends Component<{}>{
               </View>
 
               <View style = {{width:'100%',flexDirection:'row',padding:5}}>
-                <View style = {{width:'40%',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,
+                <View style = {{width:'50%',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,
                   borderTopRightRadius:6,padding:5}}>
                   <StarRating
                     disabled={true}
                     maxStars={5}
                     rating={this.state.starCount}
-                    starSize={30}
+                    starSize={25}
                     fullStarColor={'#D4AF37'}
                     emptyStarColor={'#D4AF37'}
                   />
                 </View>
-                <View style = {{width:'60%'}}></View>
+                <View style = {{width:'50%'}}></View>
                 <AnimatedHideView style = {{position:'absolute',width:'100%',height:30,
                   alignItems:'center',justifyContent:'center',marginTop:10}}
                   visible = {this.state.customButton}>
@@ -619,10 +640,27 @@ export default class Details extends Component<{}>{
                 <Text style = {{color:'#fff'}}>Cancel</Text>
               </TouchableHighlight>
             </View>
-            <View style = {{width:'50%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#48c7f0'}}>
+            <View style = {{width:'50%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#2fdab8'}}>
               <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                 underlayColor = 'transparent'
-                onPress = {()=>this.getAddressDetails()}>
+                onPress = {()=>
+                  {
+                    if (this.state.access_token!='') {
+                      this.props.navigation.navigate('buy_now',{
+                        product_name:this.state.product_name,
+                        prize:this.state.prize,
+                        img:this.state.header_image,
+                        product:this.state.product_id,
+                        vendor:this.state.vendor_id,
+                        measurements : []
+                      })
+                  } else {
+                    this.setState({
+                      login_cnfrm_screen : true
+                    })
+                  }
+                }
+                }>
                 <Text style = {{color:'#fff'}}>Buy Now</Text>
               </TouchableHighlight>
             </View>
@@ -669,6 +707,28 @@ export default class Details extends Component<{}>{
           <Spinner color = {'#369'} visible={this.state.show} textContent={"Loading..."} textStyle={{color: '#369'}}
             overlayColor = {'#fff'}/>
         </View>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
+          visible = {this.state.login_cnfrm_screen}>
+          <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+            <View style = {{width:'100%',height:'80%'}}></View>
+            <View style = {{width:'95%',height:'15%',backgroundColor:'rgba(00, 00, 00, 0.7)',alignItems:'center',justifyContent:'center',
+              borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+              <Text style = {{color:'#fff',fontWeight:'bold',fontSize:16,textAlign:'center'}}>Seems like you are not a member in here</Text>
+              <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10,flexDirection:'row'}}>
+                <View style = {{width:'60%',paddingLeft:10}}>
+                  <Text style = {{color:'#369',fontWeight:'bold',fontSize:14}}
+                    onPress = {()=>this.setState({login_cnfrm_screen:false})}>Cancel</Text>
+                </View>
+                <View style = {{width:'30%',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                  <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
+                    onPress = {()=>this.props.navigation.navigate('reg')}>Sign Up</Text>
+                  <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
+                    onPress = {()=>this.props.navigation.navigate('logn')}>Log In</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
       </View>
     );
   }

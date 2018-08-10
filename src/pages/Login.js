@@ -154,24 +154,11 @@ export default class Login extends Component<{}>{
                 </View>
               </TouchableHighlight>
               <Text style = {{color:'#ffffff',marginTop:20}}>OR</Text>
-              <View style = {{flexDirection:'row',width:'90%'}}>
-                <View style = {{width:'50%',justifyContent:'center',alignItems:'center'}}>
-                  <View style = {styles.fb_btn}>
-                    <Image style = {{width:20,height:20}}
-                      source = {require('../img/fb.png')}>
-                    </Image>
-                    <Text style = {{color:'#3b5998', marginLeft:10}}>Facebook</Text>
-                  </View>
-                </View>
-                <View style = {{width:'50%',justifyContent:'center',alignItems:'center'}}>
-                  <View style = {styles.google_btn}>
-                    <Image style = {{width:20,height:20}}
-                      source = {require('../img/gl.png')}>
-                    </Image>
-                    <Text style = {{color:'#db3236',marginLeft:10}}>Google</Text>
-                  </View>
-                </View>
-              </View>
+
+
+
+
+              
               <Text style = {{color:'#369',marginTop:20,fontSize:16,textDecorationLine:'underline'}}
                 onPress = {()=>this.props.navigation.navigate('forgot')}>
                 Forgot Your Password</Text>

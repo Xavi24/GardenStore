@@ -321,7 +321,7 @@ export default class extends Component<{}>{
                   style = {styles.editAdd}>
                   <View style = {styles.editAdd}>
                     <Text style = {{color:'#369',fontWeight:'bold'}}
-                      onPress = {()=>this.props.navigation.navigate('edit_address')}>Edit/Change</Text>
+                      onPress = {()=>this.props.navigation.navigate('add_address')}>Edit/Change</Text>
                   </View>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = 'transparent'
@@ -508,7 +508,7 @@ export default class extends Component<{}>{
             <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
               <View></View>
               <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                onPress = {()=>this.setState({success_screen : false})}>OK</Text>
+                onPress = {()=>goBack()}>OK</Text>
             </View>
           </View>
         </AnimatedHideView>

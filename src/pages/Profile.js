@@ -58,8 +58,8 @@ export default class Profile extends Component<{}>{
     .then((response)=>response.json())
     .catch((error)=>console.warn(error))
     .then((response)=>{
-      console.log('response',response);
-      if (response.data!=null) {
+      console.log('response//perofile',response);
+      if (response.data!='') {
         this.setState({
           show : false
         })
@@ -79,6 +79,10 @@ export default class Profile extends Component<{}>{
         this.setState({
           phone_no : str1
         })
+      } else {
+        this.setState({
+          show : false
+        })
       }
     })
   }
@@ -92,8 +96,10 @@ export default class Profile extends Component<{}>{
         email : text
       })
     } else if (field == 'number') {
+      let sub = text.substring(3)
+      console.warn('sub..',sub);
       this.setState({
-        phone_no : text,
+        phone_no : sub,
         value : text
       })
     } else if (field == 'gender') {
@@ -206,10 +212,10 @@ export default class Profile extends Component<{}>{
                   <Text style = {{fontSize:18,color:'#369',marginTop:5,marginLeft:20}}>{this.state.gender}</Text>
                 </View>
                 <View style = {{width:'70%',padding:15}}>
-                  <TouchableHighlight style = {{width:'30%'}}
+                  <TouchableHighlight style = {{width:'35%'}}
                     underlayColor = 'transparent'
                     onPress = {()=>this.setState({editScreen:true})}>
-                    <View style = {{width:'100%',alignItems:'center',justifyContent:'space-between',height:40,borderColor:'#eee',borderWidth:1,flexDirection:'row',padding:10}}>
+                    <View style = {{width:'100%',alignItems:'center',justifyContent:'center',height:40,borderColor:'#eee',borderWidth:1,flexDirection:'row',padding:10}}>
                       <MaterialIcons
                         name='edit'
                         size={22}

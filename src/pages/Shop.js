@@ -21,6 +21,11 @@ import AnimatedHideView from 'react-native-animated-hide-view'
 
 let product_data = []
 let filterdata = []
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom;
+};
 export default class Shop extends Component<{}>{
   constructor(props){
     super(props);
@@ -34,6 +39,8 @@ export default class Shop extends Component<{}>{
       max : 500,
       specdata : '',
       url : '',
+      bottom : '',
+      next_page_url : ''
     }
   }
   componentWillMount(){
@@ -63,6 +70,9 @@ export default class Shop extends Component<{}>{
            show : false
          })
          product_data.length = 0
+         this.setState({
+           next_page_url : response.data.next_page_url
+         })
          if (response.data.data) {
            for(let product of response.data.data){
              product_data.push({
@@ -124,6 +134,95 @@ export default class Shop extends Component<{}>{
        }
      })
   }
+  handleScroll(){
+    this.setState({
+      bottom : 'true'
+    })
+    if (this.state.next_page_url != '') {
+      console.warn('call url',this.state.next_page_url);
+      let cat_name = []
+      let brand_name = []
+      let spec_name = []
+      var url = this.state.next_page_url
+      fetch(url)
+       .then((response)=>response.json())
+       .catch((error)=>console.warn(error))
+       .then((response)=>{
+         if (response.data!= '') {
+           this.setState({
+             show : false
+           })
+           this.setState({
+             next_page_url : response.data.next_page_url
+           })
+           if (response.data.data) {
+             for(let product of response.data.data){
+               product_data.push({
+                 name:product.name,
+                 slug:product.slug,
+                 img:product.img,
+                 price:product.price,
+                 id:product.id,
+                 disc:product.total_discount,
+                 sale_price:product.sale_price,
+                 vendor_id:product.vendor_id
+               })
+               this.setState({
+                 product_data : product_data
+               })
+               console.warn('product_data',this.state.product_data);
+             }
+           }
+             if (response.filters.cat) {
+               if (response.filters.cat.sub_cat) {
+                 for(let sub_cat of response.filters.cat.sub_cat){
+                   cat_name.push({name:sub_cat.name})
+                 }
+                 this.setState({
+                   cat_data : cat_name
+                 })
+               }
+               if (response.filters.brands) {
+                 for(let brands of response.filters.brands){
+                   brand_name.push({name:brands.brand_details.name})
+                 }
+                 this.setState({
+                   brand_data : brand_name
+                 })
+               }
+               if (response.filters.specs) {
+                 spec_keys = Object.keys(response.filters.specs)
+                 for (var i = 0; i < spec_keys.length; i++) {
+                   spec_name.push({
+                     name:spec_keys[i],
+                     spec:response.filters.specs[spec_keys[i]]
+                   })
+                 }
+                 this.setState({
+                   spec_data : spec_name
+                 })
+               }
+               if (response.filters.price) {
+                 this.setState({
+                   min : parseInt(response.filters.price.min.split('.')[0]),
+                   max : parseInt(response.filters.price.max.split('.')[0]),
+                   url : url
+                 })
+               }
+             }
+         }
+       })
+    }
+    setTimeout(()=>{
+      this.setState({
+        bottom : ''
+      })
+      console.warn('delayed bottom',this.state.bottom);
+    },500)
+  }
+  getPaginationData(){
+
+  }
 
   render(){
     const {goBack} = this.props.navigation
@@ -146,7 +245,13 @@ export default class Shop extends Component<{}>{
           <View style = {styles.iconView}></View>
         </View>
         <View style = {styles.baseContainer}>
-          <ScrollView style = {{height:'100%',width:'100%'}}>
+          <ScrollView style = {{height:'100%',width:'100%'}}
+            onScroll={({nativeEvent}) => {
+              if (isCloseToBottom(nativeEvent)) {
+                this.handleScroll();
+              }
+            }}
+            scrollEventThrottle={400}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
                 itemDimension = {180}

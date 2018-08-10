@@ -21,7 +21,7 @@ import AnimatedHideView from 'react-native-animated-hide-view'
 
 let product_data = []
 let filterdata = []
-export default class SearchData extends Component<{}>{
+export default class SortData extends Component<{}>{
   constructor(props){
     super(props);
     this.state = {
@@ -34,96 +34,92 @@ export default class SearchData extends Component<{}>{
       max : 500,
       specdata : '',
       url : '',
+      popularityColor : '#7a7979',
+      relevenceColor : '#7a7979',
+      phtlcolor : '#7a7979',
+      arrivalscolor : '#7a7979',
+      sortdata : '',
+      plthcolor : '#7a7979',
+      sortinput : ''
     }
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    console.warn('params',params);
-    this.setState({
-      name : params.name
-    })
+    let response = params.data
+    let url = params.url
+    this.getFilterDetails(response,url);
   }
-  componentDidMount(){
-    this.getProductdata();
-  }
-  getProductdata(){
+  getFilterDetails(response,url){
     let cat_name = []
     let brand_name = []
     let spec_name = []
-    this.setState({
-      show : true
-    })
-    var url = config.API_URL+'products/search?term='+this.state.name
-    fetch(url)
-     .then((response)=>response.json())
-     .catch((error)=>console.warn(error))
-     .then((response)=>{
-       if (response.data!= '') {
-         this.setState({
-           show : false
-         })
-         product_data.length = 0
-         if (response.data.data) {
-           for(let product of response.data.data){
-             product_data.push({
-               name:product.name,
-               slug:product.slug,
-               img:product.img,
-               price:product.price,
-               id:product.id,
-               disc:product.total_discount,
-               sale_price:product.sale_price,
-               vendor_id:product.vendor_id
-             })
-             this.setState({
-               product_data : product_data
-             })
-           }
-         }
-           if (response.filters.cat) {
-             if (response.filters.cat.sub_cat) {
-               for(let sub_cat of response.filters.cat.sub_cat){
-                 cat_name.push({name:sub_cat.name})
-               }
-               this.setState({
-                 cat_data : cat_name
-               })
-             }
-             if (response.filters.brands) {
-               for(let brands of response.filters.brands){
-                 brand_name.push({name:brands.brand_details.name})
-               }
-               this.setState({
-                 brand_data : brand_name
-               })
-             }
-             if (response.filters.specs) {
-               spec_keys = Object.keys(response.filters.specs)
-               for (var i = 0; i < spec_keys.length; i++) {
-                 spec_name.push({
-                   name:spec_keys[i],
-                   spec:response.filters.specs[spec_keys[i]]
-                 })
-               }
-               this.setState({
-                 spec_data : spec_name
-               })
-             }
-             if (response.filters.price) {
-               this.setState({
-                 min : parseInt(response.filters.price.min.split('.')[0]),
-                 max : parseInt(response.filters.price.max.split('.')[0]),
-                 url : url
-               })
-             }
-           }
-       } else {
-         this.setState({
-           show : false
-         })
-       }
-     })
+    console.warn('params',response);
+    if (response.data!= '') {
+      this.setState({
+        show : false
+      })
+      product_data.length = 0
+      if (response.data.data) {
+        for(let product of response.data.data){
+          product_data.push({
+            name:product.name,
+            slug:product.slug,
+            img:product.img,
+            price:product.price,
+            id:product.id,
+            disc:product.total_discount,
+            sale_price:product.sale_price,
+            vendor_id:product.vendor_id
+          })
+          this.setState({
+            product_data : product_data
+          })
+        }
+      }
+        if (response.filters.cat) {
+          if (response.filters.cat.sub_cat) {
+            for(let sub_cat of response.filters.cat.sub_cat){
+              cat_name.push({name:sub_cat.name})
+            }
+            this.setState({
+              cat_data : cat_name
+            })
+          }
+          if (response.filters.brands) {
+            for(let brands of response.filters.brands){
+              brand_name.push({name:brands.brand_details.name})
+            }
+            this.setState({
+              brand_data : brand_name
+            })
+          }
+          if (response.filters.specs) {
+            spec_keys = Object.keys(response.filters.specs)
+            for (var i = 0; i < spec_keys.length; i++) {
+              spec_name.push({
+                name:spec_keys[i],
+                spec:response.filters.specs[spec_keys[i]]
+              })
+            }
+            this.setState({
+              spec_data : spec_name
+            })
+          }
+          if (response.filters.price) {
+            this.setState({
+              min : parseInt(response.filters.price.min.split('.')[0]),
+              max : parseInt(response.filters.price.max.split('.')[0]),
+              url : url
+            })
+          }
+        }
+    } else {
+      this.setState({
+        show : false
+      })
+    }
   }
+
   render(){
     const {goBack} = this.props.navigation
     return(
@@ -232,7 +228,6 @@ export default class SearchData extends Component<{}>{
             </View>
           </TouchableHighlight>
         </View>
-
         <Spinner visible = {this.state.show}
           textContent = {"Loading..."}
           color = {'#369'}

@@ -10,8 +10,48 @@ import {View,
 import Spinner from 'react-native-loading-spinner-overlay'
 import config from '../API/config'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import AnimatedHideView from 'react-native-animated-hide-view'
 
 export default class ForgotPassword extends Component<{}>{
+  constructor(props){
+    super(props);
+    this.state = {
+      email : '',
+      success_screen:false
+    }
+  }
+  updateValue(text,field){
+
+  if(field == 'email'){
+      this.setState({
+        email:text,
+      })
+    }
+  }
+forgotPassword(){
+  console.warn('email',this.state.email);
+  let collection = {}
+  collection.name = this.state.email
+  var url = config.API_URL+'forgot-password'
+    fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(collection),
+    headers: new Headers({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    })
+  })
+  .then((response)=>response.json())
+  .catch((error)=> console.warn("fetch error:",error))
+  .then((response)=>{
+  console.warn('response',response);
+  if (response.code == '200') {
+    this.setState({
+      success_screen : true
+    })
+  }
+  })
+}
   render(){
     const {goBack} = this.props.navigation
     return(
@@ -46,17 +86,35 @@ export default class ForgotPassword extends Component<{}>{
               <TextInput style = {{width:'90%',height:55,marginTop:40,borderColor:'#eee',borderWidth:1,color:'#369',padding:10}}
                 underlineColorAndroid = '#369'
                 placeholderTextColor = '#369'
-                placeholder = 'Enter Your E-mail'>
+                placeholder = 'Enter Your E-mail'
+                onChangeText = {(email)=>this.updateValue(email,'email')}>
               </TextInput>
               <View style = {{width:'90%',height:55,backgroundColor:'#2fdab8',marginTop:30}}>
                 <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
-                  underlayColor = 'transparent'>
+                  underlayColor = 'transparent'
+                  onPress = {()=>this.forgotPassword()}>
                  <Text style = {{fontSize:16,color:'#fff',fontWeight:'bold'}}>Send</Text>
                 </TouchableHighlight>
               </View>
             </View>
           </ScrollView>
         </View>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
+          justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
+          visible = {this.state.success_screen}>
+          <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
+            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+            <Image style = {{height:80,width:80}}
+              source = {require('../img/thumbs.png')}>
+            </Image>
+            <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:10}}>Success</Text>
+            <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+              <View></View>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                onPress = {()=>this.setState({success_screen : false})}>OK</Text>
+            </View>
+          </View>
+        </AnimatedHideView>
       </View>
     );
   }

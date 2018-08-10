@@ -6,12 +6,14 @@ import {View,
         TextInput,
         AsyncStorage,
         StatusBar,
-        TouchableHighlight
+        TouchableHighlight,
+        Image
     } from 'react-native';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { CheckBox } from 'react-native-elements'
 import config from '../API/config';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import AnimatedHideView from 'react-native-animated-hide-view'
 
 export default class Add_Address extends Component<{}>{
   static navigationOptions = {
@@ -27,10 +29,26 @@ export default class Add_Address extends Component<{}>{
     super(props);
     this.state = {
       gender : '',
-      checked : false,officeChecked : false,homeChecked : false,
-      postcode : '',name : '',street_address : '',landmark : '',
-      city : '',state : '',district : '',country : '', phone_no : '',
-      type : '',default : '',access_token : ''
+      checked : false,
+      officeChecked : false,
+      homeChecked : false,
+      postcode : '',
+      name : '',
+      street_address : '',
+      landmark : '',
+      city : '',
+      state : '',
+      district : '',
+      country : '',
+      phone_no : '',
+      type : '',
+      default : '',
+      access_token : '',
+      error_screen:false,
+      area:'',
+      building:'',
+      measurements:[],
+      success_screen : false
     }
   }
 
@@ -113,10 +131,19 @@ export default class Add_Address extends Component<{}>{
       this.setState({
         phone_no:text
       })
+    } else if (field == 'area') {
+      this.setState({
+        area:text
+      })
+    } else if (field == 'Building') {
+      this.setState({
+        building :text
+      })
     }
   }
 
   saveAddress(){
+    console.warn('access/////save',this.state.access_token);
     let addressData = {}
     addressData.postcode = this.state.postcode,
     addressData.name = this.state.name,
@@ -128,7 +155,9 @@ export default class Add_Address extends Component<{}>{
     addressData.country = this.state.country,
     addressData.type = this.state.type,
     addressData.default = (this.state.checked)?1:0,
-    addressData.phone_no = this.state.phone_no
+    addressData.phone_no = this.state.phone_no,
+    addressData.area = this.state.area,
+    addressData.building = this.state.building
 
     var url = config.API_URL+'addAddress'
     fetch(url, {
@@ -143,8 +172,23 @@ export default class Add_Address extends Component<{}>{
     .then((response)=>response.json())
     .catch((error)=>console.warn('error',error))
     .then((response)=>{
+      console.warn('response',response);
       if (response.code == '200') {
-          this.props.navigation.navigate('buy_now')
+        this.setState({
+          success_screen : true
+        })
+          this.props.navigation.navigate('buy_now',{
+            product_name:this.state.product_name,
+            prize:this.state.prize,
+            img:this.state.header_image,
+            product:this.state.product_id,
+            vendor:this.state.vendor_id,
+            measurements : []
+          })
+      } else {
+        this.setState({
+          error_screen : true
+        })
       }
     })
   }
@@ -156,7 +200,7 @@ export default class Add_Address extends Component<{}>{
         this.setState({
           access_token : value
         })
-        this.saveAddress();
+        // this.saveAddress();
       }
     } catch (error) {
       console.warn(error.message);
@@ -165,16 +209,16 @@ export default class Add_Address extends Component<{}>{
 
   componentWillMount(){
     this._getAccessToken().done();
-    const {params} = this.props.navigation.state;
-    console.warn('params',params);
-    this.setState({
-      product_image : params.img,
-      price : params.prize,
-      product_name : params.product_name,
-      product_id : params.product,
-      vendor_id : params.vendor
-
-    })
+    // const {params} = this.props.navigation.state;
+    // console.warn('params',params);
+    // this.setState({
+    //   product_image : params.img,
+    //   price : params.prize,
+    //   product_name : params.product_name,
+    //   product_id : params.product,
+    //   vendor_id : params.vendor,
+    //   measurements : params.measurements
+    // })
   }
 
   render(){
@@ -213,7 +257,18 @@ export default class Add_Address extends Component<{}>{
                   <TextInput style = {styles.input}
                     underlineColorAndroid = '#bbbbbb'
                     placeholder="Pin Code"
+                    keyboardType='numeric'
                     onChangeText = {(text_postcode)=>this.updateValue(text_postcode,'postcode')}>
+                  </TextInput>
+                  <TextInput style = {styles.input}
+                    underlineColorAndroid = '#bbbbbb'
+                    placeholder="Area"
+                    onChangeText = {(text_area)=>this.updateValue(text_area,'area')}>
+                  </TextInput>
+                  <TextInput style = {styles.input}
+                    underlineColorAndroid = '#bbbbbb'
+                    placeholder="Building"
+                    onChangeText = {(text_building)=>this.updateValue(text_building,'Building')}>
                   </TextInput>
                   <TextInput style = {styles.input}
                     underlineColorAndroid = '#bbbbbb'
@@ -258,6 +313,7 @@ export default class Add_Address extends Component<{}>{
                   <TextInput style = {styles.input}
                     underlineColorAndroid = '#bbbbbb'
                     placeholder="Mobile No"
+                    keyboardType='numeric'
                     onChangeText = {(text_phone_no)=>this.updateValue(text_phone_no,'phone_no')}>
                   </TextInput>
                   <View style = {{width:'100%'}}>
@@ -305,8 +361,10 @@ export default class Add_Address extends Component<{}>{
                     <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
                       borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',
                         alignItems:'center',justifyContent:'center'}}>
-                        <Text style = {{fontSize:16,color:'#fff'}}
-                          onPress = {() =>this._getAccessToken()}>SAVE</Text>
+                        <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                          <Text style = {{fontSize:16,color:'#fff'}}
+                            onPress = {() =>this.saveAddress()}>SAVE</Text>
+                        </TouchableHighlight>
                       </View>
                   </View>
                 </View>
@@ -315,6 +373,43 @@ export default class Add_Address extends Component<{}>{
             </View>
           </ScrollView>
         </View>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
+          position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
+          visible = {this.state.error_screen}>
+          <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
+            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+            <Image style = {{width:60,height:60,marginTop:20}}
+              source = {require('../img/attention.png')}>
+            </Image>
+            <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your profile data. Please enter Your
+                details correctly</Text>
+            <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
+              <Text style = {{fontSize:16,textAlign:'center'}}>There is an error occured while Changing your Password.
+                Please go back and check all the details and try again</Text>
+            </View>
+            <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
+              <View></View>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                onPress = {()=>this.setState({error_screen : false})}>OK</Text>
+            </View>
+          </View>
+        </AnimatedHideView>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
+          justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
+          visible = {this.state.success_screen}>
+          <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
+            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+            <Image style = {{height:80,width:80}}
+              source = {require('../img/order.png')}>
+            </Image>
+            <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:10}}>Success</Text>
+            <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+              <View></View>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                onPress = {()=>this.setState({success_screen : false})}>OK</Text>
+            </View>
+          </View>
+        </AnimatedHideView>
       </View>
     );
   }

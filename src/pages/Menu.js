@@ -16,7 +16,7 @@ export default class Menu extends Component<{}>{
   constructor(props){
     super(props);
     this.state = {
-      name:'',
+      name:'GardenStore User',
       menu:'',
       menu_data : [],
       userAction : '',
@@ -24,7 +24,7 @@ export default class Menu extends Component<{}>{
       number : '',
       email : '',
       gender : '',
-      profileName : ''
+      profileName : '!'
     }
   }
   async _getAccessToken(){
@@ -133,9 +133,10 @@ export default class Menu extends Component<{}>{
                 onPress = {()=> this.props.navigation.navigate('add_to_cart')}>Shopping Cart</Text>
                 <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20}}
                   onPress = {()=>this.props.navigation.navigate('wishList')}>Wishlist</Text>
-                <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20}}>Wallet</Text>
-              <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20,marginBottom:10}}
-                onPress = {()=>this.props.navigation.navigate('settings')}>Settings</Text>
+                <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20}}
+                  onPress = {()=>this.props.navigation.navigate('wallet')}>Wallet</Text>
+                <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20,marginBottom:10}}
+                 onPress = {()=>this.props.navigation.navigate('settings')}>Settings</Text>
             </View>
           </View>
         </ScrollView>

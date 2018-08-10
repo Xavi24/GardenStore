@@ -45,13 +45,15 @@ export default class filterData extends Component<{}>{
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
+    console.warn('params',params);
     let response = params.data
+    let url = params.url
     this.setState({
-      url :params.url
+      name : params.name
     })
-    this.getFilterDetails(response);
+    this.getFilterDetails(response,url);
   }
-  getFilterDetails(response){
+  getFilterDetails(response,url){
     let cat_name = []
     let brand_name = []
     let spec_name = []
@@ -86,7 +88,6 @@ export default class filterData extends Component<{}>{
             this.setState({
               cat_data : cat_name
             })
-            // console.warn('cat_data',this.state.cat_data);
           }
           if (response.filters.brands) {
             for(let brands of response.filters.brands){
@@ -95,11 +96,9 @@ export default class filterData extends Component<{}>{
             this.setState({
               brand_data : brand_name
             })
-            // console.warn('brand_data',this.state.brand_data);
           }
           if (response.filters.specs) {
             spec_keys = Object.keys(response.filters.specs)
-            // console.warn('spec_keys',spec_keys);
             for (var i = 0; i < spec_keys.length; i++) {
               spec_name.push({
                 name:spec_keys[i],
@@ -109,19 +108,13 @@ export default class filterData extends Component<{}>{
             this.setState({
               spec_data : spec_name
             })
-
-            // console.warn('spec_name',spec_name);
           }
           if (response.filters.price) {
-            // console.warn('price',response.filters.price);
             this.setState({
               min : parseInt(response.filters.price.min.split('.')[0]),
               max : parseInt(response.filters.price.max.split('.')[0]),
-              url : this.state.url
+              url : url
             })
-              // this.state.multiSliderValue[0] = parseInt(this.state.min),
-              // this.state.multiSliderValue[1] = parseInt(this.state.max)
-              // console.warn('multiSliderValue',this.state.min);
           }
         }
     } else {
@@ -266,7 +259,11 @@ export default class filterData extends Component<{}>{
         <View style = {{height:'8%',width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row',backgroundColor:'#fff'}}>
           <TouchableHighlight style = {{height:'100%',width:'50%'}}
             underlayColor = 'transparent'
-            onPress = {()=>this.setState({sort_view:true})}>
+            onPress = {()=>this.props.navigation.navigate('sort',
+              {
+                url:this.state.url,
+                name:this.state.name
+              })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderRightWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>
                <MaterialIcons
@@ -300,113 +297,7 @@ export default class filterData extends Component<{}>{
             </View>
           </TouchableHighlight>
         </View>
-        <AnimatedHideView style = {{backgroundColor:'rgba(00, 00, 00, 0.7)',height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
-          visible = {this.state.sort_view}>
-          <TouchableHighlight style = {{height:'100%',width:'100%'}}
-            underlayColor = 'transparent'>
-            <View style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
-              <TouchableHighlight style = {{width:'100%',height:'50%'}}
-                underlayColor = 'transparent'
-                onPress = {()=>this.setState({sort_view:false})}>
-                <View style = {{width:'100%',height:'100%'}}></View>
-              </TouchableHighlight>
-              <View style = {{width:'100%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center'}}>
-                <View style = {{width:'100%',paddingLeft:10,borderBottomColor:'#eee',borderBottomWidth:1,marginTop:10,paddingBottom:10}}>
-                  <Text style = {{fontSize:16}}>Sort By</Text>
-                </View>
-                <TouchableHighlight style = {{width:'100%'}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.getPopularityData('popularity')}>
-                  <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                    <View style = {{width:'92%',paddingLeft:10}}>
-                      <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Popularity</Text>
-                    </View>
-                    <View style = {{width:'7%'}}>
-                    <MaterialIcons
-                      name='radio-button-checked'
-                      size={18}
-                      style = {{color:this.state.popularityColor}}>
-                    </MaterialIcons>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-                <TouchableHighlight style = {{width:'100%'}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.getrelevanceData('relevance')}>
-                  <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                    <View style = {{width:'92%',paddingLeft:10}}>
-                      <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Relevance</Text>
-                    </View>
-                    <View style = {{width:'7%'}}>
-                    <MaterialIcons
-                      name='radio-button-checked'
-                      size={18}
-                      style = {{color:this.state.relevenceColor}}>
-                    </MaterialIcons>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-                <TouchableHighlight style = {{width:'100%'}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.getpricelthData('price_lth')}>
-                  <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                    <View style = {{width:'92%',paddingLeft:10}}>
-                      <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Price low to high</Text>
-                    </View>
-                    <View style = {{width:'7%'}}>
-                    <MaterialIcons
-                      name='radio-button-checked'
-                      size={18}
-                      style = {{color:this.state.plthcolor}}>
-                    </MaterialIcons>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-                <TouchableHighlight style = {{width:'100%'}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.getpricehtlData('price_htl')}>
-                  <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                    <View style = {{width:'92%',paddingLeft:10}}>
-                      <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Price high to low</Text>
-                    </View>
-                    <View style = {{width:'7%'}}>
-                    <MaterialIcons
-                      name='radio-button-checked'
-                      size={18}
-                      style = {{color:this.state.phtlcolor}}>
-                    </MaterialIcons>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-                <TouchableHighlight style = {{width:'100%'}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.getnewarrivalsData('new_arrival')}>
-                  <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                    <View style = {{width:'92%',paddingLeft:10}}>
-                      <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>New Arrivals</Text>
-                    </View>
-                    <View style = {{width:'7%'}}>
-                    <MaterialIcons
-                      name='radio-button-checked'
-                      size={18}
-                      style = {{color:this.state.arrivalscolor}}>
-                    </MaterialIcons>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-                <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginBottom:10,marginTop:10,flexDirection:'row'}}>
-                  <TouchableHighlight style = {{width:'90%'}}
-                    underlayColor = 'transparent'
-                    onPress = {()=>this.getsortData()}>
-                    <View style = {{width:'100%',alignItems:'center',justifyContent:'center',height:40,backgroundColor:'#2fdab8'}}>
-                      <Text style = {{color:'#fff',fontSize:18,color:'#fff',fontWeight:'bold'}}>Sort</Text>
-                    </View>
-                  </TouchableHighlight>
-                </View>
-              </View>
-            </View>
-          </TouchableHighlight>
-        </AnimatedHideView>
+
         <Spinner visible = {this.state.show}
           textContent = {"Loading..."}
           color = {'#369'}

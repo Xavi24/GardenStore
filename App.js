@@ -8,7 +8,6 @@ import Login from './src/pages/Login'
 import WishList from './src/pages/WishList'
 import Cart from './src/pages/Cart'
 import Wallet from './src/pages/Wallet'
-import Category from './src/pages/Category'
 import Filter from './src/pages/Filter'
 import Details from './src/pages/Details'
 import Add_Address from './src/pages/Add_Address'
@@ -23,6 +22,8 @@ import Profile from './src/pages/Profile'
 import Edit_Address from './src/pages/Edit_Address'
 import filterData from './src/pages/filterData'
 import Sort from './src/pages/Sort'
+import SortData from './src/pages/SortData'
+import CMS from './src/pages/CMS'
 
 const StackNavigator_Function = StackNavigator({
   get_started :{screen:Getstarted},
@@ -33,7 +34,6 @@ const StackNavigator_Function = StackNavigator({
   wishList:{screen:WishList},
   add_to_cart : {screen:Cart},
   wallet : {screen:Wallet},
-  category : {screen:Category},
   filter : {screen:Filter},
   details:{screen:Details},
   add_address : {screen:Add_Address},
@@ -47,7 +47,9 @@ const StackNavigator_Function = StackNavigator({
   profile : {screen:Profile},
   edit_address : {screen:Edit_Address},
   filter_page : {screen:filterData},
-  sort : {screen:Sort}
+  sort : {screen:Sort},
+  sort_page : {screen:SortData},
+  cms : {screen:CMS}
   },
 {
   headerMode:'none'
