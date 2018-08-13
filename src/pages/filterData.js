@@ -40,7 +40,8 @@ export default class filterData extends Component<{}>{
       arrivalscolor : '#7a7979',
       sortdata : '',
       plthcolor : '#7a7979',
-      sortinput : ''
+      sortinput : '',
+      urlPass : ''
     }
   }
   componentWillMount(){
@@ -113,7 +114,7 @@ export default class filterData extends Component<{}>{
             this.setState({
               min : parseInt(response.filters.price.min.split('.')[0]),
               max : parseInt(response.filters.price.max.split('.')[0]),
-              url : url
+              urlPass : url
             })
           }
         }
@@ -123,22 +124,23 @@ export default class filterData extends Component<{}>{
       })
     }
   }
-  getsortData(){
-    console.warn('input',this.state.sortinput);
-    if (this.state.sortinput!='') {
-      var url = config.API_URL+'products/search?category='+this.state.name+'&'+'sort='+this.state.sortinput
-      console.log('url',url);
-      fetch(url)
-       .then((response)=>response.json())
-       .catch((error)=>console.warn(error))
-       .then((response)=>{
-         console.warn('response',response);
-         if (response.data.length!=0) {
-           this.props.navigation.navigate('sortdata',{data:response,url:this.state.url})
-         }
-       })
-    }
-  }
+  // getsortData(){
+  //   console.warn('input',this.state.sortinput);
+  //   console.warn('.............',this.state.url);
+  //   if (this.state.sortinput!='') {
+  //     var url = config.API_URL+'products/search?category='+this.state.name+'&'+'sort='+this.state.sortinput
+  //     console.log('url',url);
+  //     fetch(url)
+  //      .then((response)=>response.json())
+  //      .catch((error)=>console.warn(error))
+  //      .then((response)=>{
+  //        console.warn('response',response);
+  //        if (response.data.length!=0) {
+  //          this.props.navigation.navigate('sortdata',{data:response,url:this.state.url})
+  //        }
+  //      })
+  //   }
+  // }
   getPopularityData(input){
     this.setState({
       sortinput : input,
@@ -237,7 +239,7 @@ export default class filterData extends Component<{}>{
                               <Text style = {styles.productName}>{item.name}</Text>
                               <View style = {{width:'100%',flexDirection:'row'}}>
                                 <Text style = {styles.productPrice_des}>Price : </Text>
-                                <Text style = {styles.productPrice}>{item.price}</Text>
+                                <Text style = {styles.productPrice}>{item.sale_price}</Text>
                                 <Text style = {{color:'#48c7f0',fontSize:16,marginLeft:5}}>{item.disc}</Text>
                                 <Text style = {{color:'#48c7f0',fontSize:16}}>%</Text>
                                 <Text style = {{color:'#0cb038',fontSize:16,marginLeft:5}}>off</Text>
@@ -261,7 +263,7 @@ export default class filterData extends Component<{}>{
             underlayColor = 'transparent'
             onPress = {()=>this.props.navigation.navigate('sort',
               {
-                url:this.state.url,
+                urlPass:this.state.urlPass,
                 name:this.state.name
               })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderRightWidth:2,borderColor:'#eee',
@@ -284,7 +286,7 @@ export default class filterData extends Component<{}>{
               brand_data:this.state.brand_data,
               cat_data:this.state.cat_data,
               spec_data:this.state.spec_data,
-              url:this.state.url
+              url:this.state.urlPass
             })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderLeftWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>

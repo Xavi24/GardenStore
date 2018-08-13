@@ -63,7 +63,8 @@ export default class Details extends Component<{}>{
       measurementData : [],
       show : false,
       custom_nav_data : [],
-      login_cnfrm_screen : false
+      login_cnfrm_screen : false,
+      rating_Success : true
     }
   }
   addMyrating(rating){
@@ -338,6 +339,7 @@ export default class Details extends Component<{}>{
      })
   }
   addToWishList(){
+    console.warn('enterd into add to wishlist page');
     var url = config.API_URL+'user/wishlistCreate/'+this.state.product_id
     fetch(url, {
       headers : new Headers({
@@ -349,6 +351,7 @@ export default class Details extends Component<{}>{
     .then((response)=>response.json())
     .catch((error)=>console.warn(error))
     .then((response)=>{
+      console.warn('response',response);
       if(response.message=='success'){
         this.setState({
           show_fav : false
@@ -395,7 +398,7 @@ export default class Details extends Component<{}>{
       }
     })
   }
-  componentDidMount(){
+  componentWillMount(){
     const {params} = this.props.navigation.state;
     this.setState({
       slug : params.slug,
@@ -728,6 +731,10 @@ export default class Details extends Component<{}>{
               </View>
             </View>
           </View>
+        </AnimatedHideView>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'space-between',position:'absolute'}}
+          visible = {this.state.rating_Success}>
+          <View style = {{height:'70%'}}></View>
         </AnimatedHideView>
       </View>
     );

@@ -1,11 +1,20 @@
 import React,{Component} from 'react'
-import {View,Text,StyleSheet,Image,TouchableHighlight,Picker,ScrollView,AsyncStorage} from 'react-native'
+import {View,
+        Text,
+        StyleSheet,
+        Image,
+        TouchableHighlight,
+        Picker,
+        ScrollView,
+        AsyncStorage
+  } from 'react-native'
 import config from '../API/config'
 import GridView from 'react-native-super-grid'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import AnimatedHideView from 'react-native-animated-hide-view'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import Spinner from 'react-native-loading-spinner-overlay'
+import Toast from 'react-native-simple-toast'
 
 const cartData = [];
 var radio_props = [
@@ -31,7 +40,8 @@ export default class Cart extends Component<{}>{
       success_screen : false,
       placeorder_error_screen : false,
       show : false,
-      emptyScreen : false
+      emptyScreen : false,
+      variation_id : ''
     }
   }
   updateSize = (size) => {
@@ -59,7 +69,7 @@ export default class Cart extends Component<{}>{
     })
     .then((response)=>response.json())
     .then((response)=> {
-    console.warn('cartResponse--->>>',response);
+    console.log('cartResponse--->>>',response);
       if (response.data.length > 0) {
         this.setState({
           show : false
@@ -70,11 +80,13 @@ export default class Cart extends Component<{}>{
             name:data.variation_details.name,
             price:data.variation_details.price,
             image:data.variation_details.variation_image_single.variation_image,
-            stock:data.variation_details.stock
+            stock:data.variation_details.stock,
+            var_id:data.variation_id
           })
           this.setState({
             crtData:cartData
           })
+          console.warn('cccccccc',this.state.crtData);
           totalPrize = totalPrize+parseInt(data.variation_details.price)
         }
         this.setState({
@@ -153,7 +165,7 @@ export default class Cart extends Component<{}>{
     .then((response)=>response.json())
     .catch((error)=>console.warn(error))
     .then((response)=>{
-      console.warn('response',response);
+      console.warn('responseCart',response);
       if (response.code == '200') {
         this.setState({
           success_screen : true
@@ -187,6 +199,64 @@ export default class Cart extends Component<{}>{
     this.setState({
       visible:!this.state.visible
     })
+  }
+  removeFromCart(var_id){
+    this.setState({
+      show:true
+    })
+    console.warn('variation_id',var_id);
+    var url = config.API_URL+'product/removeCart/'+var_id
+    fetch(url,{
+      method : 'DELETE',
+      headers: new Headers({
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+        'Authorization' : this.state.access_token
+      })
+    })
+     .then((response)=>response.json())
+     .catch((error)=>console.warn(error))
+     .then((response)=>{
+       console.warn('response',response);
+       if (response) {
+         this.setState({
+           show : false
+         })
+         if (response.code == '200') {
+            Toast.show('Product Removed From Cart', Toast.LONG);
+            this.getCartData();
+         }
+       }
+     })
+  }
+  movToWishlist(var_id){
+    this.setState({
+      show:true
+    })
+    console.warn('variation_id',var_id);
+    var url = config.API_URL+'user/cartToWishlist/'+var_id
+    fetch(url,{
+      method : 'GET',
+      headers: new Headers({
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+        'Authorization' : this.state.access_token
+      })
+    })
+     .then((response)=>response.json())
+     .catch((error)=>console.warn(error))
+     .then((response)=>{
+       console.warn('response',response);
+       if (response) {
+         this.setState({
+           show : false
+         })
+         if (response.code == '200') {
+            Toast.show('Product Moved To Wishlist', Toast.LONG);
+            this.getCartData();
+         }
+       }
+     })
   }
   render(){
     const {goBack} = this.props.navigation
@@ -224,10 +294,6 @@ export default class Cart extends Component<{}>{
                         </View>
                         <View style = {styles.contentView}>
                           <Text style = {{color:'#369',fontSize:18,fontWeight:'bold',marginTop:5}}>{item.name}</Text>
-                          <View style = {{flexDirection:'row'}}>
-                            <Text style = {styles.textMain}>Sold by : </Text>
-                            <Text style = {styles.text}>WanWagon</Text>
-                          </View>
                           <View style = {{flexDirection:'row',marginTop:20}}>
                             <Text style = {styles.textMain}>RS.</Text>
                             <Text style = {styles.textPrice}>{item.price}</Text>
@@ -236,10 +302,18 @@ export default class Cart extends Component<{}>{
                       </View>
                       <View style = {styles.gridFooterView}>
                         <View style = {styles.leftFooter}>
-                          <Text style = {{color:'#363a42',fontSize:16,fontWeight:'bold'}}>REMOVE</Text>
+                          <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                            underlayColor = 'transparent'
+                            onPress = {()=>this.removeFromCart(item.var_id)}>
+                            <Text style = {{color:'#363a42',fontSize:16,fontWeight:'bold'}}>REMOVE</Text>
+                          </TouchableHighlight>
                         </View>
                         <View style = {styles.rightFooter}>
-                          <Text style = {{color:'#369',fontSize:16,fontWeight:'bold'}}>MOVE TO WISHLIST</Text>
+                          <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                            underlayColor = 'transparent'
+                            onPress = {()=>this.movToWishlist(item.var_id)}>
+                            <Text style = {{color:'#369',fontSize:16,fontWeight:'bold'}}>MOVE TO WISHLIST</Text>
+                          </TouchableHighlight>
                         </View>
                       </View>
                     </View>

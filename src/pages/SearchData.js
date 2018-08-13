@@ -34,6 +34,9 @@ export default class SearchData extends Component<{}>{
       max : 500,
       specdata : '',
       url : '',
+      urlPass : '',
+      sortUrl : '',
+      urlPass : ''
     }
   }
   componentWillMount(){
@@ -113,8 +116,12 @@ export default class SearchData extends Component<{}>{
                this.setState({
                  min : parseInt(response.filters.price.min.split('.')[0]),
                  max : parseInt(response.filters.price.max.split('.')[0]),
-                 url : url
+                 urlPass : config.API_URL+'products/search?term=',
+                 urlPass : url
                })
+               console.warn('url//pass-->filter',this.state.urlPass);
+               console.warn('url//pass-->name',this.state.name);
+               console.warn('sortUrl///',this.state.urlPass);
              }
            }
        } else {
@@ -172,7 +179,7 @@ export default class SearchData extends Component<{}>{
                               <Text style = {styles.productName}>{item.name}</Text>
                               <View style = {{width:'100%',flexDirection:'row'}}>
                                 <Text style = {styles.productPrice_des}>Price : </Text>
-                                <Text style = {styles.productPrice}>{item.price}</Text>
+                                <Text style = {styles.productPrice}>{item.sale_price}</Text>
                                 <Text style = {{color:'#48c7f0',fontSize:16,marginLeft:5}}>{item.disc}</Text>
                                 <Text style = {{color:'#48c7f0',fontSize:16}}>%</Text>
                                 <Text style = {{color:'#0cb038',fontSize:16,marginLeft:5}}>off</Text>
@@ -196,7 +203,7 @@ export default class SearchData extends Component<{}>{
             underlayColor = 'transparent'
             onPress = {()=>this.props.navigation.navigate('sort',
               {
-                url:this.state.url,
+                urlPass:this.state.urlPass,
                 name:this.state.name
               })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderRightWidth:2,borderColor:'#eee',
@@ -219,7 +226,7 @@ export default class SearchData extends Component<{}>{
               brand_data:this.state.brand_data,
               cat_data:this.state.cat_data,
               spec_data:this.state.spec_data,
-              url:this.state.url
+              url:this.state.urlPass
             })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderLeftWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>

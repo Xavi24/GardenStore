@@ -48,6 +48,8 @@ export default class Filter extends Component<{}>{
       url : '',
       arr : [],
       product_data : [],
+      emptyScreen : false,
+      pass_name : ''
     }
   }
   multiSliderValuesChange = (values) => {
@@ -61,21 +63,30 @@ export default class Filter extends Component<{}>{
     this.getFilterData(params)
   }
   postFilterData(){
-    console.warn('pricemin',this.state.min);
+    console.warn('url//test',this.state.url);
+    console.warn('url//name',this.state.pass_name);
     let cat_name = []
     let brand_name = []
     let spec_name = []
     let price = '';
     price = '['+'min='+this.state.min+','+'max='+this.state.max+']'
-    var url = this.state.url+'&'+'&'+'brand='+this.state.selected_brand+'&'+'specs='+this.state.arr+'&'+'&'+'price[min]='+this.state.min+'&'+'price[max]'+this.state.max
-    console.log('url',url);
+    var url = this.state.url+this.state.pass_name+'&'+'brand='+this.state.selected_brand+'&'+'specs='+this.state.arr+'&'+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max
+    console.warn('url',url);
     fetch(url)
      .then((response)=>response.json())
      .catch((error)=>console.warn(error))
      .then((response)=>{
        console.warn('response',response);
-       if (response.data.length!=0) {
-         this.props.navigation.navigate('filter_page',{data:response,url:this.state.url});
+       if (response.data) {
+         if (response.data.length!=0) {
+           if (response.data.data.length == 0) {
+             this.setState({
+               emptyScreen : true
+             })
+           } else {
+             this.props.navigation.navigate('filter_page',{data:response,url:this.state.url});
+           }
+         }
        }
      })
   }
@@ -142,7 +153,8 @@ export default class Filter extends Component<{}>{
       max:params.max,
       brand_data:params.brand_data,
       spec_data:params.spec_data,
-      url : params.url
+      url : params.url,
+      pass_name : params.name
     })
   }
   render(){
@@ -211,7 +223,7 @@ export default class Filter extends Component<{}>{
                   renderItem={item => (
                     <View style = {{width:'100%',flexDirection:'row',borderTopColor:'#eee',borderTopWidth:1}}>
                       <Text style = {{color:this.state.grid_item_color,fontSize:16,marginTop:5}}
-                        onPress = {()=>this.setState({selected_cat:item.name,grid_data:this.state.empty})}>{item.name}</Text>
+                        onPress = {()=>this.setState({pass_name:item.name,grid_data:this.state.empty,selected_cat:item.name})}>{item.name}</Text>
                     </View>
                   )}
                 />
@@ -300,6 +312,35 @@ export default class Filter extends Component<{}>{
                   onPress = {()=>this.updateSpceValue()}>Confirm</Text>
                 <Text style = {{fontSize:16,color:'#800000',fontWeight:'bold'}}
                   onPress = {()=>this.setState({spec_show:false})}>Close</Text>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
+        <AnimatedHideView
+          visible = {this.state.emptyScreen}
+          style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}>
+          <View style = {styles.toolbar}>
+            <View style = {styles.menuView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                onPress = {()=>goBack()}>
+                <MaterialIcons
+                  name='arrow-back'
+                  size={22}
+                  style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+             </View>
+             <View style = {styles.textView}>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Filter</Text>
+             </View>
+            <View style = {styles.iconView}></View>
+          </View>
+          <View style = {styles.baseContainer}>
+            <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+              <Image style = {{width:40,height:40,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
+                source = {require('../img/rotate.png')}></Image>
+                <Text>No product to show</Text>
+                <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
               </View>
             </View>
           </View>

@@ -1,5 +1,7 @@
 import React,{Component} from 'react'
 import {StackNavigator} from 'react-navigation'
+import {TabNavigator,TabBarBottom} from 'react-navigation'
+
 import Getstarted from './src/start/Getstarted'
 import HomePage from './src/start/HomePage'
 import Home from './src/start/Home'
@@ -24,6 +26,48 @@ import filterData from './src/pages/filterData'
 import Sort from './src/pages/Sort'
 import SortData from './src/pages/SortData'
 import CMS from './src/pages/CMS'
+import My_Order from './src/pages/My_Order'
+import Open_Order from './src/pages/Open_Order'
+import Cancel_Order from './src/pages/Cancel_Order'
+import AboutUs from './src/pages/AboutUs'
+import ContactUs from './src/pages/ContactUs'
+
+const tab_function = TabNavigator({
+  myorder : {screen:My_Order,
+    navigationOptions: {
+      tabBarLabel: 'My Order',
+    }
+  },
+  open_order : {screen:Open_Order,
+    navigationOptions: {
+        tabBarLabel: 'Open Order',
+      }
+    },
+  cancel_order: {screen:Cancel_Order,
+    navigationOptions: {
+        tabBarLabel: 'Canceled Order',
+      }
+    }
+},
+{
+  tabBarOptions:
+    {
+      activeTintColor:'#369',
+      inactiveTintColor:'#fff',
+      style:{
+        backgroundColor:'#282a2d',
+        borderTopColor:'#282a2d'
+      },
+      labelStyle:{
+        fontSize:12
+      },
+      indicatorStyle:{
+        backgroundColor:'transparent'
+      }
+    },
+    tabBarPosition: 'bottom',
+  })
+
 
 const StackNavigator_Function = StackNavigator({
   get_started :{screen:Getstarted},
@@ -49,7 +93,10 @@ const StackNavigator_Function = StackNavigator({
   filter_page : {screen:filterData},
   sort : {screen:Sort},
   sort_page : {screen:SortData},
-  cms : {screen:CMS}
+  cms : {screen:CMS},
+  my_order : {screen:tab_function},
+  about : {screen:AboutUs},
+  contact : {screen:ContactUs}
   },
 {
   headerMode:'none'

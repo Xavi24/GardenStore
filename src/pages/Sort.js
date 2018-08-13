@@ -31,24 +31,25 @@ export default class Sort extends Component<{}>{
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    console.warn('params',params);
+    console.warn('params--shop--sort',params);
     this.setState({
-      url : params.url,
-      name : this.state.name
+      url : params.urlPass,
+      name : params.name
     })
   }
   getsortData(){
     console.warn('input',this.state.sortinput);
+    console.warn('url-->>//name',this.state.name);
     if (this.state.sortinput!='') {
-      var url = this.state.url+'&'+'sort='+this.state.sortinput
-      console.log('url',url);
+      var url = this.state.url+this.state.name+'&'+'sort='+this.state.sortinput
+      console.warn('url',url);
       fetch(url)
        .then((response)=>response.json())
        .catch((error)=>console.warn(error))
        .then((response)=>{
          console.warn('response',response);
          if (response.data.length!=0) {
-           this.props.navigation.navigate('sort_page',{data:response,url:this.state.url})
+           this.props.navigation.navigate('sort_page',{data:response,url:this.state.url,name:this.state.name})
          }
        })
     }

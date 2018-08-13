@@ -1,5 +1,11 @@
 import React,{Component} from 'react'
-import {View,Text,StyleSheet,ScrollView,AsyncStorage} from 'react-native'
+import {View,
+        Text,
+        StyleSheet,
+        ScrollView,
+        AsyncStorage,
+        TouchableHighlight
+  } from 'react-native'
 import config from '../API/config'
 import ExpanableList from 'react-native-expandable-section-flatlist'
 import {Thumbnail} from 'native-base'
@@ -20,7 +26,7 @@ export default class Menu extends Component<{}>{
       menu:'',
       menu_data : [],
       userAction : '',
-      name : '',
+      name : 'Garden Store User',
       number : '',
       email : '',
       gender : '',
@@ -99,20 +105,20 @@ export default class Menu extends Component<{}>{
       }
 
     _renderRow = (rowItem, rowId, sectionId) =>
-      <Text style = {{fontSize:16,color:'#369',marginLeft:20,marginTop:10}}
+      <Text style = {{fontSize:14,marginLeft:20,marginTop:10}}
         onPress = {()=> this.props.navigation.navigate('shop',{name:rowItem.name})}>{rowItem.name}</Text>;
     _renderSection = (section, sectionId)  =>
-      <Text style = {{marginLeft:10,marginTop:20,fontSize:18,color:'#363a42'}}>{section}</Text>;
+      <Text style = {{marginLeft:10,marginTop:20,fontSize:16,color:'#363a42'}}>{section}</Text>;
   render(){
     return(
       <View style = {styles.container}>
         <View style = {styles.profileView}>
-          <View style = {{width:'100%',marginLeft:20}}>
-            <View style = {{height:60,width:60,borderRadius:60/2,backgroundColor:'#2fdab8',marginTop:20,alignItems:'center',justifyContent:'center'}}>
+          <View style = {{width:'100%',marginLeft:5}}>
+            <View style = {{height:60,width:60,borderRadius:60/2,backgroundColor:'#2fdab8',marginTop:20,alignItems:'center',justifyContent:'center',marginLeft:10}}>
               <Text style = {{color:'#fff',fontSize:24,fontWeight:'bold'}}>{this.state.profileName}</Text>
              </View>
-            <Text style = {{fontSize:14,color:'#fff',fontWeight:'bold',marginTop:10}}>{this.state.name}</Text>
-            <Text style = {{fontSize:14,color:'#fff'}}>{this.state.email}</Text>
+            <Text style = {{fontSize:14,color:'#fff',fontWeight:'bold',marginTop:10,marginLeft:10}}>{this.state.name}</Text>
+            <Text style = {{fontSize:14,color:'#fff',marginLeft:10}}>{this.state.email}</Text>
           </View>
         </View>
         <ScrollView>
@@ -129,14 +135,66 @@ export default class Menu extends Component<{}>{
           </View>
           <View>
             <View>
-              <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20}}
-                onPress = {()=> this.props.navigation.navigate('add_to_cart')}>Shopping Cart</Text>
-                <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20}}
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                    underlayColor = 'transparent'>
+                    <MaterialIcons
+                      name='shopping-cart'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                    </MaterialIcons>
+                </TouchableHighlight>
+              <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
+                onPress = {()=> this.props.navigation.navigate('add_to_cart')}>My Cart</Text>
+              </View>
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                    underlayColor = 'transparent'>
+                    <MaterialIcons
+                      name='favorite'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                    </MaterialIcons>
+                </TouchableHighlight>
+                <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
                   onPress = {()=>this.props.navigation.navigate('wishList')}>Wishlist</Text>
-                <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20}}
+              </View>
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                    underlayColor = 'transparent'>
+                    <MaterialIcons
+                      name='payment'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                    </MaterialIcons>
+                </TouchableHighlight>
+                <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
                   onPress = {()=>this.props.navigation.navigate('wallet')}>Wallet</Text>
-                <Text style = {{fontSize:18,color:'#363a42',marginLeft:10,marginTop:20,marginBottom:10}}
+              </View>
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                    underlayColor = 'transparent'>
+                    <MaterialIcons
+                      name='settings'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                    </MaterialIcons>
+                </TouchableHighlight>
+                <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
                  onPress = {()=>this.props.navigation.navigate('settings')}>Settings</Text>
+              </View>
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20,marginBottom:10}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                    underlayColor = 'transparent'>
+                    <MaterialIcons
+                      name='shopping-cart'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                    </MaterialIcons>
+                </TouchableHighlight>
+                <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
+                  onPress = {()=>this.props.navigation.navigate('my_order')}>My Orders</Text>
+              </View>
             </View>
           </View>
         </ScrollView>

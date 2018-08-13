@@ -65,7 +65,9 @@ export default class extends Component<{}>{
       show : false,
       measurements : [],
       underlayColor : '#eee',
-      ptrl_font : 0
+      ptrl_font : 0,
+      emptyScreen : false,
+      error_msg : ''
     }
   }
   getAddress(){
@@ -152,11 +154,19 @@ export default class extends Component<{}>{
       console.warn('response',response);
       if (response.code == '200') {
         this.setState({
-          success_screen : true
+          emptyScreen : true
         })
       } else {
         this.setState({
           error_screen : true
+        })
+      } if (response.code == '409') {
+        this.setState({
+          error_msg : response.message
+        })
+      } else {
+        this.setState({
+          error_msg : 'An error occured while buying your product go back and enter all the required data'
         })
       }
     })
@@ -496,19 +506,39 @@ export default class extends Component<{}>{
             </TouchableHighlight>
           </View>
         </View>
-        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
-          justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
-          visible = {this.state.success_screen}>
-          <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
-            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-            <Image style = {{height:80,width:80}}
-              source = {require('../img/order.png')}>
-            </Image>
-            <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:10}}>Success</Text>
-            <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-              <View></View>
-              <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                onPress = {()=>goBack()}>OK</Text>
+        <AnimatedHideView
+          visible = {this.state.emptyScreen}
+          style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}>
+          <View style = {styles.toolbar}>
+            <View style = {styles.menuView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                onPress = {()=>goBack()}>
+                <MaterialIcons
+                  name='close'
+                  size={22}
+                  style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+             </View>
+             <View style = {styles.textView}>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Close</Text>
+             </View>
+            <View style = {styles.iconView}></View>
+          </View>
+          <View style = {styles.baseContainer}>
+            <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+              <Image style = {{width:60,height:60,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
+                source = {require('../img/checked.png')}></Image>
+                <Text style = {{marginTop:10,fontSize:16,fontWeight:'bold'}}>Your product ordered successfully</Text>
+                <View style = {{width:'90%',height:40,backgroundColor:'#369',marginTop:20,alignItems:'center',justifyContent:'center'}}>
+                  <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                    underlayColor = 'transparent'
+                    onPress = {()=>this.props.navigation.navigate('my_order')}>
+                    <Text style = {{color:'#fff',fontSize:16,fontWeight:'bold'}}>View Orders</Text>
+                  </TouchableHighlight>
+                </View>
+                <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+              </View>
             </View>
           </View>
         </AnimatedHideView>
@@ -522,8 +552,7 @@ export default class extends Component<{}>{
             </Image>
             <Text style = {{fontSize:22,fontWeight:'bold',color:'#000'}}>Oops!</Text>
             <View style = {{width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:16,textAlign:'center'}}>There is an error occured while ordering your product.
-                Please go back and check all the details and try again</Text>
+              <Text style = {{fontSize:16,textAlign:'center'}}>{this.state.error_msg}</Text>
             </View>
             <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10}}>
               <View></View>
@@ -658,6 +687,12 @@ const styles = StyleSheet.create({
   iconView:{
     height:'100%',
     width:'10%',
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  baseContainer:{
+    height:'92%',
+    width:'100%',
     alignItems:'center',
     justifyContent:'center'
   }

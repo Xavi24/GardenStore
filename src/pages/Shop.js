@@ -40,27 +40,29 @@ export default class Shop extends Component<{}>{
       specdata : '',
       url : '',
       bottom : '',
-      next_page_url : ''
+      next_page_url : '',
+      urlPass : '',
+      sortUrl : ''
     }
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
     console.warn('params',params);
-    this.setState({
-      name : params.name
-    })
+    // this.setState({
+    //   name : params.name
+    // })
+    this.getProductdata(params.name);
   }
-  componentDidMount(){
-    this.getProductdata();
-  }
-  getProductdata(){
+
+  getProductdata(name){
     let cat_name = []
     let brand_name = []
     let spec_name = []
     this.setState({
       show : true
     })
-    var url = config.API_URL+'products/search?category='+this.state.name
+    var url = config.API_URL+'products/search?category='+name
+    console.warn('name//pass//filter',name);
     fetch(url)
      .then((response)=>response.json())
      .catch((error)=>console.warn(error))
@@ -123,8 +125,13 @@ export default class Shop extends Component<{}>{
                this.setState({
                  min : parseInt(response.filters.price.min.split('.')[0]),
                  max : parseInt(response.filters.price.max.split('.')[0]),
-                 url : url
+                 urlPass : config.API_URL+'products/search?category=',
+                 name : name,
+                 sortUrl : url
                })
+               console.warn('url//pass-->filter',this.state.urlPass);
+               console.warn('url//pass-->name',this.state.name);
+               console.warn('sortUrl//',this.state.sortUrl);
              }
            }
        } else {
@@ -278,7 +285,7 @@ export default class Shop extends Component<{}>{
                               <Text style = {styles.productName}>{item.name}</Text>
                               <View style = {{width:'100%',flexDirection:'row'}}>
                                 <Text style = {styles.productPrice_des}>Price : </Text>
-                                <Text style = {styles.productPrice}>{item.price}</Text>
+                                <Text style = {styles.productPrice}>{item.sale_price}</Text>
                                 <Text style = {{color:'#48c7f0',fontSize:16,marginLeft:5}}>{item.disc}</Text>
                                 <Text style = {{color:'#48c7f0',fontSize:16}}>%</Text>
                                 <Text style = {{color:'#0cb038',fontSize:16,marginLeft:5}}>off</Text>
@@ -302,8 +309,9 @@ export default class Shop extends Component<{}>{
             underlayColor = 'transparent'
             onPress = {()=>this.props.navigation.navigate('sort',
               {
-                url:this.state.url,
-                name:this.state.name
+                // url:this.state.sortUrl,
+                name:this.state.name,
+                urlPass : this.state.urlPass
               })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderRightWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>
@@ -325,7 +333,7 @@ export default class Shop extends Component<{}>{
               brand_data:this.state.brand_data,
               cat_data:this.state.cat_data,
               spec_data:this.state.spec_data,
-              url:this.state.url
+              url:this.state.urlPass
             })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderLeftWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>
