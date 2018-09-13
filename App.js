@@ -7,7 +7,7 @@ import HomePage from './src/start/HomePage'
 import Home from './src/start/Home'
 import Register from './src/pages/Register'
 import Login from './src/pages/Login'
-import WishList from './src/pages/WishList'
+import WishList from './src/pages/WishListData'
 import Cart from './src/pages/Cart'
 import Wallet from './src/pages/Wallet'
 import Filter from './src/pages/Filter'
@@ -26,48 +26,20 @@ import filterData from './src/pages/filterData'
 import Sort from './src/pages/Sort'
 import SortData from './src/pages/SortData'
 import CMS from './src/pages/CMS'
-import My_Order from './src/pages/My_Order'
-import Open_Order from './src/pages/Open_Order'
 import Cancel_Order from './src/pages/Cancel_Order'
 import AboutUs from './src/pages/AboutUs'
 import ContactUs from './src/pages/ContactUs'
-
-const tab_function = TabNavigator({
-  myorder : {screen:My_Order,
-    navigationOptions: {
-      tabBarLabel: 'My Order',
-    }
-  },
-  open_order : {screen:Open_Order,
-    navigationOptions: {
-        tabBarLabel: 'Open Order',
-      }
-    },
-  cancel_order: {screen:Cancel_Order,
-    navigationOptions: {
-        tabBarLabel: 'Canceled Order',
-      }
-    }
-},
-{
-  tabBarOptions:
-    {
-      activeTintColor:'#369',
-      inactiveTintColor:'#fff',
-      style:{
-        backgroundColor:'#282a2d',
-        borderTopColor:'#282a2d'
-      },
-      labelStyle:{
-        fontSize:12
-      },
-      indicatorStyle:{
-        backgroundColor:'transparent'
-      }
-    },
-    tabBarPosition: 'bottom',
-  })
-
+import AddressManagement from './src/pages/AddressManagement'
+import ViewAddress from './src/pages/ViewAddress'
+import Add_New_Address from "./src/pages/Add_New_Address"
+import ViewOpenOrder from './src/pages/ViewOpenOrder'
+import ViewMyOrderProduct from './src/pages/ViewMyOrderProduct'
+import ReturnProduct from './src/pages/ReturnProduct'
+import CartBuynow from './src/pages/CartBuynow'
+import ReplaceProduct from './src/pages/ReplaceProduct'
+import Order from './src/pages/Order'
+import Open from './src/pages/Open'
+import Cancel from './src/pages/Cancel'
 
 const StackNavigator_Function = StackNavigator({
   get_started :{screen:Getstarted},
@@ -94,9 +66,19 @@ const StackNavigator_Function = StackNavigator({
   sort : {screen:Sort},
   sort_page : {screen:SortData},
   cms : {screen:CMS},
-  my_order : {screen:tab_function},
   about : {screen:AboutUs},
-  contact : {screen:ContactUs}
+  contact : {screen:ContactUs},
+  add_manage : {screen:AddressManagement},
+  view_address : {screen:ViewAddress},
+  add_new : {screen:Add_New_Address},
+  view_open_order : {screen:ViewOpenOrder},
+  view_my_order : {screen:ViewMyOrderProduct},
+  return_product : {screen:ReturnProduct},
+  cart_buy_now : {screen:CartBuynow},
+  replace_product : {screen : ReplaceProduct},
+  order : {screen : Order},
+  open : {screen : Open},
+  cancel : {screen : Cancel}
   },
 {
   headerMode:'none'

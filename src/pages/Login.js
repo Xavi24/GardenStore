@@ -8,7 +8,8 @@ import {View,
         TouchableHighlight,
         ScrollView,
         AsyncStorage,
-        ActivityIndicator
+        ActivityIndicator,
+        BackHandler
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -23,7 +24,7 @@ export default class Login extends Component<{}>{
             backgroundColor:'#282a2d',
             borderBottomColor:'#282a2d'
           }
-    }
+    };
 
     constructor(){
     super();
@@ -57,8 +58,8 @@ export default class Login extends Component<{}>{
   login(){
     this.setState({
       show:true
-    })
-    let data = {}
+    });
+    let data = {};
     data.cred1 = this.state.cred1;
     data.cred2 = this.state.cred2;
 
@@ -76,7 +77,7 @@ export default class Login extends Component<{}>{
         console.warn('response',response);
         this.setState({
           show:false
-        })
+        });
 
         if (response.code === 200) {
           let access_token = response.token
@@ -121,7 +122,9 @@ export default class Login extends Component<{}>{
           <View style = {styles.textView}>
             <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Login</Text>
           </View>
-          <View style = {styles.iconView}></View>
+          <View style = {styles.iconView}>
+
+          </View>
         </View>
         <View style = {styles.baseContainer}>
           <Image style = {styles.background_img}
@@ -155,10 +158,6 @@ export default class Login extends Component<{}>{
               </TouchableHighlight>
               <Text style = {{color:'#ffffff',marginTop:20}}>OR</Text>
 
-
-
-
-              
               <Text style = {{color:'#369',marginTop:20,fontSize:16,textDecorationLine:'underline'}}
                 onPress = {()=>this.props.navigation.navigate('forgot')}>
                 Forgot Your Password</Text>
@@ -223,7 +222,6 @@ const styles = StyleSheet.create({
     backgroundColor:'#369',
     alignItems:'center',
     justifyContent:'center',
-    flexDirection:'row',
     borderTopLeftRadius:6,
     borderTopRightRadius:6,
     borderBottomLeftRadius:6,
@@ -236,7 +234,6 @@ const styles = StyleSheet.create({
     width:'90%',
     alignItems:'center',
     justifyContent:'center',
-    flexDirection:'row',
     borderTopLeftRadius:6,
     borderTopRightRadius:6,
     borderBottomLeftRadius:6,

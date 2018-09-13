@@ -7,7 +7,8 @@ import {View,
         StatusBar,
         TouchableOpacity,
         TouchableHighlight,
-        TextInput
+        TextInput,
+        BackHandler
   } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Swiper from 'react-native-swiper'
@@ -34,6 +35,7 @@ export default class CMS extends Component<{}>{
       search_data : ''
     }
   }
+
 
   getMenu(){
       let sub = {}

@@ -1,9 +1,22 @@
 import React,{Component} from 'react'
-import {View,Text,StyleSheet,Image,StatusBar,TextInput,TouchableHighlight,ScrollView,Alert,ActivityIndicator} from 'react-native'
+import {
+        View,
+        Text,
+        StyleSheet,
+        Image,
+        StatusBar,
+        TouchableHighlight,
+        ScrollView,
+        Alert,
+        ActivityIndicator,
+        BackHandler,
+        TextInput
+  } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import Spinner from 'react-native-loading-spinner-overlay'
 import config from '../API/config'
+import Toast from 'react-native-simple-toast'
 
 var radio_props = [
   {label: 'Male', value: 'male' },
@@ -19,14 +32,13 @@ export default class Register extends Component<{}>{
             backgroundColor:'#282a2d',
             borderBottomColor:'#282a2d'
           }
-  }
+  };
   constructor(){
     super();
     this.state = {
       name : '',email : '',user_name : '', password : '',password_confirmation : '',phone_no : '',gender : '',cc : 'IN',
       err_name:'',err_email:'',err_pass:'',err_cnf_pass:'',err_user:'',err_ph:'',err_cc:'',err_gender:'',
       show:false
-
     }
   }
   updateValue(text,field){
@@ -76,8 +88,8 @@ componentWillUnmount(){
   submit(){
     this.setState({
       show:true
-    })
-    let collection = {}
+    });
+    let collection = {};
     collection.name = this.state.name,
     collection.email = this.state.email,
     collection.user_name = this.state.user_name,
@@ -87,7 +99,7 @@ componentWillUnmount(){
     collection.phone_no = this.state.phone_no,
     collection.cc = this.state.cc
 
-        var url = config.API_URL+'register'
+        var url = config.API_URL+'register';
         fetch(url, {
         method: 'POST',
         body: JSON.stringify(collection),
@@ -102,8 +114,8 @@ componentWillUnmount(){
           console.warn('response',response);
           this.setState({
             show:false
-          })
-          let res = Object.keys(response)
+          });
+          let res = Object.keys(response);
           if (res.indexOf('errors') > -1) {
               let obj = Object.keys(response.errors)
               if (obj.indexOf('name') > -1) {
@@ -131,10 +143,16 @@ componentWillUnmount(){
                   err_pass:response.errors.password[0]
                 })
               }
+              if (obj.indexOf('phone_no') > -1) {
+                this.setState({
+                  err_ph : response.errors.phone_no[0]
+                })
+              }
 
           }
 
           else {
+              Toast.show('Registration Completed successfully', Toast.LONG);
             this.props.navigation.navigate('logn')
           }
       })
@@ -176,6 +194,7 @@ componentWillUnmount(){
                 <TextInput style = {styles.input}
                   underlineColorAndroid='transparent'
                   placeholder="Full Name"
+                  returnKeyType={ "done" }
                   placeholderTextColor="#ffffff"
                   onChangeText = {(text_name)=>this.updateValue(text_name,'name')}>
                 </TextInput>
@@ -185,6 +204,7 @@ componentWillUnmount(){
                 <TextInput style = {styles.input}
                   underlineColorAndroid='transparent'
                   placeholder="E-mail"
+                  returnKeyType={ "next" }
                   placeholderTextColor="#ffffff"
                   onChangeText = {(text_mail)=>this.updateValue(text_mail,'email')}>
                 </TextInput>
@@ -193,7 +213,7 @@ componentWillUnmount(){
                 </View>
                 <TextInput style = {styles.input}
                   underlineColorAndroid='transparent'
-                  placeholder="UserName"
+                  placeholder="Username"
                   placeholderTextColor="#ffffff"
                   onChangeText = {(text_username)=>this.updateValue(text_username,'user_name')}>
                 </TextInput>
@@ -212,7 +232,7 @@ componentWillUnmount(){
                 </View>
                 <TextInput style = {styles.input}
                   underlineColorAndroid='transparent'
-                  placeholder="Confirm Passoword"
+                  placeholder="Confirm Password"
                   secureTextEntry={true}
                   placeholderTextColor="#ffffff"
                   onChangeText = {(text_cnfrm_pass)=>this.updateValue(text_cnfrm_pass,'password_confirmation')}>
@@ -236,7 +256,7 @@ componentWillUnmount(){
                 </View>
                   <TextInput style = {styles.input}
                     underlineColorAndroid='transparent'
-                    placeholder="Ph Number"
+                    placeholder="Mobile Number"
                     keyboardType='numeric'
                     placeholderTextColor="#ffffff"
                     onChangeText = {(text_phno) =>this.updateValue(text_phno,'phone_no')}>
@@ -262,8 +282,8 @@ componentWillUnmount(){
 
             </View>
             <View style = {{width:'100%',height:'100%',position:'absolute', alignItems:'center',justifyContent:'center'}}>
-            <Spinner color = {'#369'} visible={this.state.show} textContent={"Loading..."} textStyle={{color: '#369'}}
-              overlayColor = {'#fff'}/>
+                <Spinner color = {'#369'} visible={this.state.show} textContent={"Loading..."} textStyle={{color: '#369'}}
+                overlayColor = {'#fff'}/>
             </View>
           </View>
        </View>

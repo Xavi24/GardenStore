@@ -8,7 +8,10 @@ import {View,
         StyleSheet,
         ListView,
         TextInput,
-        AsyncStorage} from 'react-native'
+        AsyncStorage,
+        BackHandler,
+        FlatList
+  } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import LinearGradient from 'react-native-linear-gradient'
 import config from '../API/config'
@@ -19,10 +22,12 @@ import AnimatedHideView from 'react-native-animated-hide-view'
 import ImageSlider from 'react-native-image-slider'
 import Stars from 'react-native-stars-rating'
 import StarRating from 'react-native-star-rating'
+import Toast from 'react-native-simple-toast'
 
 let count = 1
-p_specs_container = [];
-p_spec_variation_container = []
+let p_specs_container = [];
+let p_spec_variation_container = []
+let measures = [];
 export default class Details extends Component<{}>{
   static navigationOptions = {
    header : null
@@ -35,7 +40,7 @@ export default class Details extends Component<{}>{
       header_image : '',
       is_in_cart : '',
       is_in_wishlist : '',
-      has_bought : '',
+      has_bought : false,
       prize : '',
       product_note : '',
       brand : '',
@@ -64,7 +69,17 @@ export default class Details extends Component<{}>{
       show : false,
       custom_nav_data : [],
       login_cnfrm_screen : false,
-      rating_Success : true
+      rating_Success : true,
+      out_of_stock_screen : false,
+      out_of_stock_screen_temp : false,
+      customising_screen : false,
+      Data : [],
+      measurements : [],
+      cart_text : 'Add To Cart',
+      discount : '',
+      sale_price : '',
+      p_color : '#369',
+      d_color : '#360',
     }
   }
   addMyrating(rating){
@@ -90,7 +105,7 @@ export default class Details extends Component<{}>{
       })
     } else if (count == '5') {
       this.setState({
-        feedback : 'Excelent'
+        feedback : 'Excellent'
       })
     }
   }
@@ -151,7 +166,7 @@ export default class Details extends Component<{}>{
       if (value !== null) {
         this.setState({
           access_token : value
-        })
+        });
           this.getDetails();
       } else {
         this.getDetails();
@@ -174,7 +189,7 @@ export default class Details extends Component<{}>{
     .then((response)=>response.json())
     .catch((error)=>console.warn(error))
     .then((response)=>{
-      console.warn('GetAddressResponse',response);
+      console.log('GetAddressResponse',response);
       if (response.data!= '') {
         this.props.navigation.navigate('buy_now',{
           product_name:this.state.product_name,
@@ -182,7 +197,9 @@ export default class Details extends Component<{}>{
           img:this.state.header_image,
           product:this.state.product_id,
           vendor:this.state.vendor_id,
-          measurements : []
+          measurements : this.state.measurements,
+          slug : this.state.slug,
+          spec : this.state.spec
         })
       }
       else {
@@ -192,10 +209,25 @@ export default class Details extends Component<{}>{
           img:this.state.header_image,
           product:this.state.product_id,
           vendor:this.state.vendor_id,
-          measurements : []
+          measurements : this.state.measurements
         })
       }
     })
+  }
+  updateValue1(text,field,name,index){
+    console.warn('text',text);
+    console.warn('field',field);
+    console.warn('index',index);
+    console.warn('name',name);
+    measures[index] = {
+      product_measurement_id : field,
+      value : text,
+      name : name
+    }
+    this.setState({
+      measurements : measures
+    })
+    console.warn('measures////',this.state.measurements);
   }
   customNavigation(){
     this.state.custom_nav_data.push({
@@ -203,19 +235,25 @@ export default class Details extends Component<{}>{
       prize:this.state.prize,
       img:this.state.header_image,
       product:this.state.product_id,
-      vendor:this.state.vendor_id
-    })
-    this.props.navigation.navigate('customization',{data:this.state.measurementData,p_data:this.state.custom_nav_data})
-    console.warn('custom_nav_data',this.state.custom_nav_data);
-    console.warn('measurementData',this.state.measurementData);
+      vendor:this.state.vendor_id,
+      slug : this.state.slug,
+      spec : this.state.spec
+    });
+    this.setState({
+      customising_screen : true,
+      Data : this.state.measurementData
+    });
+    // this.props.navigation.navigate('customization',{data:this.state.measurementData,p_data:this.state.custom_nav_data})
+    // console.warn('custom_nav_data',this.state.custom_nav_data);
+    console.warn('measurementData........',this.state.measurementData);
   }
   getDetails(){
     this.setState({
       show : true
-    })
+    });
     console.log('slug//details :',this.state.slug);
-    spec_datas = [];
-    spec_variation_datas = [];
+    let spec_datas = [];
+    let spec_variation_datas = [];
      var url = config.API_URL+'productDetail/'+this.state.slug
      fetch(url, {
        headers: new Headers({
@@ -227,34 +265,48 @@ export default class Details extends Component<{}>{
      .then((response)=>response.json())
      .catch((error)=>console.log(error))
      .then((response)=>{
-       if (response.data!=null) {
-         this.setState({
-           show : false
-         })
+       this.setState({
+         show : false
+       });
+       if (response.data) {
          console.log('productDetailresponse',response);
 
          this.setState({
            is_in_cart : response.data.is_in_cart,
            is_in_wishlist : response.data.is_in_wishlist,
            product_name : response.data.product_name,
-           prize : response.data.product_mrp,
            product_note : response.data.product_notes,
            brand : response.data.brand,
            product_id : response.data.product_variation_id,
            product_details : response.data.product_details.product_description,
-           starCount : response.data.product_rating
+           starCount : response.data.product_rating,
+           sale_price : response.data.product_mrp
          })
          for(let product_images of response.data.product_images){
            this.state.slider_Images.push(product_images.img)
          }
          for(let product_vendors of response.data.product_vendors){
            this.setState({
-             vendor_id : product_vendors.vendor_id
+             vendor_id : product_vendors.vendor_id,
+             prize : product_vendors.product_price,
+             discount : product_vendors.discount
            })
+           if (this.state.discount == 0) {
+             this.setState({
+               d_color : '#fff',
+               p_color : '#fff'
+             })
+           }
+           if (product_vendors.quantity < 1) {
+             this.setState({
+               out_of_stock_screen_temp : true
+             })
+           }
+           console.warn('out_of_stock_screen_temp',this.state.out_of_stock_screen_temp);
          }
            p_specs_container.length = 0;
           for (let product_specs of response.data.product_details.product_specs){
-            product_specs_keys = Object.keys(product_specs)
+            let product_specs_keys = Object.keys(product_specs)
             p_specs_container.push({
               spec_title : product_specs_keys[0],
               specs : product_specs[product_specs_keys[0]]
@@ -271,9 +323,9 @@ export default class Details extends Component<{}>{
           }
           this.setState({
             spec : spec_datas
-          })
+          });
           for(let product_spec_variation of response.data.product_variation_items){
-            product_spec_variation_key = Object.keys(product_spec_variation)
+            let product_spec_variation_key = Object.keys(product_spec_variation);
             p_spec_variation_container.push({
               spec_title : product_spec_variation_key[0],
               specs : product_spec_variation[product_spec_variation_key[0]]
@@ -291,11 +343,12 @@ export default class Details extends Component<{}>{
           }
           this.setState({
             spec_variation : spec_variation_datas
-          })
-          console.log('spec_variation',this.state.spec_variation);
+          });
+          console.warn('spec_variation',this.state.spec_variation);
            if (response.data.is_in_cart) {
             this.setState({
-              show_cart:false
+              show_cart:false,
+              cart_text : 'Move To Cart'
             })
           } else {
             this.setState({
@@ -379,24 +432,43 @@ export default class Details extends Component<{}>{
     })
   }
   addToCart(){
-    var url = config.API_URL+'product/addToCart/'+this.state.product_id+'/'+this.state.vendor_id
-    fetch(url, {
-      method : 'POST',
-      headers : new Headers({
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        'Authorization' : this.state.access_token
+    if (this.state.cart_text == 'Add To Cart') {
+      let cartData = {}
+      cartData.measurements = JSON.stringify(this.state.measurements);
+      console.warn('cart,measurements',this.state.measurements);
+      this.setState({
+        customising_screen : false
       })
-    })
-    .then((response)=>response.json())
-    .catch((error)=>console.warn(error))
-    .then((response)=>{
-      if (response.message=='success') {
-        this.setState({
-          show_cart : false
+      var url = config.API_URL+'product/addToCart/'+this.state.product_id+'/'+this.state.vendor_id
+      fetch(url, {
+        method : 'POST',
+        body : JSON.stringify(cartData),
+        headers : new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
         })
-      }
-    })
+      })
+      .then((response)=>response.json())
+      .catch((error)=>console.warn(error))
+      .then((response)=>{
+        console.warn('response',response);
+        if (response.message=='success') {
+          Toast.show('Product Added To Cart', Toast.LONG);
+          this.getDetails();
+          this.setState({
+            show_cart : false
+          })
+        } if (response.code == '409'){
+          Toast.show(response.message, Toast.LONG);
+        }
+      })
+    } else if (this.state.cart_text == 'Move To Cart') {
+      this.setState({
+        customising_screen : false
+      })
+      this.props.navigation.navigate('add_to_cart')
+    }
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
@@ -428,7 +500,7 @@ export default class Details extends Component<{}>{
           <View style = {styles.iconView}></View>
         </View>
         <View style = {styles.baseContainer}>
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator = {false}>
             <View style = {styles.scrollContainer}>
               <View style = {styles.headerImage}>
                 <ImageSlider
@@ -449,164 +521,177 @@ export default class Details extends Component<{}>{
                             underlayColor="#ccc"
                             onPress={() => move(index)}
                             style={styles.button}>
-                            <Text style={position === index && styles.buttonSelected}>
-                              {index + 1}
-                            </Text>
+                            <View style={position === index && styles.buttonSelected}>
+                            </View>
                           </TouchableHighlight>
                         );
                       })}
                     </View>
                   )}
                 />
-                <View style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}>
-                  <View style = {{width:'100%',height:'50%'}}></View>
-                  <View style = {{width:'100%',height:'50%'}}>
-                    <LinearGradient
-                      style = {{width:'100%',height:'100%'}}
-                      start={{x: 0.5, y: 0.0}} end={{x: 0.5, y: 1.0}}
-                      locations={[0,0.7]}
-                      colors={['rgba(00, 00, 00, 0.0)','rgba(00, 00, 00, 0.7)']}>
-                        <View style = {{width:'100%',justifyContent:'center',alignItems:'center'}}>
-                          <Text style = {{fontSize:20,fontWeight:'bold',color:'#0cb038'}}>{this.state.prize}</Text>
-                          <Text style = {styles.cover_img}>{this.state.product_name}</Text>
-                          <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
-                            <Text style = {{color:'#fff',marginTop:10}}>Product Brand : </Text>
-                            <Text style = {styles.cover_img_des}>{this.state.brand}</Text>
-                          </View>
-                        </View>
-                        <View style = {{marginLeft:5,justifyContent:'center',alignItems:'center'}}>
-                          <View style = {styles.function_icon_view}>
-                            <TouchableHighlight underlayColor = 'transparent'
-                              onPress = {()=>{
-                                if (this.state.access_token!='') {
-                                  this.setState({ratingView:true})
-                                } else {
-                                  this.setState({
-                                    login_cnfrm_screen : true
-                                  })
-                                }
-                              }}>
-                              <MaterialIcons
-                                name='star-border'
-                                size={25}
-                                style = {{color:'#ffffff'}}>
-                              </MaterialIcons>
-                            </TouchableHighlight>
-                            <View>
-                              <TouchableHighlight
-                                underlayColor = 'transparent'
-                                onPress = {()=>this.removeWishList()}>
-                                <MaterialIcons
-                                  name='favorite'
-                                  size={25}
-                                  style = {{color:'#e50000'}}>
-                                </MaterialIcons>
-                              </TouchableHighlight>
-                              <AnimatedHideView
-                                visible = {this.state.show_fav}
-                                style = {{position:'absolute'}}>
-                                <TouchableHighlight
-                                  underlayColor = 'transparent'
-                                  onPress = {()=>{
-                                    if (this.state.access_token!='') {
-                                      this.addToWishList()
-                                    } else {
-                                      this.setState({
-                                        login_cnfrm_screen:true
-                                      })
-                                    }
-                                  }}>
-                                  <MaterialIcons
-                                    name='favorite'
-                                    size={25}
-                                    style = {{color:'#fff'}}>
-                                  </MaterialIcons>
-                                </TouchableHighlight>
-                              </AnimatedHideView>
-                            </View>
-                            <TouchableHighlight underlayColor = 'transparent'>
-                              <MaterialIcons
-                                name='share'
-                                size={25}
-                                style = {{color:'#ffffff'}}>
-                              </MaterialIcons>
-                            </TouchableHighlight>
-                            <View>
-                              <TouchableHighlight underlayColor = 'transparent'
-                                onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
-                                <MaterialIcons
-                                  name='add-shopping-cart'
-                                  size={25}
-                                  style = {{color:'#48c7f0'}}>
-                                </MaterialIcons>
-                              </TouchableHighlight>
-                              <AnimatedHideView
-                                visible = {this.state.show_cart}
-                                style = {{position:'absolute'}}>
-                                <TouchableHighlight
-                                  underlayColor = 'transparent'
-                                  onPress = {()=>this.addToCart()}>
-                                  <MaterialIcons
-                                    name='add-shopping-cart'
-                                    size={25}
-                                    style = {{color:'#fff'}}>
-                                  </MaterialIcons>
-                                </TouchableHighlight>
-                              </AnimatedHideView>
-                            </View>
-                          </View>
-                        </View>
-                    </LinearGradient>
+              </View>
+              <View style = {{width:'98%',padding:10,backgroundColor:'#fff',marginTop:5,elevation:2}}>
+                <Text style = {styles.cover_img}>{this.state.product_name}</Text>
+                <View style = {{width:'100%',alignItems:'center',flexDirection:'row'}}>
+                  <Image style = {{width:13,height:13,alignItems:'center',justifyContent:'center',resizeMode:'stretch',marginTop:4}}
+                    source = {require('../img/curr.png')}>
+                  </Image>
+                  <Text style = {{color:'#595656',fontSize:14,marginLeft:4}}>{this.state.prize}</Text>
+                  <Text style = {{color:this.state.p_color,fontSize:12,marginLeft:10,textDecorationLine:'line-through'}}>{this.state.sale_price}</Text>
+                  <Text style = {{color:this.state.d_color,fontSize:12,marginLeft:10}}>{this.state.discount}% off</Text>
+                </View>
+                <View style = {{width:'100%',flexDirection:'row',padding:5}}>
+                  <View style = {{width:'50%',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,
+                    borderTopRightRadius:6,padding:5}}>
+                    <StarRating
+                      disabled={true}
+                      maxStars={5}
+                      rating={this.state.starCount}
+                      starSize={25}
+                      fullStarColor={'#D4AF37'}
+                      emptyStarColor={'#D4AF37'}
+                    />
                   </View>
+                  <View style = {{width:'50%'}}></View>
+                  <AnimatedHideView style = {{position:'absolute',width:'100%',height:30,
+                    alignItems:'center',justifyContent:'center',marginTop:10}}
+                    visible = {this.state.customButton}>
+                      <View style = {{width:'100%',alignItems:'center',
+                        justifyContent:'space-between',flexDirection:'row'}}>
+                        <View></View>
+                        <TouchableHighlight style = {{width:100,alignItems:'center',justifyContent:'center'}}
+                          underlayColor = 'transparent'
+                          onPress = {()=>this.customNavigation()}>
+                        <View style = {{width:'100%',height:40,backgroundColor:'#48c7f0',alignItems:'center',justifyContent:'center'}}>
+                          <Text style = {{color:'#fff'}}>Customise</Text>
+                        </View>
+                      </TouchableHighlight>
+                      </View>
+                  </AnimatedHideView>
                 </View>
               </View>
-
-              <View style = {{width:'100%',flexDirection:'row',padding:5}}>
-                <View style = {{width:'50%',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,
-                  borderTopRightRadius:6,padding:5}}>
-                  <StarRating
-                    disabled={true}
-                    maxStars={5}
-                    rating={this.state.starCount}
-                    starSize={25}
-                    fullStarColor={'#D4AF37'}
-                    emptyStarColor={'#D4AF37'}
-                  />
-                </View>
-                <View style = {{width:'50%'}}></View>
-                <AnimatedHideView style = {{position:'absolute',width:'100%',height:30,
-                  alignItems:'center',justifyContent:'center',marginTop:10}}
-                  visible = {this.state.customButton}>
-                    <View style = {{width:'100%',alignItems:'center',
-                      justifyContent:'space-between',flexDirection:'row'}}>
-                      <View></View>
-                      <TouchableHighlight style = {{width:100,alignItems:'center',justifyContent:'center'}}
-                        underlayColor = 'transparent'
-                        onPress = {()=>this.customNavigation()}>
-                      <View style = {{width:'100%',height:40,backgroundColor:'#48c7f0',alignItems:'center',justifyContent:'center'}}>
-                        <Text style = {{color:'#fff'}}>Customise</Text>
-                      </View>
-                    </TouchableHighlight>
+              <View style = {{width:'98%',backgroundColor:'#fff',elevation:2,flexDirection:'row',alignItems:'center',height:60,
+                justifyContent:'space-between',padding:10,borderTopColor:'#eee',borderTopWidth:1}}>
+                <View style = {{width:'25%',height:'100%',borderRightWidth:1,borderRightColor:'#eee'}}>
+                  <TouchableHighlight underlayColor = 'transparent'
+                    style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                    onPress = {()=>{
+                      if (this.state.access_token!='') {
+                        this.setState({ratingView:true})
+                      } else {
+                        this.setState({
+                          login_cnfrm_screen : true
+                        })
+                      }
+                    }}>
+                    <View style = {{flexDirection:'row'}}>
+                      <MaterialIcons
+                        name='star-border'
+                        size={22}
+                        style = {{color:'#605e5e'}}>
+                      </MaterialIcons>
+                      <Text style = {{marginLeft:3,color:'#605e5e',marginTop:3,fontSize:12}}>Rate us</Text>
                     </View>
-                </AnimatedHideView>
+                  </TouchableHighlight>
+                </View>
+                <View style = {{width:'25%',height:'100%',borderRightWidth:1,borderRightColor:'#eee',alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{flexDirection:'row'}}>
+                    <View>
+                      <TouchableHighlight
+                        underlayColor = 'transparent'
+                        onPress = {()=>this.removeWishList()}>
+                        <MaterialIcons
+                          name='favorite'
+                          size={22}
+                          style = {{color:'#e50000'}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
+                      <AnimatedHideView
+                        visible = {this.state.show_fav}
+                        style = {{position:'absolute'}}>
+                        <TouchableHighlight
+                          underlayColor = 'transparent'
+                          onPress = {()=>{
+                            if (this.state.access_token!='') {
+                              this.addToWishList()
+                            } else {
+                              this.setState({
+                                login_cnfrm_screen:true
+                              })
+                            }
+                          }}>
+                          <MaterialIcons
+                            name='favorite'
+                            size={22}
+                            style = {{color:'#605e5e'}}>
+                          </MaterialIcons>
+                        </TouchableHighlight>
+                      </AnimatedHideView>
+                    </View>
+                    <Text style = {{marginLeft:5,color:'#605e5e',marginTop:3,fontSize:12}}>Wishlist</Text>
+                  </View>
+                </View>
+                <View style = {{width:'25%',height:'100%',borderRightWidth:1,borderRightColor:'#eee'}}>
+                <TouchableHighlight underlayColor = 'transparent'
+                  style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{flexDirection:'row'}}>
+                    <MaterialIcons
+                      name='share'
+                      size={22}
+                      style = {{color:'#605e5e'}}>
+                    </MaterialIcons>
+                    <Text style = {{marginLeft:5,color:'#605e5e',marginTop:3,fontSize:12}}>Share</Text>
+                  </View>
+                </TouchableHighlight>
+                </View>
+
+                <View style = {{width:'25%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{flexDirection:'row'}}>
+                    <View>
+                      <TouchableHighlight underlayColor = 'transparent'
+                        onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
+                        <MaterialIcons
+                          name='add-shopping-cart'
+                          size={22}
+                          style = {{color:'#48c7f0'}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
+                      <AnimatedHideView
+                        visible = {this.state.show_cart}
+                        style = {{position:'absolute'}}>
+                        <TouchableHighlight
+                          underlayColor = 'transparent'
+                          onPress = {()=>this.addToCart()}>
+                          <MaterialIcons
+                            name='add-shopping-cart'
+                            size={22}
+                            style = {{color:'#605e5e'}}>
+                          </MaterialIcons>
+                        </TouchableHighlight>
+                      </AnimatedHideView>
+                    </View>
+                    <Text style = {{marginLeft:5,color:'#605e5e',marginTop:3,fontSize:12}}>Cart</Text>
+                  </View>
+
+                </View>
               </View>
               <View style = {{width:'100%'}}>
                 <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
 
-                  <View style = {{width:'95%',alignItems:'center',justifyContent:'center',borderColor:'#bbb',borderWidth:1,
-                    borderTopLeftRadius:6,borderTopRightRadius:6,borderBottomLeftRadius:6,borderBottomRightRadius:6,paddingLeft:5,
-                    marginTop:10,marginBottom:10,paddingTop:5,paddingBottom:5,paddingRight:2}}>
+                  <View style = {{width:'98%',alignItems:'center',justifyContent:'center',elevation:2,backgroundColor:'#fff',
+                    marginTop:5,padding:10}}>
                     <View style = {{width:'100%'}}>
-                      <Text style = {{color:'#000',fontSize:16,fontWeight:'bold',marginTop:5,marginBottom:10}}>About : </Text>
+                      <Text style = {{color:'#000',fontSize:14,fontWeight:'bold',marginTop:5,marginBottom:10}}>About : </Text>
                     </View>
-                    <Text style = {{fontSize:16}}>{this.state.product_details}</Text>
+                    <Text style = {{fontSize:12}}>{this.state.product_details}</Text>
                   </View>
                 </View>
               </View>
               <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
-                <View style = {{width:'95%',alignItems:'center',justifyContent:'center'}}>
+                <View style = {{width:'98%',alignItems:'center',justifyContent:'center',elevation:2,backgroundColor:'#fff',
+                  marginTop:5,marginBottom:5,padding:10}}>
                   <View style = {{width:'100%'}}>
-                    <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Product Details</Text>
+                    <Text style = {{color:'#000',fontSize:14,fontWeight:'bold'}}>Product Details</Text>
                   </View>
                   <GridView
                     itemDimension={360}
@@ -615,21 +700,21 @@ export default class Details extends Component<{}>{
                     renderItem={item => (
                       <View style = {{width:'100%',flexDirection:'row'}}>
                         <View style = {{width:'40%',marginLeft:1}}>
-                          <Text style = {{color:'#363a42'}}>{item.spec_name}</Text>
+                          <Text style = {{color:'#363a42',fontSize:12}}>{item.spec_name}</Text>
                         </View>
                         <View style = {{width:'50%'}}>
-                          <Text style = {{color:'#369'}}>{item.spec_value}</Text>
+                          <Text style = {{color:'#369',fontSize:12}}>{item.spec_value}</Text>
                         </View>
                       </View>
                     )}
                   />
                   <View style = {{width:'100%'}}>
-                    <Text style = {{fontSize:16,marginTop:10,marginBottom:5,color:'#000',fontWeight:'bold'}}>Model & Care</Text>
-                    <Text style = {{color:'#363a42'}}>100% Pure Material</Text>
-                    <Text style = {{color:'#363a42'}}>Machine-wash</Text>
-                    <Text style = {{color:'#363a42',marginTop:10}}>Cash on delivery might be available</Text>
-                    <Text style = {{color:'#363a42'}}>Easy 30 days return & 30 days exchange</Text>
-                    <Text style = {{color:'#363a42',marginBottom:10}}>Try & buy might be available</Text>
+                    <Text style = {{fontSize:14,marginTop:5,marginBottom:5,color:'#000',fontWeight:'bold'}}>Model & Care</Text>
+                    <Text style = {{color:'#363a42',fontSize:12}}>100% Pure Material</Text>
+                    <Text style = {{color:'#363a42',fontSize:12}}>Machine-wash</Text>
+                    <Text style = {{color:'#363a42',marginTop:10,fontSize:12}}>Cash on delivery might be available</Text>
+                    <Text style = {{color:'#363a42',fontSize:12}}>Easy 30 days return & 30 days exchange</Text>
+                    <Text style = {{color:'#363a42',marginBottom:10,fontSize:12}}>Try & buy might be available</Text>
                   </View>
                 </View>
               </View>
@@ -648,21 +733,25 @@ export default class Details extends Component<{}>{
                 underlayColor = 'transparent'
                 onPress = {()=>
                   {
-                    if (this.state.access_token!='') {
+                    if (this.state.access_token!=''&&this.state.out_of_stock_screen_temp == false) {
                       this.props.navigation.navigate('buy_now',{
                         product_name:this.state.product_name,
                         prize:this.state.prize,
                         img:this.state.header_image,
                         product:this.state.product_id,
                         vendor:this.state.vendor_id,
-                        measurements : []
+                        measurements : this.state.measurements,
+                        slug : this.state.slug,
+                        spec : this.state.spec
                       })
-                  } else {
+                  } else if (this.state.access_token == ''){
                     this.setState({
                       login_cnfrm_screen : true
                     })
-                  }
-                }
+                  } else if (this.state.out_of_stock_screen_temp == true) {
+                    this.setState({out_of_stock_screen : true})
+                   }
+                 }
                 }>
                 <Text style = {{color:'#fff'}}>Buy Now</Text>
               </TouchableHighlight>
@@ -674,36 +763,40 @@ export default class Details extends Component<{}>{
           style = {{width:'100%',height:'100%',position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)',alignItems:'center',justifyContent:'center'}}>
           <View style = {{width:'89%',height:'65%',backgroundColor:'#fff',borderBottomLeftRadius:8,borderBottomRightRadius:8,
             borderTopLeftRadius:8,borderTopRightRadius:8,alignItems:'center',justifyContent:'center'}}>
-            <Text style = {{color:'#000',fontSize:22,fontWeight:'bold'}}>Wants to Rate Us Now ?</Text>
-            <Image style = {{width:80,height:80,alignItems:'center',justifyContent:'center',marginTop:20}}
-              source = {require('../img/thumbs.png')}>
-            </Image>
-            <View style = {{width:'90%',alignItems:'center',justifyContent:'center',marginTop:20}}>
-              <Text style = {{fontSize:16,textAlign:'center'}}>Rate the product it will incredibly helpful to other user to select the best one</Text>
-            </View>
-            <View style = {{width:'100%',marginTop:10,alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{color:'#800000',fontSize:20,marginTop:5,marginBottom:10,fontWeight:'bold'}}>{this.state.feedback}</Text>
-              <Stars
-                isActive={true}
-                rateMax={5}
-                isHalfStarEnabled={false}
-                onStarPress={(rating) => this.addMyrating(rating)}
-                rate={1}
-                size={35}
-              />
-              <TextInput style = {styles.input}
-                underlineColorAndroid='#bbb'
-                placeholder="Your Comment"
-                placeholderTextColor="#000"
-                onChangeText = {(user_comment)=>this.updateValue(user_comment,'comment')}>
-              </TextInput>
-            </View>
-            <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10}}>
-              <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
-                onPress = {()=>this.addReview()}>SUBMIT</Text>
-              <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
-                onPress = {()=>this.setState({ratingView:false})}>DISMISS</Text>
-            </View>
+            <ScrollView style = {{width:'100%',height:'100%'}}>
+              <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{color:'#000',fontSize:22,fontWeight:'bold'}}>Wants to Rate Us Now ?</Text>
+              <Image style = {{width:80,height:80,alignItems:'center',justifyContent:'center',marginTop:20}}
+                source = {require('../img/thumbs.png')}>
+              </Image>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'center',marginTop:20}}>
+                <Text style = {{fontSize:16,textAlign:'center'}}>Rate the product it will incredibly helpful to other user to select the best one</Text>
+              </View>
+              <View style = {{width:'100%',marginTop:10,alignItems:'center',justifyContent:'center'}}>
+                <Text style = {{color:'#800000',fontSize:20,marginTop:5,marginBottom:10,fontWeight:'bold'}}>{this.state.feedback}</Text>
+                <Stars
+                  isActive={true}
+                  rateMax={5}
+                  isHalfStarEnabled={false}
+                  onStarPress={(rating) => this.addMyrating(rating)}
+                  rate={1}
+                  size={35}
+                />
+                <TextInput style = {styles.input}
+                  underlineColorAndroid='#bbb'
+                  placeholder="Your Comment"
+                  placeholderTextColor="#000"
+                  onChangeText = {(user_comment)=>this.updateValue(user_comment,'comment')}>
+                </TextInput>
+              </View>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10}}>
+                <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                  onPress = {()=>this.addReview()}>SUBMIT</Text>
+                <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                  onPress = {()=>this.setState({ratingView:false})}>DISMISS</Text>
+              </View>
+              </View>
+            </ScrollView>
           </View>
         </AnimatedHideView>
         <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
@@ -713,7 +806,9 @@ export default class Details extends Component<{}>{
         <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
           visible = {this.state.login_cnfrm_screen}>
           <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-            <View style = {{width:'100%',height:'80%'}}></View>
+            <View style = {{width:'100%',height:'80%'}}>
+
+            </View>
             <View style = {{width:'95%',height:'15%',backgroundColor:'rgba(00, 00, 00, 0.7)',alignItems:'center',justifyContent:'center',
               borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
               <Text style = {{color:'#fff',fontWeight:'bold',fontSize:16,textAlign:'center'}}>Seems like you are not a member in here</Text>
@@ -732,9 +827,88 @@ export default class Details extends Component<{}>{
             </View>
           </View>
         </AnimatedHideView>
-        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'space-between',position:'absolute'}}
-          visible = {this.state.rating_Success}>
-          <View style = {{height:'70%'}}></View>
+        <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',
+          position : 'absolute'}}
+          visible = {this.state.out_of_stock_screen}>
+          <View style = {{width:'95%',backgroundColor:'rgba(00,00,00,0.7)',alignItems:'center',justifyContent:'center'}}>
+            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold',marginTop:30,marginBottom:20}}>Sorry This Product Not in Stock</Text>
+            <View style = {{width:'100%',padding:10,flexDirection:'row'}}>
+              <View style = {{width:'90%'}}></View>
+              <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                onPress = {()=>this.setState({out_of_stock_screen:false})}>OK</Text>
+            </View>
+          </View>
+        </AnimatedHideView>
+        <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'rgba(00,00,00,0.5)',
+          position:'absolute'}}
+          visible = {this.state.customising_screen}>
+          <View style = {{width:'95%',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,backgroundColor:'#fff',
+            borderTopRightRadius:6,alignItems:'center',justifyContent:'center'}}>
+            <View style = {{height:50,width:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#5a5a5a',flexDirection:'row'}}>
+              <View style = {{width:'85%',alignItems:'center',justifyContent:'center'}}>
+                <Text style = {{color:'#fff',fontSize:14}}>Customise</Text>
+              </View>
+              <View style = {{width:'15%',alignItems:'center',justifyContent:'center'}}>
+                <TouchableHighlight underlayColor = 'transparent'
+                  onPress = {()=>this.setState({customising_screen:false,measurements : []})}>
+                  <MaterialIcons
+                    name='close'
+                    size={22}
+                    style = {{color:'#fff'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
+              </View>
+            </View>
+            <FlatList
+              data={this.state.Data}
+              renderItem={({ item, index }) => (
+                <View style = {{width:'100%'}}>
+                  <Text style = {{color:'#363a42',fontSize:14,fontWeight:'bold',marginTop:10}}>{item.name} (inches)</Text>
+                  <View style = {{width:'100%',alignItems:'center',flexDirection:'row',marginBottom:10}}>
+                    <TextInput style = {styles.input1}
+                      underlineColorAndroid='transparent'
+                      placeholderTextColor="#eee"
+                      keyboardType = 'numeric'
+                      onChangeText = {(text_data)=>this.updateValue1(text_data, item.product_measurement_id, item.name, index)}>
+                    </TextInput>
+                    <TouchableHighlight underlayColor = 'transparent'
+                      style = {{marginLeft:10}}
+                      onPress = {()=>this.setState({des_screen:true,des:item.description})}>
+                    <MaterialIcons
+                      name='info'
+                      size={30}
+                      style = {{color:'#363a42'}}>
+                    </MaterialIcons>
+                  </TouchableHighlight>
+                </View>
+              </View>
+              )}
+            />
+            <View style = {{width:'100%',height:50,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+              <TouchableHighlight style = {{width:'50%',height:'100%'}}
+                underlayColor = 'transparent'
+                onPress = {()=>this.addToCart()}>
+                <View style = {{width:'100%',height:'100%',backgroundColor:'#363a42',alignItems:'center',justifyContent:'center'}}>
+                  <Text style = {{color:'#fff'}}>{this.state.cart_text}</Text>
+                </View>
+              </TouchableHighlight>
+              <TouchableHighlight style = {{width:'50%',height:'100%'}}>
+                <View style = {{width:'100%',height:'100%',backgroundColor:'#2fdab8',alignItems:'center',justifyContent:'center'}}>
+                  <Text style = {{color:'#fff'}}
+                    onPress = {()=>this.props.navigation.navigate('buy_now',{
+                      product_name:this.state.product_name,
+                      prize:this.state.prize,
+                      img:this.state.header_image,
+                      product:this.state.product_id,
+                      vendor:this.state.vendor_id,
+                      measurements : this.state.measurements,
+                      slug : this.state.slug,
+                      spec : this.state.spec
+                    })}>Buy Now</Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          </View>
         </AnimatedHideView>
       </View>
     );
@@ -789,11 +963,12 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
   headerImage:{
-    height:300,
+    height:450,
     width:'100%',
     alignItems:'center',
     justifyContent:'center',
-    backgroundColor:'#369'
+    backgroundColor:'#fff',
+    elevation:2
   },
   customSlide: {
     backgroundColor:'#fff',
@@ -820,16 +995,20 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 8 / 2,
-    backgroundColor: '#fff',
-    opacity: 0.9,
+    backgroundColor: '#bbb',
+    opacity: 1,
   },
   buttonSelected: {
     opacity: 1,
     backgroundColor: '#369',
+    width: 8,
+    height: 8,
+    borderRadius: 8 / 2,
+    elevation:3
   },
   cover_img:{
-    color:'#ffffff',
-    fontSize:18
+    color:'#595656',
+    fontSize:12
   },
   cover_img_des:{
     color:'#ffffff',
@@ -848,5 +1027,20 @@ const styles = StyleSheet.create({
     height:45,
     color:'#000',
     marginTop:20
+  },
+  input1:{
+    width:'80%',
+    height:45,
+    paddingLeft:16,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    borderBottomLeftRadius: 6,
+    borderBottomRightRadius: 6,
+    color:'#363a42',
+    borderColor:'#363a42',
+    borderWidth:1,
+    marginTop:10,
+    alignItems:'center',
+    justifyContent:'center'
   }
 })

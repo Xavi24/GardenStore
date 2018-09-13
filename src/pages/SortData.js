@@ -9,7 +9,7 @@ import {View,
         TouchableOpacity,
         ActivityIndicator,
         BackHandler,
-        AsyncStorage
+        TextInput
   } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -19,8 +19,13 @@ import config from '../API/config'
 import Spinner from 'react-native-loading-spinner-overlay'
 import AnimatedHideView from 'react-native-animated-hide-view'
 
-let product_data = []
-let filterdata = []
+let product_data = [];
+let filterdata = [];
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom;
+};
 export default class SortData extends Component<{}>{
   constructor(props){
     super(props);
@@ -41,7 +46,15 @@ export default class SortData extends Component<{}>{
       sortdata : '',
       plthcolor : '#7a7979',
       sortinput : '',
-      urlPass : ''
+      urlPass : '',
+      off :'% 0ff',
+      tem_disc : 1,
+      next_page_off : '',
+      out_of_stock_screen : false,
+      out_of_stock_screen_padding : 0,
+      search_container_style : 0,
+      color : '#333',
+      price : ''
     }
   }
   componentWillMount(){
@@ -53,9 +66,12 @@ export default class SortData extends Component<{}>{
     this.getFilterDetails(response,url,params.name);
   }
   getFilterDetails(response,url,name){
-    let cat_name = []
-    let brand_name = []
-    let spec_name = []
+    let cat_name = [];
+    let brand_name = [];
+    let spec_name = [];
+    let price : '';
+    let color : '';
+    let stockColor : '';
     console.warn('params..............',url);
     console.warn('params.............',name);
     if (response.data!= '') {
@@ -63,17 +79,49 @@ export default class SortData extends Component<{}>{
         show : false
       })
       product_data.length = 0
+      this.setState({
+        next_page_url : response.data.next_page_url
+      })
       if (response.data.data) {
         for(let product of response.data.data){
+          let off ='% off',
+          tem_disc = 1
+          console.warn('discccccccccc',product.total_discount);
+          if (product.total_discount < 1) {
+            console.warn('entered into the loop');
+              tem_disc = '',
+              price = '',
+              color = '#fff'
+          } else {
+            console.warn('entered into the else loop');
+              off ='% off',
+              tem_disc = product.total_discount.toString()+this.state.off,
+              price = product.price,
+              color = '#333'
+          }
+          let stk = ''
+          if (product.stock == 0) {
+            stk = true,
+            stockColor='#800000',
+            this.setState({
+              out_of_stock_screen : true,
+              out_of_stock_screen_padding :2
+            })
+          } else {
+            stk = false,
+            stockColor='#0cb038'
+          }
           product_data.push({
             name:product.name,
             slug:product.slug,
             img:product.img,
-            price:product.price,
+            price:price,
             id:product.id,
-            disc:product.total_discount,
+            disc:tem_disc,
             sale_price:product.sale_price,
-            vendor_id:product.vendor_id
+            vendor_id:product.vendor_id,
+            stock:stk,
+            color : color
           })
           this.setState({
             product_data : product_data
@@ -98,7 +146,7 @@ export default class SortData extends Component<{}>{
             })
           }
           if (response.filters.specs) {
-            spec_keys = Object.keys(response.filters.specs)
+           let spec_keys = Object.keys(response.filters.specs)
             for (var i = 0; i < spec_keys.length; i++) {
               spec_name.push({
                 name:spec_keys[i],
@@ -124,7 +172,136 @@ export default class SortData extends Component<{}>{
       })
     }
   }
-
+  handleScroll(){
+    let price : '';
+    let color : '';
+    let stockColor : '';
+    this.setState({
+      bottom : 'true'
+    })
+    if (this.state.next_page_url != '') {
+      console.warn('call url',this.state.next_page_url);
+      let cat_name = []
+      let brand_name = []
+      let spec_name = []
+      var url = this.state.next_page_url
+      fetch(url)
+       .then((response)=>response.json())
+       .catch((error)=>console.warn(error))
+       .then((response)=>{
+         if (response.data!= '') {
+           this.setState({
+             show : false
+           });
+           this.setState({
+             next_page_url : response.data.next_page_url
+           });
+           if (response.data.data) {
+             for(let product of response.data.data){
+               let off ='% off',
+               tem_disc = 1
+               console.warn('discccccccccc',product.total_discount);
+               if (product.total_discount < 1) {
+                 console.warn('entered into the loop');
+                   tem_disc = '',
+                   price = '',
+                   color = '#fff'
+               } else {
+                 console.warn('entered into the else loop');
+                   off ='% off',
+                   tem_disc = product.total_discount.toString()+this.state.off,
+                   price = product.price,
+                   color = '#333'
+               }
+               let stk = ''
+               if (product.stock == 0) {
+                 stk = true,
+                 stockColor='#800000',
+                 this.setState({
+                   out_of_stock_screen : true,
+                   out_of_stock_screen_padding :2
+                 })
+               } else {
+                 stk = false,
+                 stockColor='#0cb038'
+               }
+               product_data.push({
+                 name:product.name,
+                 slug:product.slug,
+                 img:product.img,
+                 price:price,
+                 id:product.id,
+                 disc:tem_disc,
+                 sale_price:product.sale_price,
+                 vendor_id:product.vendor_id,
+                 stock:stk,
+                 color:color
+               });
+               this.setState({
+                 product_data : product_data
+               });
+               console.warn('product_data',this.state.product_data);
+             }
+           }
+             if (response.filters.cat) {
+               if (response.filters.cat.sub_cat) {
+                 for(let sub_cat of response.filters.cat.sub_cat){
+                   cat_name.push({name:sub_cat.name})
+                 }
+                 this.setState({
+                   cat_data : cat_name
+                 })
+               }
+               if (response.filters.brands) {
+                 for(let brands of response.filters.brands){
+                   brand_name.push({name:brands.brand_details.name})
+                 }
+                 this.setState({
+                   brand_data : brand_name
+                 })
+               }
+               if (response.filters.specs) {
+                let spec_keys = Object.keys(response.filters.specs)
+                 for (var i = 0; i < spec_keys.length; i++) {
+                   spec_name.push({
+                     name:spec_keys[i],
+                     spec:response.filters.specs[spec_keys[i]]
+                   })
+                 }
+                 this.setState({
+                   spec_data : spec_name
+                 })
+               }
+               if (response.filters.price) {
+                 this.setState({
+                   min : parseInt(response.filters.price.min.split('.')[0]),
+                   max : parseInt(response.filters.price.max.split('.')[0]),
+                   url : url
+                 })
+               }
+             }
+         }
+       })
+    }
+    setTimeout(()=>{
+      this.setState({
+        bottom : ''
+      })
+      console.warn('delayed bottom',this.state.bottom);
+    },500)
+  }
+  goToSearch(){
+    if (this.state.search_data!='') {
+        this.props.navigation.navigate('searchData',{name:this.state.search_data})
+    }
+  }
+  updateValue(text,field){
+    if (field == 'search') {
+      this.setState({
+        search_data : text
+      })
+    }
+  }
   render(){
     const {goBack} = this.props.navigation
     return(
@@ -143,10 +320,48 @@ export default class SortData extends Component<{}>{
           <View style = {styles.textView}>
             <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
           </View>
-          <View style = {styles.iconView}></View>
+          <View style = {styles.iconView}>
+            <TouchableHighlight underlayColor = 'transparent'
+              onPress = {()=>this.setState({search_container_style:60})}>
+              <MaterialIcons
+                name='search'
+                size={22}
+                style = {{color:'#fff'}}>
+              </MaterialIcons>
+            </TouchableHighlight>
+          </View>
         </View>
         <View style = {styles.baseContainer}>
-          <ScrollView style = {{height:'100%',width:'100%'}}>
+          <View style = {{width:'100%',height:this.state.search_container_style,backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
+            <View style = {{width:'95%',height:'80%',alignItems:'center',justifyContent:'space-between',backgroundColor:'#eee',flexDirection:'row'}}>
+              <View style = {{width:'85%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                <TextInput style = {{height:'95%',width:'95%',fontSize:14,color:'#000'}}
+                  placeholder = 'Search'
+                  placeholderTextColor = '#bbb'
+                  underlineColorAndroid = 'transparent'
+                  onChangeText = {(text_search) => this.updateValue(text_search,'search')}>
+                </TextInput>
+              </View>
+              <View style = {{width:'15%',height:'100%',backgroundColor:'#2fdab8'}}>
+                <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                  underlayColor = 'transparent'
+                  onPress = {()=>this.goToSearch()}>
+                  <MaterialIcons
+                    name='search'
+                    size={26}
+                    style = {{color:'#fff'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </View>
+        <ScrollView style = {{height:'100%',width:'100%'}}
+          onScroll={({nativeEvent}) => {
+            if (isCloseToBottom(nativeEvent)) {
+              this.handleScroll();
+            }
+          }}
+          scrollEventThrottle={400}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
                 itemDimension = {180}
@@ -154,39 +369,49 @@ export default class SortData extends Component<{}>{
                 style = {styles.gridView}
                 spacing = {4}
                 renderItem = {item =>
-                  <TouchableHighlight style = {{height:300,width:'100%'}}
-                    underlayColor = 'transparent'
-                    onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,img:item.img,id:item.id,vendor_id:item.vendor_id})}>
-                    <View style = {styles.grid_content}>
-                      <Image style = {styles.imageView}
-                        source ={{uri:config.IMG_URL+item.img}}>
-                      </Image>
-                      <View style = {styles.gridBaseView}>
-                        <ScrollView></ScrollView>
-                        <LinearGradient
-                          style = {{borderBottomLeftRadius:2,borderBottomRightRadius:2,width:'100%'}}
-                          start={{x: 0.5, y: 0.0}} end={{x: 0.5, y: 1.0}}
-                          locations={[0,0.7]}
-                          colors={['rgba(00, 00, 00, 0.0)','rgba(00, 00, 00, 0.7)']}>
-                          <View style = {styles.productDetails}>
-                            <View style = {{width:'95%',alignItems:'center',justifyContent:'center'}}>
-                              <Text style = {styles.productName}>{item.name}</Text>
-                              <View style = {{width:'100%',flexDirection:'row'}}>
-                                <Text style = {styles.productPrice_des}>Price : </Text>
-                                <Text style = {styles.productPrice}>{item.price}</Text>
-                                <Text style = {{color:'#48c7f0',fontSize:16,marginLeft:5}}>{item.disc}</Text>
-                                <Text style = {{color:'#48c7f0',fontSize:16}}>%</Text>
-                                <Text style = {{color:'#0cb038',fontSize:16,marginLeft:5}}>off</Text>
-                              </View>
-                              <View style = {{width:'100%'}}>
-                                <Text style = {{color:'#48c7f0',fontSize:16}}>Explore Now!</Text>
-                              </View>
+                  <View style = {{elevation:3,height:300,width:'100%',backgroundColor:'#fff'}}>
+                    <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
+                      underlayColor = 'transparent'
+                      onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,img:item.img,id:item.id,vendor_id:item.vendor_id})}>
+                      <View style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
+                        <Image style = {{height:'75%',width:'100%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
+                          source ={{uri:config.IMG_URL+item.img}}>
+                        </Image>
+                        <AnimatedHideView style = {{height:'100%',width:'95%',position:'absolute'}}
+                          visible = {item.stock}>
+                          <View style = {{width:'100%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                            <View></View>
+                            <View style = {{backgroundColor:'#800000',padding:this.state.out_of_stock_screen_padding,alignItems:'center',
+                              justifyContent:'center',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+                              <Text style = {{fontSize:10,color:'#fff',marginLeft:1,marginRight:1}}>out of stock</Text>
                             </View>
                           </View>
-                        </LinearGradient>
+                        </AnimatedHideView>
+                        <View style = {{height:'25%',width:'98%',alignItems:'center',justifyContent:'center',padding:5}}>
+                          <View style = {{width:'100%',height:'100%'}}>
+                            <Text style = {styles.productName}>{item.name}</Text>
+                            <View style = {{width:'100%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',
+                              marginTop:6,marginBottom:5}}>
+                              <View style = {{flexDirection:'row'}}>
+                                <Image style = {{width:11,height:11,alignItems:'center',justifyContent:'center',resizeMode:'stretch',marginTop:4}}
+                                  source = {require('../img/curr.png')}>
+                                </Image>
+                                <Text style = {styles.productPrice}>{item.sale_price}</Text>
+                                <Text style = {{color:item.color,fontSize:10,marginLeft:5,textDecorationLine:'line-through',
+                                  marginTop:2}}>{item.price}</Text>
+                                <Text style = {{color:'#0cb038',fontSize:10,marginLeft:5,marginTop:2}}>{item.disc}</Text>
+                              </View>
+                              <MaterialIcons
+                                name='favorite-border'
+                                size={20}
+                                style = {{color:'#595656'}}>
+                              </MaterialIcons>
+                            </View>
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                  </TouchableHighlight>
+                    </TouchableHighlight>
+                  </View>
                 }
               />
             </View>
@@ -307,15 +532,15 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
   productName:{
-    color:'#fff',
-    fontSize:16,
+    color:'#666',
+    fontSize:12,
   },
   productPrice:{
-    color:'#0cb038',
-    fontSize:14,
+    color:'#48c7f0',
+    fontSize:12,
   },
   productPrice_des:{
-    color:'#fff',
+    color:'#333',
     fontSize:14,
     marginRight:5
   }

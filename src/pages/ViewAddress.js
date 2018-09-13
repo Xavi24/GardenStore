@@ -20,13 +20,15 @@ import GridView from 'react-native-super-grid'
 import Toast from 'react-native-simple-toast'
 
 let item = [];
-export default class Add_Address extends Component<{}>{
+export default class ViewAddress extends Component<{}>{
     constructor(props){
         super(props);
         this.state = {
             access_token : '',
             addressArray : [],
-            show : false
+            show : false,
+            removeScreen : false,
+            address_id:''
         }
     }
     async _getAccessToken(){
@@ -91,7 +93,8 @@ export default class Add_Address extends Component<{}>{
     }
     deleteAddress(id){
         this.setState({
-            show : true
+            show : true,
+            removeScreen : false
         })
         var url = config.API_URL+'deleteAddress/'+id;
         fetch(url, {
@@ -129,7 +132,7 @@ export default class Add_Address extends Component<{}>{
                 <View style={styles.toolbar}>
                     <View style={styles.menuView}>
                         <TouchableHighlight underlayColor='transparent'
-                                            onPress = {()=>goBack()}>
+                            onPress = {()=>goBack()}>
                             <MaterialIcons
                                 name='arrow-back'
                                 size={22}
@@ -182,24 +185,24 @@ export default class Add_Address extends Component<{}>{
                                             <View style={{width:'30%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',
                                                 padding:10}}>
                                                 <TouchableHighlight underlayColor='transparent'
-                                                                    onPress = {()=>this.props.navigation.navigate('edit_address',
-                                                                        {
-                                                                            id:item.address_id,
-                                                                            name : item.name,
-                                                                            street : item.street,
-                                                                            city : item.city,
-                                                                            district : item.district,
-                                                                            postcode : item.postcode,
-                                                                            state : item.state,
-                                                                            country : item.country,
-                                                                            landmark : item.landmark,
-                                                                            area : item.area,
-                                                                            building : item.building,
-                                                                            phone_no : item.phone_no,
-                                                                            type : item.type,
-                                                                            dflt : item.dflt
-                                                                        }
-                                                                    )}>
+                                                    onPress = {()=>this.props.navigation.navigate('edit_address',
+                                                        {
+                                                            id:item.address_id,
+                                                            name : item.name,
+                                                            street : item.street,
+                                                            city : item.city,
+                                                            district : item.district,
+                                                            postcode : item.postcode,
+                                                            state : item.state,
+                                                            country : item.country,
+                                                            landmark : item.landmark,
+                                                            area : item.area,
+                                                            building : item.building,
+                                                            phone_no : item.phone_no,
+                                                            type : item.type,
+                                                            dflt : item.dflt
+                                                        }
+                                                        )}>
                                                     <MaterialIcons
                                                         name='edit'
                                                         size={22}
@@ -207,7 +210,7 @@ export default class Add_Address extends Component<{}>{
                                                     </MaterialIcons>
                                                 </TouchableHighlight>
                                                 <TouchableHighlight underlayColor='transparent'
-                                                                    onPress = {()=>this.deleteAddress(item.address_id)}>
+                                                    onPress = {()=>this.setState({removeScreen:true,address_id:item.address_id})}>
                                                     <MaterialIcons
                                                         name='delete'
                                                         size={22}
@@ -222,6 +225,22 @@ export default class Add_Address extends Component<{}>{
                         </View>
                     </ScrollView>
                 </View>
+                <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
+                  visible = {this.state.removeScreen}>
+                  <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
+                    borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+                    <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants remove the address ?</Text>
+                    <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
+                      <View style = {{width:'60%'}}></View>
+                      <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
+                        <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                          onPress = {()=>this.setState({removeScreen:false})}>No</Text>
+                        <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                          onPress = {()=>this.deleteAddress(this.state.address_id)}>Yes</Text>
+                      </View>
+                    </View>
+                  </View>
+                </AnimatedHideView>
                 <View style = {{width:'100%',height:'100%',position:'absolute', alignItems:'center',justifyContent:'center'}}>
                     <Spinner color = {'#369'} visible={this.state.show} textContent={"Loading..."} textStyle={{color: '#369'}}
                              overlayColor = {'#fff'}/>

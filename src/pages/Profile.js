@@ -6,7 +6,8 @@ import {View,
         TouchableHighlight,
         AsyncStorage,
         TextInput,
-        Image
+        Image,
+        BackHandler
   } from 'react-native'
   import Spinner from 'react-native-loading-spinner-overlay'
   import config from '../API/config'
@@ -30,8 +31,17 @@ export default class Profile extends Component<{}>{
       error_screen : false,
       success_screen : false,
       value : '+91',
-      show : false
+      show : false,
+      male_color : '#282a2d',
+      femal_color : '#282a2d'
     }
+  }
+  okProcess(){
+    this.setState({
+      success_screen : false,
+      editScreen : false
+    })
+    this.getProfile();
   }
   async _getAccessToken(){
     try {
@@ -47,7 +57,7 @@ export default class Profile extends Component<{}>{
     }
   }
   getProfile(){
-    var url = config.API_URL+'profile'
+    var url = config.API_URL+'profile';
     fetch(url, {
       headers : new Headers({
         'Content-Type' : 'application/json',
@@ -62,13 +72,22 @@ export default class Profile extends Component<{}>{
       if (response.data!='') {
         this.setState({
           show : false
-        })
+        });
         this.setState({
           name : response.data.name,
           number : response.data.phone_no,
           email : response.data.email,
           gender : response.data.gender
-        })
+        });
+        if (response.data.gender == 'female'||response.data.gender == 'Female') {
+          this.setState({
+            femal_color : '#360'
+          })
+        } else if (response.data.gender == 'Male'||response.data.gender == 'male') {
+          this.setState({
+            male_color : '#360'
+          })
+        }
         let str = response.data.name.charAt(0);
         console.warn('1st letter',str);
         this.setState({
@@ -96,11 +115,11 @@ export default class Profile extends Component<{}>{
         email : text
       })
     } else if (field == 'number') {
-      let sub = text.substring(3)
-      console.warn('sub..',sub);
+      // let sub = text.substring(3)
+      // console.warn('sub..',sub);
       this.setState({
-        phone_no : sub,
-        value : text
+        // phone_no : sub,
+        phone_no : text
       })
     } else if (field == 'gender') {
       this.setState({
@@ -111,8 +130,8 @@ export default class Profile extends Component<{}>{
   editAddress(){
     this.setState({
       show : true
-    })
-    let data = {}
+    });
+    let data = {};
     data.name = this.state.name,
     data.email = this.state.email,
     data.gender = this.state.gender,
@@ -154,7 +173,7 @@ export default class Profile extends Component<{}>{
   componentWillMount(){
     this.setState({
       show : true
-    })
+    });
     this._getAccessToken();
   }
   render(){
@@ -175,11 +194,13 @@ export default class Profile extends Component<{}>{
           <View style = {styles.textView}>
             <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Profile</Text>
           </View>
-          <View style = {styles.iconView}></View>
+          <View style = {styles.iconView}>
+
+          </View>
         </View>
         <View style = {styles.baseContainer}>
           <ScrollView style = {{width:'100%',height:'100%'}}>
-            <View style = {{height:'100%',alignItems:'100%',alignItems:'center',justifyContent:'center'}}>
+            <View style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
               <View style = {{width:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#282a2d'}}>
                 <View style = {{height:120,width:120,borderRadius:120/2,backgroundColor:'#2fdab8',marginTop:20,alignItems:'center',justifyContent:'center'}}>
                   <Text style = {{color:'#fff',fontSize:40,fontWeight:'bold'}}>{this.state.profileName}</Text>
@@ -244,7 +265,7 @@ export default class Profile extends Component<{}>{
                 </TouchableHighlight>
               </View>
               <View style = {styles.textView}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Edit Address</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Edit Profile</Text>
               </View>
               <View style = {styles.iconView}>
               </View>
@@ -256,12 +277,14 @@ export default class Profile extends Component<{}>{
                   <TextInput style = {{color:'#360',borderColor:'#eee',borderWidth:1,height:50,width:'90%',marginTop:30,padding:15}}
                     underlineColorAndroid='#369'
                     placeholder='Full Name'
+                    value={this.state.name}
                     placeholderTextColor='#369'
                     onChangeText = {(text_name)=>this.updateValue(text_name,'name')}>
                   </TextInput>
                   <TextInput style = {{color:'#360',borderColor:'#eee',borderWidth:1,height:50,width:'90%',marginTop:20,padding:15}}
                     underlineColorAndroid='#369'
                     placeholder='E-mail id'
+                    value={this.state.email}
                     placeholderTextColor='#369'
                     onChangeText = {(text_email)=>this.updateValue(text_email,'email')}>
                   </TextInput>
@@ -270,15 +293,42 @@ export default class Profile extends Component<{}>{
                     placeholder='Phone Number'
                     placeholderTextColor='#369'
                     keyboardType = 'numeric'
-                    value = {this.state.value}
+                    value = {this.state.phone_no}
                     onChangeText = {(text_number)=>this.updateValue(text_number,'number')}>
                   </TextInput>
-                  <TextInput style = {{color:'#360',borderColor:'#eee',borderWidth:1,height:50,width:'90%',marginTop:20,padding:15}}
-                    underlineColorAndroid='#369'
-                    placeholder='Gender'
-                    placeholderTextColor='#369'
-                    onChangeText = {(text_gender)=>this.updateValue(text_gender,'gender')}>
-                  </TextInput>
+
+                  <View style = {{width:'90%',marginTop:20,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                    <View style = {{width:'50%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                      <TouchableHighlight underlayColor = 'transparent'
+                        onPress = {()=>this.setState({
+                          male_color : '#360',
+                          femal_color : '#282a2d',
+                          gender : 'male'
+                        })}>
+                        <MaterialIcons
+                          name='radio-button-checked'
+                          size={22}
+                          style = {{color:this.state.male_color}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
+                      <Text style = {{color:'#000',fontWeight:'bold',marginLeft:10}}>Male</Text>
+                    </View>
+                    <View style = {{width:'50%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                      <TouchableHighlight underlayColor = 'transparent'
+                        onPress = {()=>this.setState({
+                          male_color : '#282a2d',
+                          femal_color : '#360',
+                          gender : 'female'
+                        })}>
+                        <MaterialIcons
+                          name='radio-button-checked'
+                          size={22}
+                          style = {{color:this.state.femal_color}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
+                      <Text style = {{color:'#000',fontWeight:'bold',marginLeft:10}}>Female</Text>
+                    </View>
+                  </View>
                   <View style = {{width:'90%',backgroundColor:'#2fdab8',height:40,marginTop:40}}>
                     <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
                       underlayColor = 'transparent'
@@ -295,15 +345,17 @@ export default class Profile extends Component<{}>{
           visible = {this.state.success_screen}>
           <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
             <Image style = {{height:100,width:100,alignItems:'center',justifyContent:'center',resizeMode:'stretch',marginTop:20}}
-              source = {require('../img/thumbs.png')}></Image>
+              source = {require('../img/thumbs.png')}>
+            </Image>
             <View style = {{width:'90%',alignItems:'center',justifyContent:'center',marginTop:20}}>
               <Text style = {{color:'#000',fontSize:16,textAlign:'center'}}>Your Profile Data Has been Updated Successfully</Text>
             </View>
             <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:30,marginBottom:20}}>
-              <View style = {{width:'80%'}}></View>
+              <View style = {{width:'80%'}}>
+              </View>
               <View style = {{width:'20%',alignItems:'center',justifyContent:'center'}}>
                 <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
-                  onPress = {()=>this.setState({success_screen:false})}>OK</Text>
+                  onPress = {()=>this.okProcess()}>OK</Text>
               </View>
             </View>
           </View>

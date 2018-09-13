@@ -7,16 +7,29 @@ import {View,
         StatusBar,
         TouchableOpacity,
         TouchableHighlight,
-        TextInput
+        TextInput,
+        BackHandler,
+        BackAndroid
   } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Swiper from 'react-native-swiper'
 import config from '../API/config'
 import GridView from 'react-native-super-grid'
 import Spinner from 'react-native-loading-spinner-overlay'
+import AnimatedHideView from 'react-native-animated-hide-view'
+import CMS from "./CMS";
 
 var menu_name = [];
 var menu_data = [];
+let single_banner_layout_mobile  = '';
+let three_block_layout_mobile = '';
+let CMS_layoutData = [];
+let left_block_big_right_block_small_layout = '';
+let three_block_vertical_layout_mobile = '';
+let two_block_layout_mobile = '';
+let sub_category_list_mobile = '';
+let main_category_list_mobile = '';
+
 export default class MainScreen extends Component<{}>{
   static navigationOptions = {
     header : null
@@ -25,29 +38,60 @@ export default class MainScreen extends Component<{}>{
   constructor(props){
     super(props);
     this.state = {
-      name : [],
-      show : false,
-      subCat : [],
-      cat_name : [],
-      menu_data : [],
-      array : [],
-      search_data : ''
+      name: [],
+      show: false,
+      subCat: [],
+      cat_name: [],
+      menu_data: [],
+      array: [],
+      search_data: '',
+      visible: false,
+      pressed: 'true',
+      total_sec: 0,
+      sections: [],
+      cms : [],
+
     }
-  }
+  };
+  // componentDidMount() {
+  //   const {goBack} = this.props.navigation
+  //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+  //     if (this.state.pressed == '') {
+  //       goBack();
+  //     } else {
+  //       this.exitFunction();
+  //     }
+  //     console.warn('pressed');
+  //     return true;
+  //   });
+  // }
+  // componentWillUnmount() {
+  //   BackHandler.removeEventListener('hardwareBackPress');
+  // }
+
+  // exitFunction(){
+  //   this.setState({
+  //     visible : true
+  //   })
+  // }
+  //
+  // kickOut(){
+  //   BackAndroid.exitApp()
+  // }
 
   getMenu(){
-      let sub = {}
-      var url = config.API_URL+'getMenu'
+      let sub = {};
+      var url = config.API_URL+'getMenu';
       fetch(url)
         .then((response)=> response.json())
         .then((response)=> {
           if (response.data!=null) {
             this.setState({
               show : false
-            })
-            menu_data.length = 0
+            });
+            menu_data.length = 0;
             for(let cat of response.data){
-              let subCatgry = []
+              let subCatgry = [];
               if (cat.sub_cat) {
                 for(sub of cat.sub_cat){
                   subCatgry.push({name:sub.name})
@@ -61,6 +105,38 @@ export default class MainScreen extends Component<{}>{
             }
           }
         })
+      }
+      getCMSData(){
+
+        var url = config.API_URL+'mobile/home';
+        fetch(url)
+            .then((response)=>response.json())
+            .catch((error)=>console.warn(error))
+            .then((response)=>{
+              console.warn('CMS response',response);
+              if (response.data) {
+                this.setState({
+                  total_sec : response.data.total_sections
+                });
+                if (response.data.contents){
+                  let key = Object.keys(response.data.contents);
+                  let i = 0;
+                  let j = 0;
+                  this.state.sections.length = 0;
+                  this.state.cms.length = 0;
+                    for (j=0;j<this.state.total_sec;j++){
+                      this.state.sections.push({
+                        sec : key[j],
+                        cms : response.data.contents[key[j]]
+                      });
+                      // console.warn('sections-->'+j,this.state.sections);
+                    }
+                    for (let cmsdata of this.state.sections){
+                      console.warn('')
+                    }
+                }
+              }
+            })
       }
     goToSearch(){
       if (this.state.search_data!='') {
@@ -77,167 +153,152 @@ export default class MainScreen extends Component<{}>{
   componentWillMount(){
     this.setState({
       show:true
-    })
+    });
     this.getMenu();
+    this.getCMSData();
   }
   render(){
+
     return(
-      <View style = {styles.container}>
-        <StatusBar
-          translucent = {false}
-          barStyle="light-content"
-          backgroundColor='#191a1c'
-        />
-        <View style = {styles.toolbar}>
-          <View style = {styles.menuView}>
-            <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.openDrawer()}>
-              <MaterialIcons
-                name='menu'
-                size={22}
-                style = {{color:'#fff'}}>
-              </MaterialIcons>
-            </TouchableHighlight>
-          </View>
-          <View style = {styles.textView}>
-            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
-          </View>
-          <View style = {styles.wishlistView}>
-            <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.navigate('wishList')}>
-              <MaterialIcons
-                name='favorite'
-                size={26}
-                style = {{color:'#fff'}}>
-              </MaterialIcons>
-            </TouchableHighlight>
-          </View>
-          <View style = {styles.cartView}>
-            <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
-              <MaterialIcons
-                name='shopping-cart'
-                size={22}
-                style = {{color:'#fff'}}>
-              </MaterialIcons>
-            </TouchableHighlight>
-          </View>
-          <View style = {styles.walletView}>
-            <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.navigate('wallet')}>
-              <MaterialIcons
-                name='payment'
-                size={20}
-                style = {{color:'#fff'}}>
-              </MaterialIcons>
-            </TouchableHighlight>
-          </View>
-        </View>
-        <View style = {{width:'100%',height:60,backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
-          <View style = {{width:'95%',height:'80%',alignItems:'center',justifyContent:'space-between',backgroundColor:'#eee',flexDirection:'row'}}>
-            <View style = {{width:'85%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-              <TextInput style = {{height:'95%',width:'95%',fontSize:14,color:'#000'}}
-                placeholder = 'Search'
-                placeholderTextColor = '#bbb'
-                underlineColorAndroid = 'transparent'
-                onChangeText = {(text_search) => this.updateValue(text_search,'search')}>
-              </TextInput>
-            </View>
-            <View style = {{width:'15%',height:'100%',backgroundColor:'#2fdab8'}}>
-              <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
-                underlayColor = 'transparent'
-                onPress = {()=>this.goToSearch()}>
+      <View style = {{width:'100%',height:'100%'}}>
+        <View style = {styles.container}>
+          <StatusBar
+            translucent = {false}
+            barStyle="light-content"
+            backgroundColor='#191a1c'
+          />
+          <View style = {styles.toolbar}>
+            <View style = {styles.menuView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                onPress = {()=>this.props.navigation.openDrawer()}>
                 <MaterialIcons
-                  name='search'
+                  name='menu'
+                  size={22}
+                  style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+            </View>
+            <View style = {styles.textView}>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
+            </View>
+            <View style = {styles.wishlistView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                onPress = {()=>this.props.navigation.navigate('wishList')}>
+                <MaterialIcons
+                  name='favorite'
                   size={26}
                   style = {{color:'#fff'}}>
                 </MaterialIcons>
               </TouchableHighlight>
             </View>
+            <View style = {styles.cartView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
+                <MaterialIcons
+                  name='shopping-cart'
+                  size={22}
+                  style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+            </View>
+            <View style = {styles.walletView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                onPress = {()=>this.props.navigation.navigate('wallet')}>
+                <MaterialIcons
+                  name='payment'
+                  size={20}
+                  style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+            </View>
           </View>
-        </View>
-        <View style = {{width:'100%',height:'92%',alignItems:'center',justifyContent:'center'}}>
-          <ScrollView style = {{marginBottom:10}}
-            showsVerticalScrollIndicator = {false}>
-            <View style = {styles.scrollContainer}>
-              <View style = {styles.baseContainer}>
-                <View style = {{height:200,width:'100%'}}>
-                  <Swiper
-                    showsButtons={false}
-                    autoplay = {true}
-                    loop = {true}>
-                    <View style = {styles.hederContainer}>
-                      <Image style = {styles.containerImage}
-                        source = {require('../img/offer4.jpg')}>
-                      </Image>
-                    </View>
-                    <View style = {styles.hederContainer}>
-                      <Image style = {styles.containerImage}
-                        source = {require('../img/add8.png')}>
-                      </Image>
-                    </View>
-                    <View style = {styles.hederContainer}>
-                      <Image style = {styles.containerImage}
-                        source = {require('../img/add7.jpg')}>
-                      </Image>
-                    </View>
-                  </Swiper>
-                </View>
-                  <View style = {styles.gridContainer}>
-                    <GridView
-                      itemDimension={90}
-                      spacing = {2}
-                      items={this.state.menu_data}
-                      renderItem={item => (
-                        <TouchableHighlight style = {{height:40,width:100,backgroundColor:'#2fdab8'}}
-                          underlayColor = 'transparent'
-                          onPress = {()=>this.props.navigation.navigate('cms',{sub:item.sub_cat})}>
-                          <View style = {{width:'100%',height:'100%',justifyContent:'center',alignItems:'center'}}>
-                            <Text style = {{color:'#fff',fontWeight:'bold'}}>{item.name}</Text>
-                          </View>
-                        </TouchableHighlight>
-                      )}
-                    />
-                  </View>
-                <View style = {styles.quatsView}>
-                  <View style = {{flexDirection:'row'}}>
-                    <MaterialIcons
-                      name='local-offer'
-                      size={30}
-                      style = {{color:'#2fdab8'}}>
-                    </MaterialIcons>
-                    <Text  style = {{fontSize:18,fontWeight:'bold',color:'#000',marginLeft:20}}>Offers That Only Made For You</Text>
-                  </View>
-                  <Text style = {{fontSize:18,marginLeft:20,marginTop:10}}>We have selected some products that only for you</Text>
-                </View>
-                <View style = {styles.offerView1}>
-                  <View style = {styles.offerHeader1}>
-                  <Image style = {styles.img}
-                    source = {require('../img/add5.jpg')}>
-                  </Image>
-                  </View>
-                  <View style = {styles.offerFooter1}>
-                    <View style = {{width:'70%',height:'100%',justifyContent:'center'}}>
-                      <Text style = {{fontSize:18,fontWeight:'bold',color:'#000',marginLeft:20}}>New Arrivals</Text>
-                      <Text style = {{fontSize:18,marginLeft:20,marginTop:5}}>New Summer Collections</Text>
-                    </View>
-                    <View style = {{width:'30%',height:'100%',justifyContent:'center',alignItems:'center'}}>
-                      <View style = {styles.btn}>
-                        <Text style = {{color:'#fff',fontWeight:'bold'}}>Shop Now</Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
+          <View style = {{width:'100%',height:60,backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
+            <View style = {{width:'95%',height:'80%',alignItems:'center',justifyContent:'space-between',backgroundColor:'#eee',flexDirection:'row'}}>
+              <View style = {{width:'85%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                <TextInput style = {{height:'95%',width:'95%',fontSize:14,color:'#000'}}
+                  placeholder = 'Search'
+                  placeholderTextColor = '#bbb'
+                  underlineColorAndroid = 'transparent'
+                  onChangeText = {(text_search) => this.updateValue(text_search,'search')}>
+                </TextInput>
+              </View>
+              <View style = {{width:'15%',height:'100%',backgroundColor:'#2fdab8'}}>
+                <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                  underlayColor = 'transparent'
+                  onPress = {()=>this.goToSearch()}>
+                  <MaterialIcons
+                    name='search'
+                    size={26}
+                    style = {{color:'#fff'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
               </View>
             </View>
-          </ScrollView>
+          </View>
+          <View style = {{width:'100%',height:'92%',alignItems:'center',justifyContent:'center'}}>
+            <ScrollView style = {{marginBottom:10}}
+              showsVerticalScrollIndicator = {false}>
+              <View style = {styles.scrollContainer}>
+                <View style = {styles.baseContainer}>
+                    <View style = {styles.gridContainer}>
+                      <GridView
+                        itemDimension={90}
+                        spacing = {2}
+                        items={this.state.menu_data}
+                        renderItem={item => (
+                            <View style={{width:100,height:40,elevation: 2}}>
+                              <TouchableHighlight style = {{height:'100%',width:'100%',backgroundColor:'#2fdab8'}}
+                                                  underlayColor = 'transparent'
+                                                  onPress = {()=>this.props.navigation.navigate('cms',{sub:item.sub_cat})}>
+                                <View style = {{width:'100%',height:'100%',justifyContent:'center',alignItems:'center'}}>
+                                  <Text style = {{color:'#fff',fontWeight:'bold'}}>{item.name}</Text>
+                                </View>
+                              </TouchableHighlight>
+                            </View>
+                        )}
+                      />
+                    </View>
+
+                <View style={{width:'100%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                  <GridView
+                      itemDimension={360}
+                      spacing = {1}
+                      items={CMS_layoutData}
+                      renderItem={item => (
+                          <View style={{width:'100%',elevation: 2}}>
+                            {item.value}
+                          </View>
+                      )}
+                  />
+                </View>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+          <Spinner visible = {this.state.show}
+            textContent = {"Loading..."}
+            textStyle = {{color: '#369'}}
+            color = {'#369'}
+            overlayColor = {'#fff'}
+          />
         </View>
-        <Spinner visible = {this.state.show}
-          textContent = {"Loading..."}
-          textStyle = {{color: '#369'}}
-          color = {'#369'}
-          overlayColor = {'#fff'}
-        />
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',
+          backgroundColor:'rgba(00, 00, 00, 0.4)'}}
+          visible = {this.state.visible}>
+          <View style = {{width:'90%',backgroundColor:'rgba(00, 00, 00, 0.8)',alignItems:'center',justifyContent:'center',
+            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold',marginTop:30}}>Wants to exit your application?</Text>
+            <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:40,marginBottom:20}}>
+              <View style = {{width:'50%'}}></View>
+              <View style = {{width:'50%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                  onPress = {()=>this.setState({visible:false})}>Not now</Text>
+                <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                  onPress = {()=>this.kickOut()}>Exit</Text>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
       </View>
     );
   }
@@ -246,7 +307,7 @@ const styles = StyleSheet.create({
   container:{
     width:'100%',
     height:'100%',
-    backgroundColor:'#fff'
+    backgroundColor:'#eee'
   },
   scrollContainer:{
     width:'100%',
@@ -324,7 +385,6 @@ const styles = StyleSheet.create({
   },
   gridContainer:{
     width:'100%',
-    backgroundColor:'#fff',
     alignItems:'center',
     justifyContent:'center',
     marginLeft:5,

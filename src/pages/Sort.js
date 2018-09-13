@@ -4,7 +4,8 @@ import {View,
         TouchableHighlight,
         Image,
         ScrollView,
-        StyleSheet
+        StyleSheet,
+        BackHandler
   } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -26,8 +27,12 @@ export default class Sort extends Component<{}>{
       plthcolor : '#7a7979',
       sortinput : '',
       url : '',
-      name : ''
+      name : '',
+      pressed : ''
     }
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
@@ -101,7 +106,7 @@ export default class Sort extends Component<{}>{
       relevenceColor : '#7a7979',
       phtlcolor : '#7a7979',
       popularityColor : '#7a7979',
-      phtlcolor : '#7a7979'
+      plthcolor : '#7a7979'
     })
   }
     render(){

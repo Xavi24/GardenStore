@@ -1,5 +1,13 @@
 import React,{Component} from 'react'
-import {View,Text,StyleSheet,Image,TouchableHighlight,AsyncStorage} from 'react-native'
+import {
+        View,
+        Text,
+        StyleSheet,
+        Image,
+        TouchableHighlight,
+        AsyncStorage,
+        BackHandler
+  } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import config from '../API/config'
 import AnimatedHideView from 'react-native-animated-hide-view'

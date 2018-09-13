@@ -5,7 +5,6 @@ import {View,
         StyleSheet,
         ScrollView,
         AsyncStorage,
-        BackAndroid,
         BackHandler
   } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -13,6 +12,16 @@ import config from '../API/config'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import {Thumbnail} from 'native-base'
 import AnimatedHideView from 'react-native-animated-hide-view'
+import Toast from 'react-native-simple-toast'
+
+// BackAndroid.addEventListener('hardwareBackPress', function() {
+//   if (!this.onMainScreen()) {
+//     // this.goBack();
+//     console.warn('pressed');
+//     return true;
+//   }
+//   return true;
+// });
 
 export default class Settings extends Component<{}>{
   constructor(props){
@@ -27,14 +36,21 @@ export default class Settings extends Component<{}>{
       profileName : '!',
       login_cnfrm_screen : false,
       change_password_View_height : 0,
+      addres_view_height : 0,
+      logConformscreen : false
     }
   }
 
   async _removeAccessToken() {
     this.setState({
       access_token : '',
-      userAction : 'Login'
-    })
+      userAction : 'Login',
+      name : 'GardenStore User',
+      profileName : '!',
+      email : '',
+      logConformscreen : false
+    });
+      Toast.show('Logged Out', Toast.LONG);
     try {
       await AsyncStorage.removeItem('token');
     } catch (error) {
@@ -55,8 +71,9 @@ export default class Settings extends Component<{}>{
        this.setState({
          access_token : value,
          userAction : 'Logout',
-         change_password_View_height : 65
-       })
+         change_password_View_height : 65,
+         addres_view_height : 65
+       });
        this.getProfile();
        console.warn('access_token',this.state.access_token);
      } else {
@@ -127,7 +144,8 @@ componentWillUnmount() {
           <View style = {styles.textView}>
             <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Settings</Text>
           </View>
-          <View style = {styles.iconView}></View>
+          <View style = {styles.iconView}>
+          </View>
         </View>
         <View style = {styles.baseContainer}>
           <ScrollView style = {{height:'100%',width:'100%'}}>
@@ -165,7 +183,8 @@ componentWillUnmount() {
                     size={22}
                     style = {{color:'#369'}}>
                   </MaterialIcons>
-                  <Text style = {{fontSize:16,color:'#369',marginLeft:30}}>About Us</Text>
+                  <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
+                    onPress={()=>this.props.navigation.navigate('about')}>About Us</Text>
                 </View>
               </View>
               <View style = {{width:'100%',height:65,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
@@ -175,7 +194,8 @@ componentWillUnmount() {
                     size={22}
                     style = {{color:'#369'}}>
                   </MaterialIcons>
-                  <Text style = {{fontSize:16,color:'#369',marginLeft:30}}>Contact Us</Text>
+                  <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
+                   onPress = {()=>this.props.navigation.navigate('contact')}>Contact Us</Text>
                 </View>
               </View>
               <View style = {{width:'100%',height:this.state.change_password_View_height,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
@@ -189,6 +209,17 @@ componentWillUnmount() {
                     onPress = {()=>this.props.navigation.navigate('change_password')}>Change Password</Text>
                 </View>
               </View>
+              <View style = {{width:'100%',height:this.state.addres_view_height,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
+                <View style = {{width:'85%',flexDirection:'row'}}>
+                  <MaterialIcons
+                      name='vpn-key'
+                    size={22}
+                    style = {{color:'#369'}}>
+                  </MaterialIcons>
+                  <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
+                    onPress = {()=>this.props.navigation.navigate('add_manage')}>Address Management</Text>
+                </View>
+              </View>
               <View style = {{width:'100%',height:65,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
                 <View style = {{width:'85%',flexDirection:'row'}}>
                   <MaterialIcons
@@ -197,15 +228,14 @@ componentWillUnmount() {
                     style = {{color:'#369'}}>
                   </MaterialIcons>
                   <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
-                    onPress ={()=>
-                      {
-                        if (this.state.userAction == 'Login') {
-                        this.props.navigation.navigate('logn')
-                      } else {
-                        this._removeAccessToken();
-                      }
+                    onPress ={()=>{
+                      if (this.state.userAction == 'Login') {
+                      this.props.navigation.navigate('logn')
+                    } else {
+                      this.setState({logConformscreen:true})
                     }
-                    }>{this.state.userAction}</Text>
+                   }
+                  }>{this.state.userAction}</Text>
                 </View>
               </View>
             </View>
@@ -221,7 +251,8 @@ componentWillUnmount() {
               <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10,flexDirection:'row'}}>
                 <View style = {{width:'60%',paddingLeft:10}}>
                   <Text style = {{color:'#369',fontWeight:'bold',fontSize:14}}
-                    onPress = {()=>this.setState({login_cnfrm_screen:false})}>Cancel</Text>
+                    onPress = {()=>
+                      this.setState({login_cnfrm_screen:false})}>Cancel</Text>
                 </View>
                 <View style = {{width:'30%',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                   <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
@@ -229,6 +260,30 @@ componentWillUnmount() {
                   <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
                     onPress = {()=>this.props.navigation.navigate('logn')}>Log In</Text>
                 </View>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
+        <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
+          visible = {this.state.logConformscreen}>
+          <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
+            borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+            <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants to go out ?</Text>
+            <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
+              <View style = {{width:'50%'}}></View>
+              <View style = {{width:'50%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:10}}>
+                <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                  onPress = {()=>this.setState({logConformscreen:false})}>Stay</Text>
+                <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                  onPress ={()=>
+                    {
+                      if (this.state.userAction == 'Login') {
+                      this.props.navigation.navigate('logn')
+                    } else {
+                      this._removeAccessToken();
+                    }
+                  }
+                }>Logout</Text>
               </View>
             </View>
           </View>

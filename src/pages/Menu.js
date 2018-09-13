@@ -4,11 +4,11 @@ import {View,
         StyleSheet,
         ScrollView,
         AsyncStorage,
-        TouchableHighlight
+        TouchableHighlight,
+        StatusBar
   } from 'react-native'
 import config from '../API/config'
 import ExpanableList from 'react-native-expandable-section-flatlist'
-import {Thumbnail} from 'native-base'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 
@@ -17,12 +17,11 @@ var menu_name = [];
 export default class Menu extends Component<{}>{
   static navigationOptions = {
     header:null
-  }
+  };
 
   constructor(props){
     super(props);
     this.state = {
-      name:'GardenStore User',
       menu:'',
       menu_data : [],
       userAction : '',
@@ -30,7 +29,10 @@ export default class Menu extends Component<{}>{
       number : '',
       email : '',
       gender : '',
-      profileName : '!'
+      profileName : '!',
+      my_order : 'Order',
+      my_order_color : '#363a42',
+      my_order_size : 22
     }
   }
   async _getAccessToken(){
@@ -39,14 +41,20 @@ export default class Menu extends Component<{}>{
       if (value !== null) {
         this.setState({
           access_token : value,
-        })
+        });
         this.getProfile();
+      } else {
+        this.setState({
+          my_order : '',
+          my_order_color : '#f5f5f5',
+          my_order_size: 0
+        })
       }
       } catch (error) {
     }
   }
   getProfile(){
-    var url = config.API_URL+'profile'
+    var url = config.API_URL+'profile';
     fetch(url, {
       headers : new Headers({
         'Content-Type' : 'application/json',
@@ -74,23 +82,23 @@ export default class Menu extends Component<{}>{
     })
   }
   getMenu(){
-      let sub = {}
-      var url = config.API_URL+'getMenu'
+      let sub = {};
+      var url = config.API_URL+'getMenu';
       fetch(url)
         .then((response)=> response.json())
         .then((response)=> {
           if (response.data!=null) {
             // console.warn('response',response);
-            menu_data.length = 0
+            menu_data.length = 0;
             for(let cat of response.data){
-              let subCatgry = []
+              let subCatgry = [];
               if (cat.sub_cat) {
                 for(sub of cat.sub_cat){
                   subCatgry.push({name:sub.name})
                 }
               }
               menu_data.push({name:cat.name,
-                            sub_cat:subCatgry})
+                            sub_cat:subCatgry});
               this.setState({
                 menu_data : menu_data
               })
@@ -112,13 +120,20 @@ export default class Menu extends Component<{}>{
   render(){
     return(
       <View style = {styles.container}>
+        <StatusBar
+          translucent = {false}
+          barStyle='light-content'
+          backgroundColor='#282a2d'
+        />
         <View style = {styles.profileView}>
-          <View style = {{width:'100%',marginLeft:5}}>
-            <View style = {{height:60,width:60,borderRadius:60/2,backgroundColor:'#2fdab8',marginTop:20,alignItems:'center',justifyContent:'center',marginLeft:10}}>
-              <Text style = {{color:'#fff',fontSize:24,fontWeight:'bold'}}>{this.state.profileName}</Text>
-             </View>
-            <Text style = {{fontSize:14,color:'#fff',fontWeight:'bold',marginTop:10,marginLeft:10}}>{this.state.name}</Text>
-            <Text style = {{fontSize:14,color:'#fff',marginLeft:10}}>{this.state.email}</Text>
+          <View></View>
+          <View style = {{width:'95%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+            <MaterialIcons
+                name='home'
+                size={22}
+                style = {{color:'#fff'}}>
+            </MaterialIcons>
+            <Text style={{color:'#fff',fontSize:14}}>Gardens Store</Text>
           </View>
         </View>
         <ScrollView>
@@ -188,12 +203,36 @@ export default class Menu extends Component<{}>{
                     underlayColor = 'transparent'>
                     <MaterialIcons
                       name='shopping-cart'
-                      size={22}
-                      style = {{color:'#363a42'}}>
+                      size={this.state.my_order_size}
+                      style = {{color:this.state.my_order_color}}>
                     </MaterialIcons>
                 </TouchableHighlight>
                 <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
-                  onPress = {()=>this.props.navigation.navigate('my_order')}>My Orders</Text>
+                  onPress = {()=>this.props.navigation.navigate('order')}>{this.state.my_order}</Text>
+              </View>
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                                    underlayColor = 'transparent'>
+                  <MaterialIcons
+                      name='settings'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
+                <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
+                      onPress = {()=>this.props.navigation.navigate('about')}>About Us</Text>
+              </View>
+              <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
+                <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
+                                    underlayColor = 'transparent'>
+                  <MaterialIcons
+                      name='settings'
+                      size={22}
+                      style = {{color:'#363a42'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
+                <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
+                      onPress = {()=>this.props.navigation.navigate('contact')}>Contact Us</Text>
               </View>
             </View>
           </View>
@@ -209,10 +248,11 @@ const styles = StyleSheet.create({
     backgroundColor:'#f5f5f5'
   },
   profileView:{
-    height:'30%',
+    height:'15%',
     width:'100%',
     alignItems:'center',
-    justifyContent:'center',
-    backgroundColor:'#282a2d'
+    justifyContent:'space-between',
+    backgroundColor:'#282a2d',
+    paddingBottom: 10
   }
-})
+});

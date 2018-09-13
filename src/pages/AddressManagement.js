@@ -1,5 +1,6 @@
-import React,{Component} from 'react';
-import {View,
+import React,{Component} from 'react'
+import {
+    View,
     Text,
     StyleSheet,
     ScrollView,
@@ -9,14 +10,13 @@ import {View,
     TouchableHighlight,
     Image,
     BackHandler
-} from 'react-native';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+} from 'react-native'
 import { CheckBox } from 'react-native-elements'
 import config from '../API/config';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import AnimatedHideView from 'react-native-animated-hide-view'
 
-export default class Edit_Address extends Component<{}>{
+export default  class AddressManagement extends Component<{}>{
     static navigationOptions = {
         title:'Address',
         headerTintColor: '#fff',
@@ -25,7 +25,6 @@ export default class Edit_Address extends Component<{}>{
             borderBottomColor:'#282a2d'
         }
     };
-
     constructor(props){
         super(props);
         this.state = {
@@ -50,7 +49,6 @@ export default class Edit_Address extends Component<{}>{
             building:'',
             measurements:[],
             success_screen : false,
-            edit_add_id : '',
             err_msg : '',
             err_postcode : '',
             err_ph : '',
@@ -66,7 +64,6 @@ export default class Edit_Address extends Component<{}>{
             err_district : ''
         }
     }
-
     checkType(type){
         if (type === 'home') {
             if (!this.state.homeChecked) {
@@ -175,7 +172,7 @@ export default class Edit_Address extends Component<{}>{
         });
         console.warn('access/////save',this.state.access_token);
         let addressData = {};
-        addressData.postcode = this.state.postcode,
+            addressData.postcode = this.state.postcode,
             addressData.name = this.state.name,
             addressData.street_address = this.state.street_address,
             addressData.landmark = this.state.landmark,
@@ -188,16 +185,16 @@ export default class Edit_Address extends Component<{}>{
             addressData.phone_no = this.state.phone_no,
             addressData.area = this.state.area,
             addressData.building = this.state.building
-        console.warn('address....',addressData);
-        if (addressData.postcode == '' || addressData.name == '' ||addressData.street_address == '' || addressData.landmark == '' ||
-            addressData.city == '' || addressData.state == '' ||addressData.district == '' || addressData.country == '' ||
-            addressData.type == '' || addressData.phone_no == '' ||addressData.area == '' || addressData.building == ''){
-            this.setState({
-                err_msg : 'seems like you have some problems with saving your address. Please go back and try again'
-            })
-        }
+        console.log('address....',addressData);
+            if (addressData.postcode == '' || addressData.name == '' ||addressData.street_address == '' || addressData.landmark == '' ||
+                addressData.city == '' || addressData.state == '' ||addressData.district == '' || addressData.country == '' ||
+                addressData.type == '' || addressData.phone_no == '' ||addressData.area == '' || addressData.building == ''){
+                this.setState({
+                    err_msg : 'seems like you have some problems with saving your address. Please go back and try again'
+                })
+            }
 
-        var url = config.API_URL+'updateAddress/'+this.state.edit_add_id;
+        var url = config.API_URL+'addAddress';
         fetch(url, {
             method: 'POST',
             body: JSON.stringify(addressData),
@@ -246,55 +243,21 @@ export default class Edit_Address extends Component<{}>{
             console.warn(error.message);
         }
     }
-
     componentWillMount(){
         this._getAccessToken().done();
-        const {params} = this.props.navigation.state;
-        console.warn('params',params);
-        this.setState({
-            edit_add_id : params.id,
-            postcode : params.postcode,
-            name : params.name,
-            street_address : params.street,
-            landmark : params.landmark,
-            city : params.city,
-            state : params.state,
-            district : params.district,
-            country : params.country,
-            phone_no : params.phone_no,
-            type : params.type,
-            default : params.dflt,
-            area:params.area,
-            building:params.building
-        });
-        if (params.dflt == 0) {
-            this.setState({
-                checked : false
-            })
-        } else if (params.dflt == 1){
-            this.setState({
-                checked : true
-            })
-        }
-        if (params.type == 'office'){
-            this.setState({
-                officeChecked : true
-            })
-        } else if (params.type == 'home'){
-            this.setState({
-                homeChecked : true
-            })
-        }
+        // const {params} = this.props.navigation.state;
+        // console.warn('params',params);
+        // this.setState({
+        //   product_image : params.img,
+        //   price : params.prize,
+        //   product_name : params.product_name,
+        //   product_id : params.product,
+        //   vendor_id : params.vendor,
+        //   measurements : params.measurements
+        // })
     }
-    success_Method(){
-        this.setState({
-            success_screen : false
-        });
-        this.props.navigation.navigate('')
-    }
-
     render(){
-        const {goBack} = this.props.navigation;
+        const {goBack} = this.props.navigation
         return(
             <View style = {styles.container}>
                 <StatusBar
@@ -305,7 +268,7 @@ export default class Edit_Address extends Component<{}>{
                 <View style = {styles.toolbar}>
                     <View style = {styles.menuView}>
                         <TouchableHighlight underlayColor = 'transparent'
-                                            onPress = {()=>goBack()}>
+                           onPress = {()=>goBack()}>
                             <MaterialIcons
                                 name='arrow-back'
                                 size={22}
@@ -314,31 +277,36 @@ export default class Edit_Address extends Component<{}>{
                         </TouchableHighlight>
                     </View>
                     <View style = {styles.textView}>
-                        <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Edit Address</Text>
+                        <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Add Address</Text>
                     </View>
                     <View style = {styles.iconView}>
 
                     </View>
                 </View>
                 <View style = {styles.baseContainer}>
+                    <View style={{width:'100%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',
+                        marginBottom:5,padding:3,marginTop:10}}>
+                        <View></View>
+                        <View style={{borderColor:'#369',borderBottomLeftRadius:3,borderBottomRightRadius:3,backgroundColor:'#fff',
+                            borderTopLeftRadius:3,borderTopRightRadius:3,alignItems:'center',justifyContent:'center',borderWidth:1,padding:3}}>
+                            <TouchableHighlight style={{alignItems:'center',justifyContent:'center'}}
+                                underlayColor='transparent'
+                                onPress = {()=>this.props.navigation.navigate('view_address')}>
+                                <Text style={{color:'#369',fontWeight:'bold',marginTop:3,marginBottom:3,marginRight:10,marginLeft:10}}>View</Text>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
+                    <Text style = {{fontSize:18,marginBottom:10,color:'#369'}}>Add New Address</Text>
                     <ScrollView style = {styles.scrollView}
                                 showsVerticalScrollIndicator={false}>
                         <View>
-                            <Text style = {{fontSize:18,marginTop:20,marginLeft:20,color:'#000'}}>Edit Your Address</Text>
                             <View style = {styles.baseView}>
 
                                 <View style = {styles.topView}>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Pin Code
-                                        </Text>
-                                    </View>
-
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Pin Code"
                                                keyboardType='numeric'
-                                               value={this.state.postcode}
                                                onChangeText = {(text_postcode)=>this.updateValue(text_postcode,'postcode')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -346,16 +314,9 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_postcode}</Text>
                                     </View>
-
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Area
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Area"
-                                               value={this.state.area}
                                                onChangeText = {(text_area)=>this.updateValue(text_area,'area')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -363,15 +324,9 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_area}</Text>
                                     </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Building
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Building"
-                                               value={this.state.building}
                                                onChangeText = {(text_building)=>this.updateValue(text_building,'Building')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -379,31 +334,14 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_building}</Text>
                                     </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Locality/Town
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Locality/Town"
-                                               value={this.state.landmark}
                                                onChangeText = {(text_landmark)=>this.updateValue(text_landmark,'landmark')}>
                                     </TextInput>
-                                    <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                                        <View>
-                                        </View>
-                                        <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_landmark}</Text>
-                                    </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            City
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="City"
-                                               value={this.state.city}
                                                onChangeText = {(text_city)=>this.updateValue(text_city,'city')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -411,31 +349,14 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_city}</Text>
                                     </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            District
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="District"
-                                               value={this.state.district}
                                                onChangeText = {(text_district)=>this.updateValue(text_district,'district')}>
                                     </TextInput>
-                                    <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                                        <View>
-                                        </View>
-                                        <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_district}</Text>
-                                    </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            State
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="State"
-                                               value={this.state.state}
                                                onChangeText = {(text_state)=>this.updateValue(text_state,'state')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -443,18 +364,12 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_state}</Text>
                                     </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Country
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Country"
-                                               value={this.state.country}
                                                onChangeText = {(text_country)=>this.updateValue(text_country,'country')}>
                                     </TextInput>
-                                    <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                                    <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginBottom:10}}>
                                         <View>
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_country}</Text>
@@ -462,15 +377,9 @@ export default class Edit_Address extends Component<{}>{
                                 </View>
 
                                 <View style = {styles.topView}>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Name
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Name"
-                                               value={this.state.name}
                                                onChangeText = {(text_name)=>this.updateValue(text_name,'name')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -478,17 +387,11 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_name}</Text>
                                     </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Address
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.addressBox}
                                                underlineColorAndroid = 'transparent'
                                                multiline={true}
                                                editable = {true}
                                                placeholder="Address"
-                                               value={this.state.street_address}
                                                onChangeText = {(text_address)=>this.updateValue(text_address,'street_address')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -496,16 +399,10 @@ export default class Edit_Address extends Component<{}>{
                                         </View>
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_street}</Text>
                                     </View>
-                                    <View style={{width:'95%',marginTop:10}}>
-                                        <Text style={{color:'#369'}}>
-                                            Mobile No
-                                        </Text>
-                                    </View>
                                     <TextInput style = {styles.input}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Mobile No"
                                                keyboardType='numeric'
-                                               value={this.state.phone_no}
                                                onChangeText = {(text_phone_no)=>this.updateValue(text_phone_no,'phone_no')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -516,6 +413,7 @@ export default class Edit_Address extends Component<{}>{
                                     <View style = {{width:'100%'}}>
                                         <Text style = {{fontSize:14,marginLeft:15,marginTop:10,marginBottom:5}}>Type of Address</Text>
                                     </View>
+
 
                                     <View style = {{width:'100%',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                                         <CheckBox
@@ -564,7 +462,7 @@ export default class Edit_Address extends Component<{}>{
                                             alignItems:'center',justifyContent:'center'}}>
                                             <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
                                                 underlayColor='transparent'
-                                                onPress = {() =>this.saveAddress()}>
+                                                onPress = {()=>this.saveAddress()}>
                                                 <Text style = {{fontSize:16,color:'#fff'}}>SAVE</Text>
                                             </TouchableHighlight>
                                         </View>
@@ -589,9 +487,7 @@ export default class Edit_Address extends Component<{}>{
                             <Text style = {{fontSize:16,textAlign:'center'}}>{this.state.err_msg}</Text>
                         </View>
                         <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                            <View>
-
-                            </View>
+                            <View></View>
                             <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
                                   onPress = {()=>this.setState({error_screen : false})}>OK</Text>
                         </View>
@@ -605,11 +501,11 @@ export default class Edit_Address extends Component<{}>{
                         <Image style = {{height:80,width:80,marginTop:20}}
                                source = {require('../img/checked.png')}>
                         </Image>
-                        <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:20}}>Your address updated successfully</Text>
+                        <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:20}}>Your address added successfully</Text>
                         <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:30,marginBottom:20}}>
                             <View></View>
                             <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                                  onPress = {()=>this.setState({success_screen : false})}>OK</Text>
+                                  onPress = {()=>this.props.navigation.navigate('view_address')}>OK</Text>
                         </View>
                     </View>
                 </AnimatedHideView>
@@ -650,8 +546,9 @@ const styles = StyleSheet.create({
     },
     input:{
         width:'90%',
-        height:40,
+        height:45,
         padding:10,
+        marginTop:10,
         marginBottom:10
     },
     addressBox:{

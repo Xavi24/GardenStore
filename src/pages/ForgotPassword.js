@@ -5,7 +5,8 @@ import {View,
         TouchableHighlight,
         Image,
         ScrollView,
-        TextInput
+        TextInput,
+        BackHandler
   } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import config from '../API/config'
