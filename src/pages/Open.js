@@ -186,13 +186,15 @@ export default class Open extends Component<{}>{
                             </View>
                           </View>
                           <View style = {{width:'100%',height:'30%',padding:10,flexDirection:'row',alignItems:'center'}}>
-                            <View style = {{height:10,width:10,borderRadius:10/2,backgroundColor:'#360',marginTop:5}}></View>
+                            <View style = {{height:10,width:10,borderRadius:10/2,backgroundColor:'#360',marginTop:5}}>
+
+                            </View>
                             <Text style = {{marginLeft:10,fontSize:12}}>Purchased on {item.date}</Text>
                           </View>
                         </View>
                       <View style = {{width:'100%',height:'20%',alignItems:'center',justifyContent:'center'}}>
                         <Text style = {{color:'#369',fontSize:12,fontWeight:'bold'}}
-                          onPress={()=>this.props.navigation.navigate('view_open_order')}>View Order Details</Text>
+                          onPress={()=>this.props.navigation.navigate('view_open_order',{order_id : item.order_id})}>View Order Details</Text>
                       </View>
                     </View>
                   )}

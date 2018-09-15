@@ -80,6 +80,7 @@ export default class Details extends Component<{}>{
       sale_price : '',
       p_color : '#369',
       d_color : '#360',
+      emptyScreen : false
     }
   }
   addMyrating(rating){
@@ -110,7 +111,7 @@ export default class Details extends Component<{}>{
     }
   }
   addReview(){
-    let Data = {}
+    let Data = {};
     Data.value = count,
     Data.title = this.state.feedback,
     Data.review = this.state.review,
@@ -178,7 +179,7 @@ export default class Details extends Component<{}>{
   getAddressDetails(){
     // console.warn('getAddressDetails product_id',this.state.product_id);
     // console.warn('getAddressDetails vendor_id',this.state.vendor_id);
-    var url = config.API_URL+'userAddresses'
+    var url = config.API_URL+'userAddresses';
     fetch(url, {
       headers : new Headers({
         'Content-Type' : 'application/json',
@@ -223,10 +224,10 @@ export default class Details extends Component<{}>{
       product_measurement_id : field,
       value : text,
       name : name
-    }
+    };
     this.setState({
       measurements : measures
-    })
+    });
     console.warn('measures////',this.state.measurements);
   }
   customNavigation(){
@@ -265,130 +266,138 @@ export default class Details extends Component<{}>{
      .then((response)=>response.json())
      .catch((error)=>console.log(error))
      .then((response)=>{
+       if (response.code){
+         if (response.code == 200){
+           if (response.data) {
+             console.log('productDetailresponse',response);
+
+             this.setState({
+               is_in_cart : response.data.is_in_cart,
+               is_in_wishlist : response.data.is_in_wishlist,
+               product_name : response.data.product_name,
+               product_note : response.data.product_notes,
+               brand : response.data.brand,
+               product_id : response.data.product_variation_id,
+               product_details : response.data.product_details.product_description,
+               starCount : response.data.product_rating,
+               sale_price : response.data.product_mrp
+             })
+             for(let product_images of response.data.product_images){
+               this.state.slider_Images.push(product_images.img)
+             }
+             for(let product_vendors of response.data.product_vendors){
+               this.setState({
+                 vendor_id : product_vendors.vendor_id,
+                 prize : product_vendors.product_price,
+                 discount : product_vendors.discount
+               })
+               if (this.state.discount == 0) {
+                 this.setState({
+                   d_color : '#fff',
+                   p_color : '#fff'
+                 })
+               }
+               if (product_vendors.quantity < 1) {
+                 this.setState({
+                   out_of_stock_screen_temp : true
+                 })
+               }
+               console.warn('out_of_stock_screen_temp',this.state.out_of_stock_screen_temp);
+             }
+             p_specs_container.length = 0;
+             for (let product_specs of response.data.product_details.product_specs){
+               let product_specs_keys = Object.keys(product_specs)
+               p_specs_container.push({
+                 spec_title : product_specs_keys[0],
+                 specs : product_specs[product_specs_keys[0]]
+               })
+             }
+             spec_datas.length = 0;
+             for(let spec_data of p_specs_container){
+               for(let val of spec_data.specs){
+                 spec_datas.push({
+                   spec_name : val.spec_name,
+                   spec_value : val.spec_value
+                 })
+               }
+             }
+             this.setState({
+               spec : spec_datas
+             });
+             for(let product_spec_variation of response.data.product_variation_items){
+               let product_spec_variation_key = Object.keys(product_spec_variation);
+               p_spec_variation_container.push({
+                 spec_title : product_spec_variation_key[0],
+                 specs : product_spec_variation[product_spec_variation_key[0]]
+               })
+             }
+             spec_variation_datas.length = 0;
+             for(let spec_variation_data of p_spec_variation_container){
+               for(let val of spec_variation_data.specs){
+                 spec_variation_datas.push({
+                   spec_name : val.variation_spec_value,
+                   spec_slug : val.variation_slug,
+                   spec_img : val.img
+                 })
+               }
+             }
+             this.setState({
+               spec_variation : spec_variation_datas
+             });
+             console.warn('spec_variation',this.state.spec_variation);
+             if (response.data.is_in_cart) {
+               this.setState({
+                 show_cart:false,
+                 cart_text : 'Move To Cart'
+               })
+             } else {
+               this.setState({
+                 show_cart:true
+               })
+             }
+             if (response.data.is_in_wishlist) {
+               this.setState({
+                 show_fav:false
+               })
+             } else {
+               this.setState({
+                 show_fav:true
+               })
+             }
+             this.ViewReview();
+             if (response.data.measurements!= '') {
+               this.setState({
+                 customButton : true
+               })
+             }
+             for(let customdata of response.data.measurements){
+               console.warn('customdata',customdata);
+               this.setState({
+                 product_meassurment_id : customdata.product_measurement_id,
+                 name : customdata.name,
+                 description : customdata.description,
+                 video : customdata.video
+               });
+               this.state.measurementData.push({
+                 product_measurement_id : this.state.product_meassurment_id,
+                 name : this.state.name,
+                 description : this.state.description,
+                 video : this.state.video,
+                 product_id : this.state.product_id,
+                 vendor_id : this.state.vendor_id
+               })
+             }
+             console.warn('measurementData',this.state.measurementData);
+           }
+         } else {
+           this.setState({
+             emptyScreen : true
+           })
+         }
+       }
        this.setState({
          show : false
        });
-       if (response.data) {
-         console.log('productDetailresponse',response);
-
-         this.setState({
-           is_in_cart : response.data.is_in_cart,
-           is_in_wishlist : response.data.is_in_wishlist,
-           product_name : response.data.product_name,
-           product_note : response.data.product_notes,
-           brand : response.data.brand,
-           product_id : response.data.product_variation_id,
-           product_details : response.data.product_details.product_description,
-           starCount : response.data.product_rating,
-           sale_price : response.data.product_mrp
-         })
-         for(let product_images of response.data.product_images){
-           this.state.slider_Images.push(product_images.img)
-         }
-         for(let product_vendors of response.data.product_vendors){
-           this.setState({
-             vendor_id : product_vendors.vendor_id,
-             prize : product_vendors.product_price,
-             discount : product_vendors.discount
-           })
-           if (this.state.discount == 0) {
-             this.setState({
-               d_color : '#fff',
-               p_color : '#fff'
-             })
-           }
-           if (product_vendors.quantity < 1) {
-             this.setState({
-               out_of_stock_screen_temp : true
-             })
-           }
-           console.warn('out_of_stock_screen_temp',this.state.out_of_stock_screen_temp);
-         }
-           p_specs_container.length = 0;
-          for (let product_specs of response.data.product_details.product_specs){
-            let product_specs_keys = Object.keys(product_specs)
-            p_specs_container.push({
-              spec_title : product_specs_keys[0],
-              specs : product_specs[product_specs_keys[0]]
-            })
-          }
-          spec_datas.length = 0;
-          for(let spec_data of p_specs_container){
-            for(let val of spec_data.specs){
-                spec_datas.push({
-                  spec_name : val.spec_name,
-                  spec_value : val.spec_value
-                })
-            }
-          }
-          this.setState({
-            spec : spec_datas
-          });
-          for(let product_spec_variation of response.data.product_variation_items){
-            let product_spec_variation_key = Object.keys(product_spec_variation);
-            p_spec_variation_container.push({
-              spec_title : product_spec_variation_key[0],
-              specs : product_spec_variation[product_spec_variation_key[0]]
-            })
-          }
-          spec_variation_datas.length = 0;
-          for(let spec_variation_data of p_spec_variation_container){
-            for(let val of spec_variation_data.specs){
-              spec_variation_datas.push({
-                spec_name : val.variation_spec_value,
-                spec_slug : val.variation_slug,
-                spec_img : val.img
-              })
-            }
-          }
-          this.setState({
-            spec_variation : spec_variation_datas
-          });
-          console.warn('spec_variation',this.state.spec_variation);
-           if (response.data.is_in_cart) {
-            this.setState({
-              show_cart:false,
-              cart_text : 'Move To Cart'
-            })
-          } else {
-            this.setState({
-              show_cart:true
-            })
-          }
-          if (response.data.is_in_wishlist) {
-            this.setState({
-              show_fav:false
-            })
-          } else {
-            this.setState({
-              show_fav:true
-            })
-          }
-          this.ViewReview();
-          if (response.data.measurements!= '') {
-            this.setState({
-              customButton : true
-            })
-          }
-          for(let customdata of response.data.measurements){
-            console.warn('customdata',customdata);
-            this.setState({
-              product_meassurment_id : customdata.product_measurement_id,
-              name : customdata.name,
-              description : customdata.description,
-              video : customdata.video
-            })
-            this.state.measurementData.push({
-              product_measurement_id : this.state.product_meassurment_id,
-              name : this.state.name,
-              description : this.state.description,
-              video : this.state.video,
-              product_id : this.state.product_id,
-              vendor_id : this.state.vendor_id
-            })
-          }
-          console.warn('measurementData',this.state.measurementData);
-       }
      })
   }
   addToWishList(){
@@ -433,12 +442,12 @@ export default class Details extends Component<{}>{
   }
   addToCart(){
     if (this.state.cart_text == 'Add To Cart') {
-      let cartData = {}
+      let cartData = {};
       cartData.measurements = JSON.stringify(this.state.measurements);
       console.warn('cart,measurements',this.state.measurements);
       this.setState({
         customising_screen : false
-      })
+      });
       var url = config.API_URL+'product/addToCart/'+this.state.product_id+'/'+this.state.vendor_id
       fetch(url, {
         method : 'POST',
@@ -466,7 +475,7 @@ export default class Details extends Component<{}>{
     } else if (this.state.cart_text == 'Move To Cart') {
       this.setState({
         customising_screen : false
-      })
+      });
       this.props.navigation.navigate('add_to_cart')
     }
   }
@@ -661,7 +670,13 @@ export default class Details extends Component<{}>{
                         style = {{position:'absolute'}}>
                         <TouchableHighlight
                           underlayColor = 'transparent'
-                          onPress = {()=>this.addToCart()}>
+                          onPress = {()=>{
+                            if(this.state.access_token!=''){
+                              this.addToCart();
+                            } else {
+                              console.warn('You are not logged in')
+                            }
+                          }}>
                           <MaterialIcons
                             name='add-shopping-cart'
                             size={22}
@@ -910,6 +925,40 @@ export default class Details extends Component<{}>{
             </View>
           </View>
         </AnimatedHideView>
+        <AnimatedHideView
+            visible = {this.state.emptyScreen}
+            style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}>
+          <View style = {styles.toolbar}>
+            <View style = {styles.menuView}>
+              <TouchableHighlight underlayColor = 'transparent'
+                                  onPress = {()=>goBack()}>
+                <MaterialIcons
+                    name='arrow-back'
+                    size={22}
+                    style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+            </View>
+            <View style = {styles.textView}>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+            </View>
+            <View style = {styles.iconView}>
+
+            </View>
+          </View>
+          <View style = {styles.baseContainer2}>
+            <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+              <Image style = {{width:40,height:40,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
+                     source = {require('../img/rotate.png')}>
+
+              </Image>
+              <Text>No product to show</Text>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
+
       </View>
     );
   }
@@ -1042,5 +1091,11 @@ const styles = StyleSheet.create({
     marginTop:10,
     alignItems:'center',
     justifyContent:'center'
+  },
+  baseContainer2:{
+    height:'92%',
+    width:'100%',
+    alignItems:'center',
+    justifyContent:'center'
   }
-})
+});

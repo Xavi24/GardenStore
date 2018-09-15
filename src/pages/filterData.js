@@ -62,8 +62,8 @@ export default class filterData extends Component<{}>{
   componentWillMount(){
     const {params} = this.props.navigation.state;
     console.warn('params',params);
-    let response = params.data
-    let url = params.url
+    let response = params.data;
+    let url = params.url;
     this.setState({
       name : params.name
     })
@@ -88,7 +88,7 @@ export default class filterData extends Component<{}>{
       if (response.data.data) {
         for(let product of response.data.data){
           let off ='% off',
-          tem_disc = 1
+          tem_disc = 1;
           console.warn('discccccccccc',product.total_discount);
           if (product.total_discount < 1) {
             console.warn('entered into the loop');

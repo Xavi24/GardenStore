@@ -25,8 +25,6 @@ import Edit_Address from './src/pages/Edit_Address'
 import filterData from './src/pages/filterData'
 import Sort from './src/pages/Sort'
 import SortData from './src/pages/SortData'
-import CMS from './src/pages/CMS'
-import Cancel_Order from './src/pages/Cancel_Order'
 import AboutUs from './src/pages/AboutUs'
 import ContactUs from './src/pages/ContactUs'
 import AddressManagement from './src/pages/AddressManagement'
@@ -65,7 +63,6 @@ const StackNavigator_Function = StackNavigator({
   filter_page : {screen:filterData},
   sort : {screen:Sort},
   sort_page : {screen:SortData},
-  cms : {screen:CMS},
   about : {screen:AboutUs},
   contact : {screen:ContactUs},
   add_manage : {screen:AddressManagement},

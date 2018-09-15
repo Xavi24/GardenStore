@@ -227,7 +227,7 @@ export default class Sort extends Component<{}>{
                         underlayColor = 'transparent'
                         onPress = {()=>this.getsortData()}>
                         <View style = {{width:'100%',alignItems:'center',justifyContent:'center',height:40,backgroundColor:'#2fdab8'}}>
-                          <Text style = {{color:'#fff',fontSize:18,color:'#fff',fontWeight:'bold'}}>Sort</Text>
+                          <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Sort</Text>
                         </View>
                       </TouchableHighlight>
                     </View>

@@ -39,11 +39,8 @@ export default class CartBuynow extends Component<{}>{
       crtData : [],
       size:'',
       qty:'',
-      error_screen : false,
       total : 0,
       placeOrderScreen : false,
-      user_address_id : '',
-      success_screen : false,
       placeorder_error_screen : false,
       show : false,
       variation_id : '',
@@ -60,7 +57,6 @@ export default class CartBuynow extends Component<{}>{
       country : '',
       landmark : '',
       ph_no : '',
-      access_token : '',
       product_name : '',
       price : '',
       product_image : '',
@@ -82,7 +78,6 @@ export default class CartBuynow extends Component<{}>{
       convertedValue : '0',
       user_point : '',
       partialpoints : '',
-      show : false,
       measurements : [],
       underlayColor : '#eee',
       ptrl_font : 0,
@@ -98,7 +93,6 @@ export default class CartBuynow extends Component<{}>{
       padding  :0,
       placeholder : '',
       discPoints : '',
-      address_id : '',
       add_new_screen : false,
       address_id : '',
       gender : '',
@@ -126,7 +120,7 @@ export default class CartBuynow extends Component<{}>{
     let Data = {};
     Data.coupon_code = this.state.coupon,
     Data.product = this.state.product_id,
-    Data.total_price = this.state.price,
+    Data.total_price = this.state.total,
     Data.vendor = this.state.vendor_id
     console.warn('Data',Data);
     var url = config.API_URL+'coupon/apply'
@@ -895,7 +889,7 @@ export default class CartBuynow extends Component<{}>{
                     </MaterialIcons>
                   </View>
                 </TouchableHighlight>
-                <AnimatedHideView style = {{position:'absolute',width:'100%',height:45,borderColor:'#bbb',borderWidth:1,marginTop:10,backgroundColor:'#360',
+                <AnimatedHideView style = {{position:'absolute',width:'100%',height:45,borderColor:'#bbb',borderWidth:1,backgroundColor:'#360',
                   marginTop:30}}
                   visible = {this.state.point_screen}>
                   <TouchableHighlight style = {{alignItems:'center',justifyContent:'center'}}
