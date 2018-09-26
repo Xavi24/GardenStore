@@ -130,14 +130,14 @@ export default class Cancel extends Component<{}>{
                     <View style = {{width:'100%',padding:10,height:'80%',alignItems:'center',justifyContent:'center',borderBottomWidth:1,
                       borderBottomColor:'#eee'}}>
                         <View style = {{width:'100%',height:'15%',borderBottomWidth:1,borderBottomColor:'#eee',alignItems:'center'}}>
-                          <Text style = {{fontSize:14}}>ORDER ID - {item.fbin}</Text>
+                          <Text style = {{fontSize:12}}>ORDER ID - {item.fbin}</Text>
                         </View>
                         <View style = {{width:'100%',height:'60%',alignItems:'center',justifyContent:'center',flexDirection:'row',padding:10}}>
                           <View style = {{width:'70%',height:'100%'}}>
                             <Text style = {{color:'#000',fontSize:12}}>{item.name}</Text>
                             <Text style = {{color:'#360',fontSize:12}}>RS. {item.amount}</Text>
-                            <Text>Quantity - {item.product_qty}</Text>
-                            <Text>Status - {item.status}</Text>
+                            <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
+                            <Text style={{fontSize:12}}>Status - {item.status}</Text>
                           </View>
                           <View style = {{width:'30%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                           <Image style = {{width:'80%',height:'99%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
@@ -154,7 +154,7 @@ export default class Cancel extends Component<{}>{
                         underlayColor = 'transparent'
                         onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>
                         <View style = {{width:'100%',height:'20%',alignItems:'center',justifyContent:'center'}}>
-                          <Text style = {{color:'#369',fontSize:16,fontWeight:'bold'}}>Buy this Product Again</Text>
+                          <Text style = {{color:'#369',fontSize:12,fontWeight:'bold'}}>Buy this Product Again</Text>
                         </View>
                       </TouchableHighlight>
                   </View>

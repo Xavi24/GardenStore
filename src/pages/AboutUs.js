@@ -20,12 +20,13 @@ import Spinner from 'react-native-loading-spinner-overlay'
 export default class AboutUs extends Component<{}>{
 
   render(){
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
           <View style = {styles.menuView}>
             <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.navigate('mainscreen')}>
+              onPress = {()=>goBack()}>
               <MaterialIcons
                 name='arrow-back'
                 size={22}

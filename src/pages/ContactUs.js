@@ -19,12 +19,13 @@ import Spinner from 'react-native-loading-spinner-overlay'
 
 export default class ContactUs extends Component<{}>{
   render(){
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
           <View style = {styles.menuView}>
             <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.props.navigation.navigate('mainscreen')}>
+              onPress = {()=>goBack()}>
               <MaterialIcons
                 name='arrow-back'
                 size={22}
@@ -61,7 +62,7 @@ export default class ContactUs extends Component<{}>{
                   <View style={{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',elevation:1,padding:10,marginTop:20}}>
                       <View style={{width:'100%',flexDirection:'row',marginTop:20}}>
                           <MaterialIcons
-                              name='phone'
+                              name='email'
                               size={24}
                               style = {{color:'#282a2d'}}>
                           </MaterialIcons>
@@ -79,7 +80,7 @@ export default class ContactUs extends Component<{}>{
                   <View style={{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',elevation:1,padding:10,marginTop:20}}>
                       <View style={{width:'100%',flexDirection:'row',marginTop:20}}>
                           <MaterialIcons
-                              name='phone'
+                              name='location-on'
                               size={24}
                               style = {{color:'#282a2d'}}>
                           </MaterialIcons>

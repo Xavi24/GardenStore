@@ -1,12 +1,13 @@
 import React,{Component} from 'react'
-import {View,
-        Text,
-        StyleSheet,
-        ScrollView,
-        AsyncStorage,
-        TouchableHighlight,
-        StatusBar
-  } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  AsyncStorage,
+  TouchableHighlight,
+  StatusBar, Image
+} from 'react-native'
 import config from '../API/config'
 import ExpanableList from 'react-native-expandable-section-flatlist'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -126,7 +127,11 @@ export default class Menu extends Component<{}>{
           backgroundColor='#282a2d'
         />
         <View style = {styles.profileView}>
-          <View></View>
+          <View style={{width:80,height:80,alignItems:'center',justifyContent:'center',marginBottom:10}}>
+            <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                   source = {require('../img/garden_logo.png')}>
+            </Image>
+          </View>
           <View style = {{width:'95%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
             <MaterialIcons
                 name='home'
@@ -214,7 +219,7 @@ export default class Menu extends Component<{}>{
                 <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
                                     underlayColor = 'transparent'>
                   <MaterialIcons
-                      name='settings'
+                      name='group'
                       size={22}
                       style = {{color:'#363a42'}}>
                   </MaterialIcons>
@@ -226,7 +231,7 @@ export default class Menu extends Component<{}>{
                 <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
                                     underlayColor = 'transparent'>
                   <MaterialIcons
-                      name='settings'
+                      name='ring-volume'
                       size={22}
                       style = {{color:'#363a42'}}>
                   </MaterialIcons>
@@ -248,10 +253,10 @@ const styles = StyleSheet.create({
     backgroundColor:'#f5f5f5'
   },
   profileView:{
-    height:'15%',
+    height:'20%',
     width:'100%',
     alignItems:'center',
-    justifyContent:'space-between',
+    justifyContent:'center',
     backgroundColor:'#282a2d',
     paddingBottom: 10
   }

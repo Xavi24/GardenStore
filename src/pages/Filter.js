@@ -85,13 +85,14 @@ export default class Filter extends Component<{}>{
     let price = '';
     price = '['+'min='+this.state.min+','+'max='+this.state.max+']';
     var url = this.state.url+this.state.pass_name+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max
-    console.warn('url',url);
+    console.log('url',url);
     fetch(url)
         .then((response)=>response.json())
         .catch((error)=>console.warn(error))
         .then((response)=>{
           console.warn('response',response);
           if (response.data) {
+            filterdata.length = 0;
             if (response.data.length!=0) {
               if (response.data.data.length == 0) {
                 this.setState({
@@ -108,27 +109,32 @@ export default class Filter extends Component<{}>{
     this.setState({
       customselected:this.state.sel_spec_data
     })
+    filterdata.push({
+      name : this.state.specdata,
+      value : this.state.sel_spec_data
+    })
     console.warn('sel_spec_data',this.state.customselected);
-    if (filterdata.length != 0) {
-      let flag = 0
-      let objIndex = filterdata.findIndex((obj => obj.name == this.state.specdata));
-      if(objIndex>=0)
-      {
-        filterdata[objIndex].value = this.state.sel_spec_data;
-        flag=1;
-      }
-      if(!flag) {
-        filterdata.push({
-          name : this.state.specdata,
-          value : this.state.sel_spec_data
-        })
-      }
-    } else {
-      filterdata.push({
-        name : this.state.specdata,
-        value : this.state.sel_spec_data
-      })
-    }
+    console.warn('filterdata',filterdata);
+    // if (filterdata.length != 0) {
+    //   let flag = 0;
+    //   let objIndex = filterdata.findIndex((obj => obj.name == this.state.specdata));
+    //   if(objIndex>=0)
+    //   {
+    //     filterdata[objIndex].value = this.state.sel_spec_data;
+    //     flag=1;
+    //   }
+    //   if(!flag) {
+    //     filterdata.push({
+    //       name : this.state.specdata,
+    //       value : this.state.sel_spec_data
+    //     })
+    //   }
+    // } else {
+    //   filterdata.push({
+    //     name : this.state.specdata,
+    //     value : this.state.sel_spec_data
+    //   })
+    // }
     this.setState({
       filterdata : filterdata,
       spec_show : false
@@ -261,7 +267,7 @@ export default class Filter extends Component<{}>{
                                     style={{width:'98%',backgroundColor:'#360',marginTop:5,elevation:2,height:this.state.animHeight,position:'absolute'}}>
                     <TouchableHighlight style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                         underlayColor='transparent'
-                                        onPress = {()=>this.setState({cat_screen:false})}>
+                                        onPress = {()=>this.setState({cat_screen:false,grid_data:this.state.empty})}>
                       <View style={{flexDirection:'row'}}>
                         <Text style={{color:'#fff',fontSize:14}}>Categogy</Text>
                         <MaterialIcons
@@ -310,7 +316,7 @@ export default class Filter extends Component<{}>{
                                     style={{width:'98%',backgroundColor:'#360',marginTop:5,elevation:2,height:this.state.animHeight,position:'absolute'}}>
                     <TouchableHighlight style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                         underlayColor='transparent'
-                                        onPress = {()=>this.setState({brand_screen:false})}>
+                                        onPress = {()=>this.setState({brand_screen:false,grid_brands:this.state.empty})}>
                       <View style={{flexDirection:'row'}}>
                         <Text style={{color:'#fff',fontSize:14}}>Brands</Text>
                         <MaterialIcons

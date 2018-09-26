@@ -38,6 +38,10 @@ import ReplaceProduct from './src/pages/ReplaceProduct'
 import Order from './src/pages/Order'
 import Open from './src/pages/Open'
 import Cancel from './src/pages/Cancel'
+import WebViewClass from './src/pages/WebViewClass'
+import ReplaceListView from './src/pages/ReplaceListView'
+import ViedioWeb from './src/pages/ViedioWeb'
+import SyncCartLogin from './src/pages/SyncCartLogin'
 
 const StackNavigator_Function = StackNavigator({
   get_started :{screen:Getstarted},
@@ -75,7 +79,11 @@ const StackNavigator_Function = StackNavigator({
   replace_product : {screen : ReplaceProduct},
   order : {screen : Order},
   open : {screen : Open},
-  cancel : {screen : Cancel}
+  cancel : {screen : Cancel},
+  web : {screen : WebViewClass},
+  replacelist_view : {screen : ReplaceListView},
+  video_web : {screen:ViedioWeb},
+  sync_login : {screen:SyncCartLogin}
   },
 {
   headerMode:'none'

@@ -33,7 +33,11 @@ export default class replaceProduct extends Component<{}>{
       img : '',
       price : '',
       replaceValue : '',
-      name : ''
+      name : '',
+      show : false,
+      removeScreen: false,
+      error_screen : false,
+
     }
   }
     async _getAccessToken() {
@@ -54,6 +58,30 @@ export default class replaceProduct extends Component<{}>{
     replaceProduct(){
         console.warn('access_token',this.state.access_token);
         console.warn('rsn',this.state.replaceValue);
+        this.setState({
+          removeScreen : false,
+          show : true
+        });
+      console.warn('order_product_id',this.state.order_product_id);
+
+      var url = config.API_URL+'user/requestProduct/'+this.state.order_product_id;
+      fetch(url,{
+        headers : new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
+        })
+      })
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+            this.setState({
+              show : false
+            });
+            if (response.code == '200'){
+              this.props.navigation.navigate('replacelist_view',{data:response,order_product_id:this.state.order_product_id,replaceValue:this.state.replaceValue});
+            }
+          })
     }
     componentWillMount(){
         const {params} = this.props.navigation.state;
@@ -167,18 +195,61 @@ export default class replaceProduct extends Component<{}>{
 
                   <View style = {{width:'100%',height:45,alignItems:'center',justifyContent:'center',backgroundColor:'#369',borderBottomRightRadius:6,
                     borderBottomLeftRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6,marginTop:20}}>
-                    <TouchableHighlight style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
+                    <TouchableHighlight style = {{width:'100%',alignItems:'center',justifyContent:'center'}}
+                      underlayColor='transparent'
+                      onPress = {()=>this.setState({removeScreen:true})}>
                       <View>
-                        <Text style = {{color:'#fff',fontSize:16,fontWeight:'bold'}}>Refond-Product</Text>
+                        <Text style = {{color:'#fff',fontSize:16,fontWeight:'bold'}}>Replace-Product</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
                 </View>
-
-
               </View>
             </ScrollView>
           </View>
+          <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
+                            visible = {this.state.removeScreen}>
+            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
+              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants replace this product ?</Text>
+              <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
+                <View style = {{width:'60%'}}></View>
+                <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
+                  <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                        onPress = {()=>this.setState({removeScreen:false})}>No</Text>
+                  <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                        onPress = {()=>this.replaceProduct()}>Yes</Text>
+                </View>
+              </View>
+            </View>
+          </AnimatedHideView>
+          <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
+            position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
+                            visible = {this.state.error_screen}>
+            <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
+              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+              <Image style = {{width:60,height:60,marginTop:20}}
+                     source = {require('../img/attention.png')}>
+              </Image>
+              <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>
+                There is some problem with replace your Product. Please select Your
+                reson </Text>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
+                <View>
+
+                </View>
+                <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                      onPress = {()=>this.setState({error_screen : false})}>OK</Text>
+              </View>
+            </View>
+          </AnimatedHideView>
+
+          <Spinner visible = {this.state.show}
+                   textContent = {"Loading..."}
+                   color = {'#369'}
+                   textStyle = {{color: '#369'}}
+                   overlayColor = {'#fff'}
+          />
         </View>
     );
   }

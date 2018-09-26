@@ -22,8 +22,7 @@ import { CheckBox } from 'react-native-elements'
 
 const cartData = [];
 var radio_props = [
-  {label: 'Debit', value: 0 },
-  {label: 'Credit', value: 1 },
+  {label: 'Pay Online', value: 1 },
   {label: 'Cash on Delivery', value: 2}
 ];
 let item = [];
@@ -31,7 +30,7 @@ let dataValue = {};
 export default class CartBuynow extends Component<{}>{
   static navigationOptions = {
     header :null
-  }
+  };
   constructor(props){
     super(props);
     this.state = {
@@ -113,14 +112,15 @@ export default class CartBuynow extends Component<{}>{
       err_landmark : '',
       err_district : '',
       point_screen : false,
-      coupon : ''
+      coupon : '',
+      coupon_disc : ''
     }
   }
   ApplyCoupon(){
     let Data = {};
     Data.coupon_code = this.state.coupon,
     Data.product = this.state.product_id,
-    Data.total_price = this.state.total,
+    Data.total_price = this.state.price,
     Data.vendor = this.state.vendor_id
     console.warn('Data',Data);
     var url = config.API_URL+'coupon/apply'
@@ -138,6 +138,16 @@ export default class CartBuynow extends Component<{}>{
     .catch((error)=>console.warn(error))
     .then((response)=>{
       console.warn('response',response);
+      if (response.code == '200') {
+        if (response.data) {
+          this.setState({
+            coupon_disc : response.data.coupon_details.amount,
+            price : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount)
+          });
+          Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
+          console.warn('coupon',this.state.coupon_disc);
+        }
+      }
     })
   }
   getAddress(){
@@ -220,13 +230,9 @@ export default class CartBuynow extends Component<{}>{
     })
   }
   payment_method(value){
-    if (value == '0') {
+    if (value == '1') {
       this.setState({
-        payment_method : 'DEBIT'
-      })
-    } else if (value == '1') {
-      this.setState({
-        payment_method : 'CREDIT'
+        payment_method : 'NOW'
       })
     } else if (value == '2') {
       this.setState({
@@ -260,9 +266,9 @@ export default class CartBuynow extends Component<{}>{
       this.setState({
         user_point:this.state.points
       })
-      console.warn('price',this.state.total);
+      console.warn('price',this.state.price);
       console.warn('Partialpoints---------',this.state.points1);
-      var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.total
+      var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.price
       fetch(url, {
         headers : new Headers({
           'Content-Type' : 'application/json',
@@ -335,7 +341,7 @@ export default class CartBuynow extends Component<{}>{
           totalPrize = totalPrize+parseInt(data.variation_details.price)*data.count
         }
         this.setState({
-          total : totalPrize
+          price : totalPrize
         })
       } else {
         console.warn('array is empty');
@@ -366,6 +372,7 @@ export default class CartBuynow extends Component<{}>{
     this.setState({
       placeOrderScreen:false
     })
+
     console.warn('access_token',this.state.access_token);
     console.warn('user_address_id',this.state.user_address_id);
     console.warn('payment_method',this.state.payment_method);
@@ -376,46 +383,58 @@ export default class CartBuynow extends Component<{}>{
     checkOutData.measurements = this.state.measurements,
     checkOutData.Points = this.state.points
     console.warn('checkOutData',checkOutData);
-    var url = config.API_URL+'user/checkout'
-    fetch(url, {
-      method : 'POST',
-      body : JSON.stringify(checkOutData),
-      headers: new Headers({
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        'Authorization' : this.state.access_token
-      })
-    })
-    .then((response)=>response.json())
-    .catch((error)=>console.warn(error))
-    .then((response)=>{
-      console.warn('responseCart',response);
-      if (response.code == '200') {
-        this.setState({
-          emptyScreen : true
+    if (this.state.payment_method == 'NOW'){
+      var url = config.API_URL+'user/checkout'
+      fetch(url, {
+        method : 'POST',
+        body : JSON.stringify(checkOutData),
+        headers: new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
         })
-      } else {
-        this.setState({
-          placeorder_error_screen : true
+      })
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+            console.warn('responseCart',response);
+            if (response.code == '200') {
+              this.props.navigation.navigate('web',{api:response.redirect});
+              console.warn('web_redirect',this.state.web_redirect);
+            } else {
+              this.setState({
+                placeorder_error_screen : true
+              })
+            }
+          })
+    } else if (this.state.payment_method=='COD'){
+      var url = config.API_URL+'user/checkout';
+      fetch(url, {
+        method : 'POST',
+        body : JSON.stringify(checkOutData),
+        headers: new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
         })
-      }
-    })
-  }
-  payment_method(value){
-    if (value == '0') {
-      this.setState({
-        payment_method : 'DEBIT'
       })
-    } else if (value == '1') {
-      this.setState({
-        payment_method : 'CREDIT'
-      })
-    } else if (value == '2') {
-      this.setState({
-        payment_method : 'COD'
-      })
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+            console.warn('responseCart',response);
+            if (response.code == '200') {
+              this.setState({
+                emptyScreen : true
+              })
+            } else {
+              this.setState({
+                placeorder_error_screen : true
+              })
+            }
+          })
     }
   }
+
   componentWillMount(){
     this._getAccessToken();
   }
@@ -951,7 +970,7 @@ export default class CartBuynow extends Component<{}>{
             </ScrollView>
             <View style = {styles.footer}>
               <View style = {{width:'50%',alignItems:'center',justifyContent:'center'}}>
-                <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>RS,{this.state.total}</Text>
+                <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>RS,{this.state.price}</Text>
               </View>
               <TouchableHighlight style = {styles.paybtn}
                 underlayColor = 'transparent'
@@ -1372,7 +1391,7 @@ export default class CartBuynow extends Component<{}>{
                   <View style = {{width:'90%',height:40,backgroundColor:'#369',marginTop:20,alignItems:'center',justifyContent:'center'}}>
                     <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
                       underlayColor = 'transparent'
-                      onPress = {()=>this.props.navigation.navigate('my_order')}>
+                      onPress = {()=>this.props.navigation.navigate('open')}>
                       <Text style = {{color:'#fff',fontSize:16,fontWeight:'bold'}}>View Orders</Text>
                     </TouchableHighlight>
                   </View>

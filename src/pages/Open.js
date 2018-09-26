@@ -34,7 +34,8 @@ export default class Open extends Component<{}>{
         openData : [],
         cancel_order : '',
         id : '',
-        show : false
+        show : false,
+        pay_height : 0
       }
     }
     async _getAccessToken(){
@@ -66,7 +67,7 @@ export default class Open extends Component<{}>{
       .then((response)=>response.json())
       .catch((error)=>console.warn(error))
       .then((response)=>{
-        // console.warn('response//open orders............',response);
+        console.log('response//open orders............',response);
         this.setState({
           show : false
         })
@@ -75,21 +76,33 @@ export default class Open extends Component<{}>{
             if (response.data.data.length > 0){
               this.state.openData.length = 0;
               for (let data of response.data.data){
-                // console.warn('data',data);
+                console.log('////////////////',data);
+                if (data.payment_method == 'NOW'){
+                  if (data.payment_data.payment_status == 'processing' || data.payment_data.payment_status == 'Processing'){
+                    this.setState({
+                      pay_height : 50
+                    })
+                  } else {
+                    this.setState({
+                      pay_height : 0
+                    })
+                  }
+                }
                 if (data.order_status == 'processing' || data.order_status == 'Processing') {
                   this.setState({
                     cancel_order : 'Cancel Order'
                   })
                 }
-                openData.order_id = data.order_id,
-                openData.address_id = data.address_id,
-                openData.date = data.date_purchased,
-                openData.amount = data.amount,
-                openData.order_status = data.order_status,
-                openData.img = data.first_orderproduct.single_var_img.variation_image,
-                openData.name = data.first_orderproduct.product_name,
-                openData.product_order_id = data.first_orderproduct.order_product_id,
-                openData.product_count = data.orderproducts_count
+                openData.order_id = data.order_id;
+                openData.address_id = data.address_id;
+                openData.date = data.date_purchased;
+                openData.amount = data.amount;
+                openData.order_status = data.order_status;
+                openData.img = data.first_orderproduct.single_var_img.variation_image;
+                openData.name = data.first_orderproduct.product_name;
+                openData.product_order_id = data.first_orderproduct.order_product_id;
+                openData.product_count = data.orderproducts_count;
+                openData.height = this.state.pay_height;
 
                 openDataArray.push({
                   order_id : openData.order_id,
@@ -100,11 +113,13 @@ export default class Open extends Component<{}>{
                   img : openData.img,
                   name : openData.name,
                   product_order_id : openData.product_order_id,
-                  product_count : openData.product_count
-                })
+                  product_count : openData.product_count,
+                  height : openData.height
+                });
                 this.setState({
                   openData : openDataArray
-                })
+                });
+                console.log('777777777777777777777',this.state.openData)
               }
             }
           }
@@ -114,9 +129,9 @@ export default class Open extends Component<{}>{
     cancelOrder(id){
       this.setState({
         show : true
-      })
+      });
       console.warn('mainid',id);
-      var url = config.API_URL+'user/cancelOrder/'+id
+      var url = config.API_URL+'user/cancelOrder/'+id;
       fetch(url, {
         method : 'PUT',
         headers: new Headers({
@@ -137,10 +152,32 @@ export default class Open extends Component<{}>{
             }
           })
     }
+    reTryPayment(id){
+      let pay = {};
+      pay.order_id = id;
+      var url = config.API_URL+'retry-payment';
+        fetch(url, {
+          method : 'POST',
+          body : JSON.stringify(pay),
+          headers: new Headers({
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json',
+            'Authorization' : this.state.access_token
+          })
+        })
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+           console.warn('6666666666666666666',response);
+            if (response.code == '200'){
+              this.props.navigation.navigate('web',{api:response.redirect});
+            }
+          })
+    }
     componentWillMount(){
       this.setState({
         show : true
-      })
+      });
       this._getAccessToken();
     }
   render(){
@@ -178,6 +215,18 @@ export default class Open extends Component<{}>{
                             <View style = {{width:'70%',height:'100%'}}>
                               <Text style = {{color:'#000',fontSize:12}}>{item.name}</Text>
                               <Text style = {{color:'#360',fontSize:12}}>RS. {item.amount}</Text>
+                              <View style={{width:'100%',height:item.height,flexDirection:'row',marginTop:10}}>
+                                <Text style={{color:'#800000',fontSize:12,marginTop:5}}>Payment Status : Failed</Text>
+                                <TouchableHighlight style={{marginLeft:10}}
+                                  underlayColor='transparent'
+                                  onPress = {()=>this.reTryPayment(item.order_id)}>
+                                  <MaterialIcons
+                                      name='replay'
+                                      size={24}
+                                      style = {{color:'#369'}}>
+                                  </MaterialIcons>
+                                </TouchableHighlight>
+                              </View>
                             </View>
                             <View style = {{width:'30%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                             <Image style = {{width:'70%',height:'95%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}

@@ -292,14 +292,15 @@ export default class SearchData extends Component<{}>{
     setTimeout(()=>{
       this.setState({
         bottom : ''
-      })
+      });
       console.warn('delayed bottom',this.state.bottom);
     },500)
   }
   goToSearch(){
     console.warn('.......',this.state.search_data);
-
-    this.getProductdata(this.state.search_data)
+    if (this.state.search_data) {
+      this.getProductdata(this.state.search_data)
+    }
   }
   updateValue(text,field){
     if (field == 'search') {
@@ -309,7 +310,7 @@ export default class SearchData extends Component<{}>{
     }
   }
   render(){
-    const {goBack} = this.props.navigation
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
@@ -407,11 +408,6 @@ export default class SearchData extends Component<{}>{
                                   marginTop:2}}>{item.price}</Text>
                                 <Text style = {{color:'#0cb038',fontSize:10,marginLeft:5,marginTop:2}}>{item.disc}</Text>
                               </View>
-                              <MaterialIcons
-                                name='favorite-border'
-                                size={20}
-                                style = {{color:'#595656'}}>
-                              </MaterialIcons>
                             </View>
                           </View>
                         </View>

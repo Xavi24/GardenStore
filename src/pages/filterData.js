@@ -360,7 +360,7 @@ export default class filterData extends Component<{}>{
     },500)
   }
   goToSearch(){
-    if (this.state.search_data!='') {
+    if (this.state.search_data) {
         this.props.navigation.navigate('searchData',{name:this.state.search_data})
     }
   }
@@ -470,11 +470,6 @@ export default class filterData extends Component<{}>{
                                   marginTop:2}}>{item.price}</Text>
                                 <Text style = {{color:'#0cb038',fontSize:10,marginLeft:5,marginTop:2}}>{item.disc}</Text>
                               </View>
-                              <MaterialIcons
-                                name='favorite-border'
-                                size={20}
-                                style = {{color:'#595656'}}>
-                              </MaterialIcons>
                             </View>
                           </View>
                         </View>

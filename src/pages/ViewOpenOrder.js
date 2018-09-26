@@ -9,7 +9,8 @@ import {
     StatusBar,
     TouchableHighlight,
     Image,
-    BackHandler
+    BackHandler,
+    FlatList
 } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 import config from '../API/config';
@@ -30,7 +31,10 @@ export default class ViewOpenOrder extends Component<{}>{
       cancel_item : '',
       show : false,
       removeScreen : false,
-      order_product_id : ''
+      order_product_id : '',
+      mes : [],
+      points : '',
+      pointText : ''
     }
   }
   async _getAccessToken(){
@@ -51,20 +55,20 @@ export default class ViewOpenOrder extends Component<{}>{
     const {params} = this.props.navigation.state;
     this.setState({
       order_id : params.order_id
-    })
+    });
     this.setState({
       show : true
-    })
+    });
     this._getAccessToken();
   }
   getOrderDetails(){
     this.setState({
       show : true,
-    })
+    });
     let orderProduct = {};
     let productArray = [];
     console.warn('id',this.state.order_id);
-    var url = config.API_URL+'user/orderDetails/'+this.state.order_id
+    var url = config.API_URL+'user/orderDetails/'+this.state.order_id;
     fetch(url, {
       method : 'GET',
       headers: new Headers({
@@ -76,20 +80,34 @@ export default class ViewOpenOrder extends Component<{}>{
       .then((response)=>response.json())
       .catch((error)=>console.warn(error))
       .then((response)=>{
-        console.warn('response',response);
+        console.log('..................',response.data);
         this.setState({
           address : response.data.address,
           show : false
-        })
+        });
         console.warn('address',this.state.address);
         if (response) {
           if (response.data) {
-            orderProduct.date = response.data.date_purchased,
-            orderProduct.amount = response.data.amount
+            if (response.data.is_points == 1){
+              this.setState({
+                points : response.data.points,
+                pointText : 'Points Used - '
+              })
+            }
+            orderProduct.date = response.data.date_purchased;
+            orderProduct.amount = response.data.amount;
+            orderProduct.fbin = response.data.fbin;
             if (response.data.orderproducts) {
               if (response.data.orderproducts.length >0) {
                 this.state.productArray.length = 0;
                 for(let data of response.data.orderproducts){
+                  for (let mesData of data.measurements){
+                    this.state.mes.push({
+                      name : mesData.measurement_name,
+                      value : mesData.value
+                    })
+                  }
+                  console.warn('{{{{{{{{}}}}}}}}}}}',this.state.mes);
                   console.warn('status/////',data.order_last_status.status);
                   console.warn('data',data);
                   if (data.order_last_status.status == 'Cancelled' || data.order_last_status.status == 'cancelled') {
@@ -97,15 +115,15 @@ export default class ViewOpenOrder extends Component<{}>{
                   } else if (data.order_last_status.status == 'processing' || data.order_last_status.status == 'Processing') {
                     orderProduct.btn_name = 'Cancel Item'
                   }
-                  orderProduct.order_product_id = data.order_product_id,
-                  orderProduct.product_id = data.product_id,
-                  orderProduct.product_name = data.product_name,
-                  orderProduct.product_price = data.product_price,
-                  orderProduct.product_qty = data.product_qty,
-                  orderProduct.measurements = data.measurements,
-                  orderProduct.img = data.single_var_img.variation_image,
-                  orderProduct.status = data.order_last_status.status,
-                  orderProduct.slug = data.variation.slug
+                  orderProduct.order_product_id = data.order_product_id;
+                  orderProduct.product_id = data.product_id;
+                  orderProduct.product_name = data.product_name;
+                  orderProduct.product_price = data.product_price;
+                  orderProduct.product_qty = data.product_qty;
+                  orderProduct.measurements = data.measurements;
+                  orderProduct.img = data.single_var_img.variation_image;
+                  orderProduct.status = data.order_last_status.status;
+                  orderProduct.slug = data.variation.slug;
 
                   productArray.push({
                     date : orderProduct.date,
@@ -119,7 +137,11 @@ export default class ViewOpenOrder extends Component<{}>{
                     img : orderProduct.img,
                     status : orderProduct.status,
                     btn_name : orderProduct.btn_name,
-                    slug : orderProduct.slug
+                    slug : orderProduct.slug,
+                    mes : this.state.mes,
+                    fbin : orderProduct.fbin,
+                    points : this.state.points,
+                    pointText : this.state.pointText
                   })
                   this.setState({
                     productArray : productArray
@@ -189,44 +211,64 @@ export default class ViewOpenOrder extends Component<{}>{
                 itemDimension={360}
                 items={this.state.productArray}
                 renderItem={item => (
-                  <TouchableHighlight underlayColor = 'transparent'
-                    onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>
-                    <View style = {{width:'100%',backgroundColor:'#fff',elevation:1}}>
+                    <View style = {{width:'100%',backgroundColor:'#fff',elevation:2}}>
                       <View style = {{width:'100%',padding:10,borderWidth:1,borderColor:'#eee'}}>
-                        <Text style = {{fontSize:14}}>ORDER ID - {item.order_product_id}</Text>
+                        <Text style = {{fontSize:14}}>ORDER ID - {item.fbin}</Text>
                       </View>
                       <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                         <View style = {{width:'75%',padding:10}}>
-                          <Text style = {{color:'#360',fontSize:16,fontWeight:'bold'}}>{item.product_name}</Text>
-                          <Text>PODUCT ID - {item.product_id}</Text>
-                          <Text style = {{color:'#369'}}>RS. {item.product_price}</Text>
-                          <Text>Quantity - {item.product_qty}</Text>
-                          <Text>Status - {item.status}</Text>
-                          <Text style = {{color:'#360'}}>Purchased on {item.date}</Text>
+                          <Text style = {{color:'#360',fontSize:14,fontWeight:'bold'}}
+                             onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>{item.product_name}</Text>
+                          <Text style = {{color:'#369',fontSize:12}}>RS. {item.product_price}</Text>
+                          <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
+                          <Text style={{fontSize:12}}>{item.pointText} {item.points}</Text>
+                          <Text style={{fontSize:12}}>Status - {item.status}</Text>
+                          <Text style = {{color:'#360',fontSize:12}}>Purchased on {item.date}</Text>
+                          <View style = {{width:'100%'}}>
+                            <View style = {{width:'100%',marginLeft:5}}>
+                              <GridView
+                                  itemDimension={360}
+                                  items={item.mes}
+                                  renderItem={item => (
+                                      <View style = {{width:'100%',flexDirection:'row'}}>
+                                        <View style = {{width:'70%'}}>
+                                          <Text style = {{fontSize:12,color:'#000',fontWeight:'bold'}}>{item.name}</Text>
+                                        </View>
+                                        <View style = {{width:'30%',justifyContent:'center',marginLeft:5}}>
+                                          <Text style = {{fontSize:12,fontWeight:'bold',color:'#006400',textAlign: 'left'}}>{item.value}</Text>
+                                        </View>
+                                      </View>
+                                  )}
+                              />
+                            </View>
+                          </View>
                         </View>
                         <View style = {{width:'25%',height:120,alignItems:'center',justifyContent:'center'}}>
-                          <Image style = {styles.image}
-                            source ={{uri:config.IMG_URL+item.img}}>
-                          </Image>
+                          <TouchableHighlight underlayColor='transparent'
+                            style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
+                            onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>
+                            <Image style = {styles.image}
+                                   source ={{uri:config.IMG_URL+item.img}}>
+                            </Image>
+                          </TouchableHighlight>
                         </View>
                       </View>
                       <View style = {{width:'100%',padding:10,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                         <View style = {{width:'70%'}}></View>
                         <View style = {{width:'30%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                          <Text style = {{color:'#369',fontWeight:'bold'}}
+                          <Text style = {{color:'#369',fontWeight:'bold',fontSize:12}}
                             onPress = {()=>this.setState({order_product_id:item.order_product_id,removeScreen:true})}>{item.btn_name}</Text>
                         </View>
                       </View>
                     </View>
-                  </TouchableHighlight>
                 )}
               />
-              <View style = {{width:'95%',padding:10,backgroundColor:'#fff',marginBottom:10,elevation:1}}>
+              <View style = {{width:'95%',padding:10,backgroundColor:'#fff',marginBottom:10,elevation:2}}>
                 <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Shipping Details : </Text>
                 <Text style = {{marginTop:10,color:'#369',fontSize:15,fontWeight:'bold'}}>{this.state.address.name}</Text>
                 <Text>{this.state.address.street_address}</Text>
                 <Text>{this.state.address.area+','+this.state.address.building}</Text>
-                <Text>{this.state.address.city+','+this.state.address.district+','+this.state.address.state+','+this.state.address.country}</Text>
+                <Text>{this.state.address.country}</Text>
                 <Text style = {{color:'#360',fontWeight:'bold'}}>Pin Code - {this.state.address.postcode}</Text>
                 <Text style = {{color:'#000',fontWeight:'bold'}}>Mobile Number - {this.state.address.phone_no}</Text>
               </View>

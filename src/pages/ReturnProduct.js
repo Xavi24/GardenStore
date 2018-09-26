@@ -58,7 +58,7 @@ export default class ReturnProduct extends Component<{}>{
       this.setState({
         removeScreen : false,
         show : true
-      })
+      });
       console.warn('access_token',this.state.access_token);
       console.warn('rsn',this.state.returnValue);
       console.warn('order_product_id',this.state.order_product_id);
@@ -215,27 +215,11 @@ export default class ReturnProduct extends Component<{}>{
                       underlayColor = 'transparent'
                       onPress = {()=>this.setState({removeScreen:true})}>
                       <View>
-                        <Text style = {{color:'#fff',fontSize:16,fontWeight:'bold'}}>Refond-Product</Text>
+                        <Text style = {{color:'#fff',fontSize:16,fontWeight:'bold'}}>Refund-Product</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
                 </View>
-                <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
-                  visible = {this.state.removeScreen}>
-                  <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-                    borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-                    <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants re-fund this product ?</Text>
-                    <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
-                      <View style = {{width:'60%'}}></View>
-                      <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
-                        <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
-                          onPress = {()=>this.setState({removeScreen:false})}>No</Text>
-                        <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
-                          onPress = {()=>this.reFundProduct()}>Yes</Text>
-                      </View>
-                    </View>
-                  </View>
-                </AnimatedHideView>
               </View>
             </ScrollView>
           </View>
@@ -274,6 +258,22 @@ export default class ReturnProduct extends Component<{}>{
                             onPress = {()=>this.setState({error_screen : false})}>OK</Text>
                   </View>
               </View>
+          </AnimatedHideView>
+          <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
+                            visible = {this.state.removeScreen}>
+            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
+              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants re-fund this product ?</Text>
+              <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
+                <View style = {{width:'60%'}}></View>
+                <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
+                  <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                        onPress = {()=>this.setState({removeScreen:false})}>No</Text>
+                  <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                        onPress = {()=>this.reFundProduct()}>Yes</Text>
+                </View>
+              </View>
+            </View>
           </AnimatedHideView>
           <Spinner visible = {this.state.show}
             textContent = {"Loading..."}

@@ -112,8 +112,8 @@ export default class Shop extends Component<{}>{
                })
              }
              console.warn('discccccccccc',this.state.price);
-             let stk = ''
-             stockColor = ''
+             let stk = '';
+             stockColor = '';
              if (product.stock == 0) {
                stk = true,
                stockColor = '#800000',
@@ -335,7 +335,8 @@ export default class Shop extends Component<{}>{
     }
   }
   goToSearch(){
-    if (this.state.search_data!='') {
+    console.warn(';;;;;;;;;;;;;;;;;',this.state.search_data);
+    if (this.state.search_data) {
         this.props.navigation.navigate('searchData',{name:this.state.search_data})
     }
   }
@@ -447,9 +448,6 @@ export default class Shop extends Component<{}>{
                                 <Text style = {{color:'#0cb038',fontSize:10,marginLeft:5,marginTop:2}}>{item.disc}</Text>
                               </View>
                               <View>
-
-
-                                
                               </View>
                             </View>
                           </View>

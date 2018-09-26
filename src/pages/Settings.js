@@ -127,7 +127,7 @@ componentWillUnmount() {
 }
 
   render(){
-    const {goBack} = this.props.navigation
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
@@ -212,7 +212,7 @@ componentWillUnmount() {
               <View style = {{width:'100%',height:this.state.addres_view_height,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
                 <View style = {{width:'85%',flexDirection:'row'}}>
                   <MaterialIcons
-                      name='vpn-key'
+                      name='location-on'
                     size={22}
                     style = {{color:'#369'}}>
                   </MaterialIcons>

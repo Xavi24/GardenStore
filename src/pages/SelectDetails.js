@@ -13,7 +13,9 @@ import {View,
   FlatList
 } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import LinearGradient from 'react-native-linear-gradient'
 import config from '../API/config'
+import Swiper from 'react-native-swiper'
 import GridView from 'react-native-super-grid'
 import Spinner from 'react-native-loading-spinner-overlay'
 import AnimatedHideView from 'react-native-animated-hide-view'
@@ -28,10 +30,7 @@ let p_spec_variation_container = [];
 let measures = [];
 let var_spec_data = [];
 let slug_check_array = [];
-let localCartData = [];
-let temp_slg_array = [];
-let id = 0;
-export default class Details extends Component<{}>{
+export default class SelectDetails extends Component<{}>{
   static navigationOptions = {
     header : null
   };
@@ -91,28 +90,11 @@ export default class Details extends Component<{}>{
       slug_check_Data : [],
       cardViewBorder : '#a09f9f',
       cardBorder : 1,
-      des_screen : false,
-      slug_array : [],
-      color:'#595656',
-      border : 1,
-      local_cart_check : [],
-      api : '',
-      color_check_screen : true,
-      color_size_screen : false,
-      selected_size : '',
-      selected_size_value : '',
-      selected_size_array : [],
-      sec_selected_array : [],
-      backgroundColor : '#eee',
-      contentArray : [],
-      out_of_stock_count : 0,
-      foo_color : '#2fdab8',
-      foo_text : 'Buy Now',
-      availability_text : 'Product Available'
+      des_screen : false
     }
   }
   addMyrating(rating){
-    count = rating;
+    count = rating
     this.fetchRating()
   }
   fetchRating(){
@@ -140,11 +122,11 @@ export default class Details extends Component<{}>{
   }
   addReview(){
     let Data = {};
-    Data.value = count;
-    Data.title = this.state.feedback;
-    Data.review = this.state.review;
-    Data.variation_id = this.state.product_id;
-    var url = config.API_URL+'product/addReview';
+    Data.value = count,
+        Data.title = this.state.feedback,
+        Data.review = this.state.review,
+        Data.variation_id = this.state.product_id
+    var url = config.API_URL+'product/addReview'
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(Data),
@@ -163,7 +145,7 @@ export default class Details extends Component<{}>{
         })
   }
   ViewReview(){
-    var url = config.API_URL+'product/my-review/'+this.state.product_id;
+    var url = config.API_URL+'product/my-review/'+this.state.product_id
     fetch(url, {
       headers: new Headers({
         'Content-Type' : 'application/json',
@@ -274,7 +256,7 @@ export default class Details extends Component<{}>{
     });
     // this.props.navigation.navigate('customization',{data:this.state.measurementData,p_data:this.state.custom_nav_data})
     // console.warn('custom_nav_data',this.state.custom_nav_data);
-    console.warn('measurementData........',this.state.Data);
+    console.warn('measurementData........',this.state.measurementData);
   }
   getDetails(){
     let item;
@@ -285,7 +267,7 @@ export default class Details extends Component<{}>{
     console.log('slug//details :',this.state.slug);
     let spec_datas = [];
     let spec_variation_datas = [];
-    var url = config.API_URL+'productDetail/'+this.state.slug;
+    var url = config.API_URL+'productDetail/'+this.state.slug
     fetch(url, {
       headers: new Headers({
         'Content-Type' : 'application/json',
@@ -299,8 +281,6 @@ export default class Details extends Component<{}>{
           if (response.code){
             if (response.code == 200){
               if (response.data) {
-                id = response.data.product_variation_id
-                console.warn('id.......?????',id);
                 this.state.slider_Images.length = 0;
                 console.log('productDetailresponse',response);
 
@@ -323,29 +303,23 @@ export default class Details extends Component<{}>{
                     vendor_id : product_vendors.vendor_id,
                     prize : product_vendors.product_price,
                     discount : product_vendors.discount
-                  });
+                  })
                   if (this.state.discount == 0) {
                     this.setState({
                       d_color : '#fff',
                       p_color : '#fff'
                     })
                   }
-                  this.setState({
-                    out_of_stock_count : product_vendors.quantity
-                  });
                   if (product_vendors.quantity < 1) {
                     this.setState({
-                      out_of_stock_screen_temp : true,
-                      foo_text : 'Out of Stock',
-                      foo_color : '#800000',
-                      availability_text : ''
+                      out_of_stock_screen_temp : true
                     })
                   }
                   console.warn('out_of_stock_screen_temp',this.state.out_of_stock_screen_temp);
                 }
                 p_specs_container.length = 0;
                 for (let product_specs of response.data.product_details.product_specs){
-                  let product_specs_keys = Object.keys(product_specs);
+                  let product_specs_keys = Object.keys(product_specs)
                   p_specs_container.push({
                     spec_title : product_specs_keys[0],
                     specs : product_specs[product_specs_keys[0]]
@@ -353,13 +327,7 @@ export default class Details extends Component<{}>{
                 }
                 spec_datas.length = 0;
                 for(let spec_data of p_specs_container){
-                  console.warn('Previousssssssssssss',spec_data.specs[0].spec_value);
-                  this.setState({
-                    selected_size : spec_data.specs[0].spec_name,
-                    selected_size_value : spec_data.specs[0].spec_value
-                  });
                   for(let val of spec_data.specs){
-                    console.warn('Vallllllllllllllllllll',val);
                     spec_datas.push({
                       spec_name : val.spec_name,
                       spec_value : val.spec_value
@@ -369,7 +337,6 @@ export default class Details extends Component<{}>{
                 this.setState({
                   spec : spec_datas
                 });
-                console.log('SSSSSSSSSSSSSSSSSSSS',this.state.spec);
                 v_item.length = 0;
                 let v_data = [];
                 for(let product_spec_variation of response.data.product_variation_items){
@@ -380,7 +347,6 @@ export default class Details extends Component<{}>{
                   });
                   let output = [];
                   let flags = [];
-                  let Trial = [];
                   let key = Object.keys(product_spec_variation);
                   console.log('key.......',key);
                   let length = product_spec_variation[key].length;
@@ -393,29 +359,73 @@ export default class Details extends Component<{}>{
                     flags[product_spec_variation[key][i].variation_spec_value] = i;
                     const arr = [];
                     arr.push(product_spec_variation[key][i].variation_slug);
+                    if (arr.includes(this.state.slug)){
+                      this.setState({
+                        cardViewBorder : '#369',
+                        cardBorder : 2
+                      })
+                    } else {
+                      this.setState({
+                        cardViewBorder : '#595656',
+                        cardBorder : 1
+                      });
+                    }
                     output.push({
                       'variation_slug':arr,
                       'variation_spec_value':product_spec_variation[key][i].variation_spec_value,
-                      'img':product_spec_variation[key][i].img
+                      'img':product_spec_variation[key][i].img,
+                      'cardViewBorder':this.state.cardViewBorder,
+                      'cardBorder':this.state.cardBorder
                     });
+                    console.log('output',output);
+
                   }
                   v_data.push({
                     v_category:key,
                     var_data:output
                   });
+                  this.setState({
+                    slug_check_Data : v_data
+                  });
                   var_spec_data.length = 0;
+                  let varArray = [];
+                  let slugCheck = {};
                   slug_check_array.length = 0;
+                  console.log('v_data.....',this.state.slug_check_Data);
                   for (let data of v_data) {
+                    // for (let slug_check of data.var_data){
+                    //   console.log('>>>>>>>>>>>>>>>>',slug_check);
+                    //   if (slug_check.variation_slug.includes(this.state.slug)){
+                    //     this.setState({
+                    //       cardViewBorder : '#369',
+                    //       cardBorder : 2
+                    //     })
+                    //   } else {
+                    //     this.setState({
+                    //       cardViewBorder : '#595656',
+                    //       cardBorder : 1
+                    //     });
+                    //   }
+                    //   slugCheck.variation_slug = slug_check.variation_slug;
+                    //   slugCheck.variation_spec_value = slug_check.variation_spec_value;
+                    //   slugCheck.img = slug_check.img;
+                    //   slugCheck.cardViewBorder = this.state.cardViewBorder;
+                    //   slugCheck.cardBorder = this.state.cardBorder;
+                    //  varArray.push({
+                    //    name : slugCheck
+                    //  });
+                    //   console.warn('////////',varArray)
+                    // }
                     var_spec_data.push({
                       name : data.v_category[0],
                       value : data.var_data
                     })
                   }
+                  console.log('............',var_spec_data)
+                  // for(let slug_check of v_data){
+                  //  console.log('slug_check',slug_check);
+                  // }
                 }
-                this.state.selected_size_array.length = 0;
-                this.state.selected_size_array.push(var_spec_data[0]);
-                console.warn('?????????',var_spec_data);
-                console.log('............',this.state.selected_size_array);
                 spec_variation_datas.length = 0;
                 for(let spec_variation_data of p_spec_variation_container){
                   for(let val of spec_variation_data.specs){
@@ -426,9 +436,6 @@ export default class Details extends Component<{}>{
                     })
                   }
                 }
-                this.getLocalCart();
-
-
                 this.setState({
                   spec_variation : spec_variation_datas
                 });
@@ -471,7 +478,7 @@ export default class Details extends Component<{}>{
                   })
                 }
                 for(let customdata of response.data.measurements){
-                  console.log('customdata////////\\\\\\\\\\',customdata);
+                  console.warn('customdata',customdata);
                   this.setState({
                     product_meassurment_id : customdata.product_measurement_id,
                     name : customdata.name,
@@ -500,206 +507,13 @@ export default class Details extends Component<{}>{
           });
         })
   }
-  async localCart(){
-    console.warn('entered into the local cart method');
-    console.warn('stock--------->>>',this.state.out_of_stock_count);
-    if (this.state.out_of_stock_count<1){
-      Toast.show('Product is out of stock', Toast.LONG);
-    } else {
-      this.setState({
-        show_cart : false
-      });
-      localCartData.push({
-        product_id : this.state.product_id,
-        vendor_id : this.state.vendor_id,
-        sale_price : this.state.sale_price,
-        product_name : this.state.product_name,
-        header_image : this.state.header_image,
-        slug : this.state.slug
-      });
-      console.log('localCartData---------->>>>',localCartData);
-      try {
-        await AsyncStorage.setItem('@MySuperCart:key', JSON.stringify(localCartData));
-      } catch (error) {
-        // Error saving data
-      }
-      // try {
-      //   const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      //   if (localCartData !== null) {
-      //     this.setState({
-      //       local_cart_check : JSON.parse(localCartData)
-      //     });
-      //     console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
-      //   }
-      // } catch (error) {
-      //   // Error retrieving data
-      // }
-    }
+  slug_check_function(){
+
   }
-  async getLocalCart(){
-    try {
-      const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      if (localCartData !== null) {
-        this.setState({
-          local_cart_check : JSON.parse(localCartData),
-          local_cart_view : true
-        });
-        console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
-        for (let data of this.state.local_cart_check) {
-          console.warn('local product_id-------->>', data.product_id);
-          console.warn('product_id-------->>', id);
-          if (id === data.product_id){
-            this.setState({
-              show_cart : false
-            })
-          }
-        }
-      } else {
-        this.setState({
-          emptyScreen : true
-        })
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
-  }
-  // async Cus_LocalCart(){
-  //   this.setState({
-  //     show_cart : false,
-  //   });
-  //   let cartData = {};
-  //   cartData.measurements = JSON.stringify(this.state.measurements);
-  //   console.warn('cart,measurements',this.state.measurements);
-  //   if (this.state.cart_text == 'Add To Cart'){
-  //     this.setState({
-  //       show_cart : false,
-  //       cart_text : 'Move To Cart'
-  //     });
-  //     console.warn('you are not logged in');
-  //     localCartData.push({
-  //       product_id : this.state.product_id,
-  //       vendor_id : this.state.vendor_id,
-  //       sale_price : this.state.sale_price,
-  //       product_name : this.state.product_name,
-  //       header_image : this.state.header_image,
-  //       slug : this.state.slug,
-  //       measurements : cartData.measurements
-  //     });
-  //     console.warn('localCartData',localCartData);
-  //     try {
-  //       await AsyncStorage.setItem('@MySuperCart:key', JSON.stringify(localCartData));
-  //     } catch (error) {
-  //       // Error saving data
-  //     }
-  //     try {
-  //       await AsyncStorage.push('@MySuperCart:key', JSON.stringify(localCartData));
-  //     } catch (error) {
-  //       // Error saving data
-  //     }
-  //
-  //     try {
-  //       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-  //       if (localCartData !== null) {
-  //         this.setState({
-  //           local_cart_check : JSON.parse(localCartData)
-  //         });
-  //         console.warn('local_cart_check',this.state.local_cart_check);
-  //       }
-  //     } catch (error) {
-  //       // Error retrieving data
-  //     }
-  //   } if (this.state.cart_text == 'Move To Cart') {
-  //     this.setState({
-  //       customising_screen : false
-  //     });
-  //     this.props.navigation.navigate('add_to_cart')
-  //   }
-  // }
-  //  async localCart(){
-  //   this.setState({
-  //     show_cart : false
-  //   });
-  //     console.warn('you are not logged in');
-  //     localCartData.push({
-  //       product_id : this.state.product_id,
-  //       vendor_id : this.state.vendor_id,
-  //       sale_price : this.state.sale_price,
-  //       product_name : this.state.product_name,
-  //       header_image : this.state.header_image,
-  //       slug : this.state.slug
-  //     });
-  //     console.warn('localCartData',localCartData);
-  //       try {
-  //         await AsyncStorage.setItem('@MySuperCart:key', JSON.stringify(localCartData));
-  //       } catch (error) {
-  //         // Error saving data
-  //       }
-  //       try {
-  //         await AsyncStorage.push('@MySuperCart:key', JSON.stringify(localCartData));
-  //       } catch (error) {
-  //         // Error saving data
-  //       }
-  //
-  //    try {
-  //      const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-  //      if (localCartData !== null) {
-  //        this.setState({
-  //          local_cart_check : JSON.parse(localCartData)
-  //        });
-  //        console.warn('local_cart_check',this.state.local_cart_check);
-  //      }
-  //    } catch (error) {
-  //      // Error retrieving data
-  //    }
-  //   }
+  SelectedSpec(slug){
 
-
-  SelectedSpec(){
-    this.state.contentArray.length = 0;
-    temp_slg_array.length = 0;
-    let slug_name : '';
-    let slug : [];
-    temp_slg_array.length = 0;
-    console.log('>>>>>>>><<<<<<<',this.state.slug);
-    console.log('var_spec_data-------->>', var_spec_data);
-    for (let data of var_spec_data){
-      let temp_array = [];
-      slug_name = data.name;
-      console.warn('slug_name..............>>',slug_name);
-      for (let slugz of data.value){
-        console.log('slugz----->>',slugz);
-          if (slugz.variation_slug.includes(this.state.slug)) {
-            temp_array.push({
-              variation_slug : slugz.variation_slug,
-              variation_spec_value : slugz.variation_spec_value,
-              img : slugz.img,
-              color:'#369'
-            })
-          } else {
-            temp_array.push({
-              variation_slug : slugz.variation_slug,
-              variation_spec_value : slugz.variation_spec_value,
-              img : slugz.img,
-              color:'#eee'
-            })
-          }
-
-      }
-      temp_slg_array.push({
-        spec : slug_name,
-        detail : temp_array
-      });
-      this.state.contentArray = temp_slg_array;
-
-        console.log('temp_slg_array------>>>',temp_slg_array)
-    }
-    this.setState({
-      color_size_screen : true
-    });
-
-
-      console.log('temp_slg_array----->>', temp_slg_array);
-      // console.log('[[[[[[[[[[[[[[[]]]]]]]]]]]]]',temp_slg_array);
+    console.warn('slggggggg',slug);
+    this.props.navigation.navigate('sel_details2',{slug:slug[0],header_image:this.state.header_image});
   }
   addToWishList(){
     console.warn('enterd into add to wishlist page');
@@ -721,48 +535,6 @@ export default class Details extends Component<{}>{
             })
           }
         })
-  }
-  speckChoose(slug,index){
-    let slug_name : '';
-    console.log('////------------>>>>',slug);
-    console.log('?????????--------->>>>>',temp_slg_array);
-    this.setState({
-      slug : slug[0],
-      color_size_screen : false
-    });
-    this._getAccessToken();
-    // for (let i=0;i<slug;i++){
-    //   for (let data of temp_slg_array){
-    //     let temp_array = [];
-    //     slug_name = data.name;
-    //     for (let slug_check of data.detail){
-    //
-    //       if (slug_check.variation_slug.includes(slug[i])){
-    //         console.warn('true');
-    //         temp_array.push({
-    //           variation_slug : slug_check.variation_slug,
-    //           variation_spec_value : slug_check.variation_spec_value,
-    //           img : slug_check.img,
-    //           color:'#369'
-    //         })
-    //       } else {
-    //         temp_array.push({
-    //           variation_slug : slug_check.variation_slug,
-    //           variation_spec_value : slug_check.variation_spec_value,
-    //           img : slug_check.img,
-    //           color:'#eee'
-    //         })
-    //       }
-    //     }
-    //     temp_slg_array.push({
-    //       spec : slug_name,
-    //       detail : temp_array
-    //     });
-    //     this.state.contentArray = temp_slg_array;
-    //     console.log('/////////////////----->>', this.state.contentArray);
-    //
-    //   }
-    // }
   }
   removeWishList(){
     var url = config.API_URL+'user/wishlistCreate/'+this.state.product_id;
@@ -822,29 +594,8 @@ export default class Details extends Component<{}>{
       this.props.navigation.navigate('add_to_cart')
     }
   }
-  // async getlocalCart(){
-  //   try {
-  //     const value = await AsyncStorage.getItem('@MySuperCart:key');
-  //     console.warn('value//',value);
-  //     if (value) {
-  //       for (let val of value){
-  //         console.warn('valllllllllllllllll',val);
-  //         if (val.product_id == this.state.product_id){
-  //           this.setState({
-  //             show_cart : false,
-  //             cart_text : 'Move To Cart'
-  //           });
-  //         }
-  //       }
-  //     } else {
-  //     }
-  //   } catch (error) {
-  //     console.warn('error',error.message);
-  //   }
-  // }
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    console.warn('params',params);
     this.setState({
       slug : params.slug,
       show : true,
@@ -852,7 +603,26 @@ export default class Details extends Component<{}>{
     });
     this._getAccessToken();
   }
-
+  // async localCart(){
+  //   console.warn('You are not logged in');
+  //   console.warn('product_name',this.state.product_name);
+  //   console.warn('sale_price',this.state.sale_price);
+  //   console.warn('discount',this.state.discount);
+  //   console.warn('slider_Images',this.state.slider_Images[0]);
+  //   this.setState({
+  //     show_cart : false
+  //   });
+  //   try {
+  //     await AsyncStorage.setItem('product_name', this.state.product_name);
+  //     await AsyncStorage.setItem('sale_price', this.state.sale_price);
+  //     await AsyncStorage.setItem('discount',this.state.discount);
+  //     await AsyncStorage.setItem('slider_Images',this.state.slider_Images[0]);
+  //     await AsyncStorage.setItem('product_id',this.state.product_id);
+  //     await AsyncStorage.setItem('vendor_id',this.state.vendor_id);
+  //   } catch (error) {
+  //     console.warn(error.message);
+  //   }
+  // }
   render(){
     const {goBack} = this.props.navigation;
     return(
@@ -903,27 +673,6 @@ export default class Details extends Component<{}>{
                           </View>
                       )}
                   />
-                  <AnimatedHideView visible={this.state.color_check_screen}
-                                    style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}>
-                    <View style={{height:'85%',width:'100%'}}>
-                    </View>
-                    <View style={{height:'15%',width:'100%',flexDirection:'row'}}>
-                      <View style={{width:'80%'}}>
-                      </View>
-                      <View style={{width:'20%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-                        <View style={{height:40,width:40,alignItems:'center',justifyContent:'center',borderRadius:40/2,backgroundColor:'#fff',
-                          elevation:2,borderColor: '#eee',borderWidth:1}}>
-                          <TouchableHighlight style={{height:'70%',width:'70%',alignItems:'center',justifyContent:'center'}}
-                                              underlayColor='transparent'
-                                              onPress = {()=>this.SelectedSpec()}>
-                            <Image style = {{width:'80%',height:'80%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                                   source = {require('../img/rgb.png')}>
-                            </Image>
-                          </TouchableHighlight>
-                        </View>
-                      </View>
-                    </View>
-                  </AnimatedHideView>
                 </View>
                 <View style = {{width:'98%',padding:10,backgroundColor:'#fff',marginTop:5,elevation:2}}>
                   <Text style = {styles.cover_img}>{this.state.product_name}</Text>
@@ -934,9 +683,6 @@ export default class Details extends Component<{}>{
                     <Text style = {{color:'#595656',fontSize:14,marginLeft:4}}>{this.state.prize}</Text>
                     <Text style = {{color:this.state.p_color,fontSize:12,marginLeft:10,textDecorationLine:'line-through'}}>{this.state.sale_price}</Text>
                     <Text style = {{color:this.state.d_color,fontSize:12,marginLeft:10}}>{this.state.discount}% off</Text>
-                  </View>
-                  <View>
-                    <Text style={{fontSize:12,color:'#360',fontWeight:'bold',marginTop:6}}>{this.state.availability_text}</Text>
                   </View>
                   <View style = {{width:'100%',flexDirection:'row',padding:5}}>
                     <View style = {{width:'50%',borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,
@@ -1081,68 +827,40 @@ export default class Details extends Component<{}>{
                   </View>
                 </View>
                 <View style={{width:'100%',backgroundColor:'#fff'}}>
-                  {/*<View style={{width:'100%',marginTop:20}}>*/}
-                  {/*<GridView*/}
-                  {/*itemDimension = {360}*/}
-                  {/*items = {this.state.selected_size_array}*/}
-                  {/*style = {styles.gridView}*/}
-                  {/*spacing = {1}*/}
-                  {/*renderItem = {item =>*/}
-                  {/*<View style = {{elevation:3,height:150,width:'100%'}}>*/}
-                  {/*<Text style={{marginBottom:5,marginLeft:10,color:'#369',fontWeight:'bold'}}>{item.name}</Text>*/}
-                  {/*<ScrollView*/}
-                  {/*horizontal={true}*/}
-                  {/*showsHorizontalScrollIndicator={false}>*/}
-                  {/*<FlatList style = {{marginTop:10}}*/}
-                  {/*data={item.value}*/}
-                  {/*numColumns={item.value.length}*/}
-                  {/*renderItem={({ item, index })=> (*/}
-                  {/*<TouchableHighlight underlayColor='transparent'*/}
-                  {/*onPress={()=>this.SelectedSpec(item.variation_slug)}*/}
-                  {/*style = {{width:60,height:60,borderRadius:60/2,backgroundColor:'#fff',marginLeft:10,alignItems:'center',justifyContent:'center',elevation:3}}>*/}
-                  {/*<Text style={{fontWeight:'bold',fontSize:18,color:'#360'}}>{item.variation_spec_value}</Text>*/}
-                  {/*</TouchableHighlight>*/}
-                  {/*)}*/}
-                  {/*/>*/}
-                  {/*</ScrollView>*/}
-                  {/*</View>*/}
-                  {/*}*/}
-                  {/*/>*/}
-                  {/*</View>*/}
-                  {/*<GridView*/}
-                  {/*itemDimension = {360}*/}
-                  {/*items = {var_spec_data}*/}
-                  {/*style = {styles.gridView}*/}
-                  {/*spacing = {1}*/}
-                  {/*renderItem = {item =>*/}
-                  {/*<View style = {{elevation:3,height:150,width:'100%'}}>*/}
-                  {/*<Text style={{marginBottom:5,marginLeft:10}}>{item.name}</Text>*/}
-                  {/*<ScrollView*/}
-                  {/*horizontal={true}*/}
-                  {/*showsHorizontalScrollIndicator={false}>*/}
-                  {/*<FlatList*/}
-                  {/*data={item.value}*/}
-                  {/*numColumns={item.value.length}*/}
-                  {/*renderItem={({ item, index })=> (*/}
-                  {/*<View style = {{width:80,height:100,backgroundColor:'#fff',marginLeft:10,alignItems:'center',justifyContent:'center'}}>*/}
-                  {/*<TouchableHighlight style={{borderWidth:item.cardBorder,borderColor:item.cardViewBorder,height:'60%',width:'70%',borderTopRightRadius:6,borderTopLeftRadius:6,*/}
-                  {/*borderBottomRightRadius:6,borderBottomLeftRadius:6}}*/}
-                  {/*underlayColor='transparent'*/}
-                  {/*onPress = {()=>this.SelectedSpec(item.variation_slug)}>*/}
-                  {/*<Image style = {{height:'100%',width:'100%',justifyContent:'center',alignItems:'center',resizeMode:'stretch'}}*/}
-                  {/*source={{uri:config.IMG_URL+item.img}}>*/}
-                  {/*</Image>*/}
-                  {/*</TouchableHighlight>*/}
-                  {/*<View style={{height:'20%',alignItems:'center',justifyContent:'center'}}>*/}
-                  {/*<Text style={{marginTop:5}}>{item.variation_spec_value}</Text>*/}
-                  {/*</View>*/}
-                  {/*</View>*/}
-                  {/*)}*/}
-                  {/*/>*/}
-                  {/*</ScrollView>*/}
-                  {/*</View>*/}
-                  {/*}*/}
-                  {/*/>*/}
+                  <GridView
+                      itemDimension = {360}
+                      items = {var_spec_data}
+                      style = {styles.gridView}
+                      spacing = {1}
+                      renderItem = {item =>
+                          <View style = {{elevation:3,height:150,width:'100%'}}>
+                            <Text style={{marginBottom:5,marginLeft:10}}>{item.name}</Text>
+                            <ScrollView
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}>
+                              <FlatList
+                                  data={item.value}
+                                  numColumns={item.value.length}
+                                  renderItem={({ item, index })=> (
+                                      <View style = {{width:80,height:100,backgroundColor:'#fff',marginLeft:10,alignItems:'center',justifyContent:'center'}}>
+                                        <TouchableHighlight style={{borderWidth:item.cardBorder,borderColor:item.cardViewBorder,height:'60%',width:'70%',borderTopRightRadius:6,borderTopLeftRadius:6,
+                                          borderBottomRightRadius:6,borderBottomLeftRadius:6}}
+                                                            underlayColor='transparent'
+                                                            onPress = {()=>this.SelectedSpec(item.variation_slug)}>
+                                          <Image style = {{height:'100%',width:'100%',justifyContent:'center',alignItems:'center',resizeMode:'stretch'}}
+                                                 source={{uri:config.IMG_URL+item.img}}>
+                                          </Image>
+                                        </TouchableHighlight>
+                                        <View style={{height:'20%',alignItems:'center',justifyContent:'center'}}>
+                                          <Text style={{marginTop:5}}>{item.variation_spec_value}</Text>
+                                        </View>
+                                      </View>
+                                  )}
+                              />
+                            </ScrollView>
+                          </View>
+                      }
+                  />
                 </View>
                 <View style = {{width:'100%'}}>
                   <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
@@ -1189,14 +907,14 @@ export default class Details extends Component<{}>{
               </View>
             </ScrollView>
             <View style = {styles.footer}>
-              {/*<View style = {{width:'50%',height:'100%',backgroundColor:'#363a42'}}>*/}
-                {/*<TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}*/}
-                                    {/*underlayColor = 'transparent'*/}
-                                    {/*onPress = {()=>goBack()}>*/}
-                  {/*<Text style = {{color:'#fff'}}>Cancel</Text>*/}
-                {/*</TouchableHighlight>*/}
-              {/*</View>*/}
-              <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:this.state.foo_color}}>
+              <View style = {{width:'50%',height:'100%',backgroundColor:'#363a42'}}>
+                <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
+                                    underlayColor = 'transparent'
+                                    onPress = {()=>goBack()}>
+                  <Text style = {{color:'#fff'}}>Cancel</Text>
+                </TouchableHighlight>
+              </View>
+              <View style = {{width:'50%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#2fdab8'}}>
                 <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                     underlayColor = 'transparent'
                                     onPress = {()=>
@@ -1204,8 +922,8 @@ export default class Details extends Component<{}>{
                                       if (this.state.access_token!=''&&this.state.out_of_stock_screen_temp == false) {
                                         this.props.navigation.navigate('buy_now',{
                                           product_name:this.state.product_name,
-                                          img:this.state.header_image,
                                           prize:this.state.prize,
+                                          img:this.state.header_image,
                                           product:this.state.product_id,
                                           vendor:this.state.vendor_id,
                                           measurements : this.state.measurements,
@@ -1221,7 +939,7 @@ export default class Details extends Component<{}>{
                                       }
                                     }
                                     }>
-                  <Text style = {{color:'#fff'}}>{this.state.foo_text}</Text>
+                  <Text style = {{color:'#fff'}}>Buy Now</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -1341,7 +1059,7 @@ export default class Details extends Component<{}>{
                           </TextInput>
                           <TouchableHighlight underlayColor = 'transparent'
                                               style = {{marginLeft:10}}
-                                              onPress = {()=>this.setState({des_screen:true,des:item.description,api:item.video})}>
+                                              onPress = {()=>this.setState({des_screen:true,des:item.description})}>
                             <MaterialIcons
                                 name='info'
                                 size={30}
@@ -1355,15 +1073,7 @@ export default class Details extends Component<{}>{
               <View style = {{width:'100%',height:50,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                 <TouchableHighlight style = {{width:'50%',height:'100%'}}
                                     underlayColor = 'transparent'
-                                    onPress = {()=>{
-                                      if(this.state.access_token){
-                                        console.warn('access_token//',this.state.access_token);
-                                        this.addToCart();
-                                      } else {
-                                        console.warn('access_token',this.state.access_token);
-                                        // this.Cus_LocalCart();
-                                      }
-                                    }}>
+                                    onPress = {()=>this.addToCart()}>
                   <View style = {{width:'100%',height:'100%',backgroundColor:'#363a42',alignItems:'center',justifyContent:'center'}}>
                     <Text style = {{color:'#fff'}}>{this.state.cart_text}</Text>
                   </View>
@@ -1442,96 +1152,11 @@ export default class Details extends Component<{}>{
                 <View style = {{height:'100%',width:'100%',backgroundColor:'#fff',elevation:4}}>
                   <ScrollView style = {{width:'100%',height:'100%'}}>
                     <View style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
-                      <View style={{width:'90%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:20}}>
-                        <View style={{width:'80%'}}>
-
-                        </View>
-                        <View style={{width:'20%',alignItems:'center',justifyContent:'center'}}>
-                          <TouchableHighlight underlayColor='transparent'
-                                              onPress = {()=> {
-                                                if (this.state.api!=null){
-                                                  this.props.navigation.navigate('video_web',{api:this.state.api})
-                                                }
-                                              }}>
-                            <MaterialIcons
-                                name='videocam'
-                                size={40}
-                                style = {{color:'#800000'}}>
-                            </MaterialIcons>
-                          </TouchableHighlight>
-                        </View>
-                      </View>
                       <Text style = {{textAlign:'center',fontSize:18,fontWeight:'bold',color:'#360',marginTop:20,marginBottom:20}}>Read The Below Content Carefully</Text>
                       <Text style = {{textAlign:'center',fontSize:16,fontWeight:'bold',color:'#000',marginTop:20,marginBottom:20}}>{this.state.des}</Text>
                     </View>
                   </ScrollView>
                 </View>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView visible={this.state.color_size_screen}
-                            style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'rgba(00,00,00,0.8)',position:'absolute'}}>
-            <View style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
-              <View style={{height:'40%'}}>
-              </View>
-              <View style={{height:'60%',width:'100%',backgroundColor:'#eee'}}>
-                <View style={{marginTop:10,marginLeft:10,flexDirection:'row'}}>
-                  <TouchableHighlight underlayColor='transparent'
-                                      onPress = {()=>this.setState({color_size_screen : false})}>
-                    <MaterialIcons
-                        name='close'
-                        size={24}
-                        style = {{color:'#000'}}>
-                    </MaterialIcons>
-                  </TouchableHighlight>
-                  <Text style={{color:'#000',fontSize:16,marginLeft:5,fontWeight:'bold'}}>Close</Text>
-                </View>
-                <ScrollView>
-                  <View style={{width:'100%',marginTop:20}}>
-                    <GridView
-                        itemDimension = {360}
-                        items = {this.state.contentArray}
-                        style = {styles.gridView}
-                        spacing = {1}
-                        renderItem = {item =>
-                            <View style = {{elevation:3,height:150,width:'100%'}}>
-                              <Text style={{marginBottom:5,marginLeft:10,color:'#369',fontWeight:'bold'}}>{item.spec}</Text>
-                              <ScrollView
-                                  horizontal={true}
-                                  showsHorizontalScrollIndicator={false}>
-                                <FlatList style = {{marginTop:10}}
-                                data={item.detail}
-                                numColumns={item.detail.length}
-                                renderItem={({ item, index })=> (
-                                <TouchableHighlight underlayColor='transparent'
-                                onPress={()=>this.speckChoose(item.variation_slug,index)}
-                                style = {{width:80,height:50,borderRadius:30/2,backgroundColor:'#fff',borderWidth:2,borderColor:item.color,marginLeft:10,alignItems:'center',justifyContent:'center',elevation:3}}>
-                                <Text style={{fontWeight:'bold',fontSize:12,color:'#595656'}}>{item.variation_spec_value}</Text>
-                                </TouchableHighlight>
-                                )}
-                                />
-                              </ScrollView>
-                            </View>
-                        }
-                    />
-                  </View>
-                  {/*<View style = {{width:'100%',height:100,backgroundColor:'#369'}}>*/}
-                  {/*<GridView*/}
-                  {/*itemDimension = {360}*/}
-                  {/*items = {this.state.sec_selected_array}*/}
-                  {/*style = {styles.gridView}*/}
-                  {/*spacing = {1}*/}
-                  {/*renderItem = {item =>*/}
-                  {/*<View style = {{elevation:3,height:150,width:100,backgroundColor:'#000'}}>*/}
-
-                  {/*</View>*/}
-                  {/*}*/}
-                  {/*/>*/}
-                  {/*</View>*/}
-                </ScrollView>
-                {/*<View style={{width:'100%',height:50,elevation:2,backgroundColor:'#48c7f0',alignItems:'center',justifyContent:'center'}}>*/}
-                  {/*<Text style={{fontSize:16,fontWeight:'bold',color:'#fff'}}>PROCEED</Text>*/}
-                {/*</View>*/}
               </View>
             </View>
           </AnimatedHideView>

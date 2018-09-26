@@ -61,15 +61,16 @@ export default class Order extends Component<{}>{
             if (response.data.data.length >0) {
               for(let data of response.data.data){
                 console.warn('data',data);
-                myOrderData.order_id = data.order_id,
-                myOrderData.address_id = data.address_id,
-                myOrderData.date = data.date_purchased,
-                myOrderData.amount = data.amount,
-                myOrderData.order_status = data.order_status,
-                myOrderData.img = data.first_orderproduct.single_var_img.variation_image,
-                myOrderData.name = data.first_orderproduct.product_name,
-                myOrderData.product_order_id = data.first_orderproduct.order_product_id,
-                myOrderData.product_count = data.orderproducts_count
+                myOrderData.order_id = data.order_id;
+                myOrderData.address_id = data.address_id;
+                myOrderData.date = data.date_purchased;
+                myOrderData.amount = data.amount;
+                myOrderData.order_status = data.order_status;
+                myOrderData.img = data.first_orderproduct.single_var_img.variation_image;
+                myOrderData.name = data.first_orderproduct.product_name;
+                myOrderData.product_order_id = data.first_orderproduct.order_product_id;
+                myOrderData.product_count = data.orderproducts_count;
+                myOrderData.fbin = data.fbin;
 
                 myOrderArray.push({
                   order_id : myOrderData.order_id,
@@ -80,11 +81,12 @@ export default class Order extends Component<{}>{
                   img : myOrderData.img,
                   name : myOrderData.name,
                   product_order_id : myOrderData.product_order_id,
-                  product_count : myOrderData.product_count
-                })
+                  product_count : myOrderData.product_count,
+                  fbin : myOrderData.fbin
+                });
                 this.setState({
                   myOrderArray : myOrderArray
-                })
+                });
                 console.warn('myOrderData',this.state.myOrderArray);
               }
             }
@@ -95,7 +97,7 @@ export default class Order extends Component<{}>{
     componentWillMount(){
       this.setState({
         show : true
-      })
+      });
       this._getAccessToken();
     }
   render(){

@@ -37,7 +37,10 @@ export default class ViewMyOrderProduct extends Component<{}>{
       retnradio : '#282a2d',
       rplzradio : '#282a2d',
       value : '',
-      order_product_id : ''
+      order_product_id : '',
+      mes : [],
+      points : '',
+      pointText : ''
 
     }
   }
@@ -84,7 +87,7 @@ export default class ViewMyOrderProduct extends Component<{}>{
       .then((response)=>response.json())
       .catch((error)=>console.warn(error))
       .then((response)=>{
-        console.warn('response',response);
+        console.log('??????????????????',response.data);
         this.setState({
           address : response.data.address,
           show : false
@@ -92,12 +95,25 @@ export default class ViewMyOrderProduct extends Component<{}>{
         console.warn('address',this.state.address);
         if (response) {
           if (response.data) {
-            orderProduct.date = response.data.date_purchased,
-            orderProduct.amount = response.data.amount
+            if (response.data.is_points == 1){
+              this.setState({
+                points : response.data.points,
+                pointText : 'Points Used - '
+              })
+            }
+            orderProduct.date = response.data.date_purchased;
+            orderProduct.amount = response.data.amount;
+            orderProduct.fbin = response.data.fbin;
             if (response.data.orderproducts) {
               if (response.data.orderproducts.length >0) {
                 this.state.productArray.length = 0;
                 for(let data of response.data.orderproducts){
+                  for (let mesData of data.measurements){
+                    this.state.mes.push({
+                      name : mesData.measurement_name,
+                      value : mesData.value
+                    })
+                  }
                   console.warn('status/////',data.order_last_status.status);
                   console.warn('data',data);
                   if (data.order_last_status.status == 'Cancelled' || data.order_last_status.status == 'cancelled') {
@@ -127,7 +143,11 @@ export default class ViewMyOrderProduct extends Component<{}>{
                     img : orderProduct.img,
                     status : orderProduct.status,
                     btn_name : orderProduct.btn_name,
-                    slug : orderProduct.slug
+                    slug : orderProduct.slug,
+                    mes : this.state.mes,
+                    fbin : orderProduct.fbin,
+                    points : this.state.points,
+                    pointText : this.state.pointText
                   });
                   this.setState({
                     productArray : productArray,
@@ -200,31 +220,52 @@ export default class ViewMyOrderProduct extends Component<{}>{
                 items={this.state.productArray}
                 renderItem={item => (
                     <View style={{width:'100%',elevation:2,backgroundColor:'#369'}}>
-                      <TouchableHighlight underlayColor = 'transparent'
-                                          onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>
+                      <TouchableHighlight underlayColor = 'transparent'>
                         <View style = {{width:'100%',backgroundColor:'#fff',elevation:1}}>
                           <View style = {{width:'100%',padding:10,borderWidth:1,borderColor:'#eee'}}>
-                            <Text style = {{fontSize:14}}>ORDER ID - {item.order_product_id}</Text>
+                            <Text style = {{fontSize:14}}>ORDER ID - {item.fbin}</Text>
                           </View>
                           <View style = {{width:'100%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                             <View style = {{width:'75%',padding:10}}>
-                              <Text style = {{color:'#360',fontSize:16,fontWeight:'bold'}}>{item.product_name}</Text>
-                              <Text>PODUCT ID - {item.product_id}</Text>
-                              <Text style = {{color:'#369'}}>RS. {item.product_price}</Text>
-                              <Text>Quantity - {item.product_qty}</Text>
-                              <Text>Status - {item.status}</Text>
-                              <Text style = {{color:'#360'}}>Purchased on {item.date}</Text>
+                              <Text style = {{color:'#360',fontSize:14,fontWeight:'bold'}}
+                                 onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>{item.product_name}</Text>
+                              <Text style = {{color:'#369',fontSize:12}}>RS. {item.product_price}</Text>
+                              <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
+                              <Text style={{fontSize:12}}>Status - {item.status}</Text>
+                              <Text style = {{color:'#360',fontSize:12}}>Purchased on {item.date}</Text>
+                              <View style = {{width:'100%'}}>
+                                <View style = {{width:'100%',marginLeft:5}}>
+                                  <GridView
+                                      itemDimension={360}
+                                      items={item.mes}
+                                      renderItem={item => (
+                                          <View style = {{width:'100%',flexDirection:'row'}}>
+                                            <View style = {{width:'70%'}}>
+                                              <Text style = {{fontSize:12,color:'#000',fontWeight:'bold'}}>{item.name}</Text>
+                                            </View>
+                                            <View style = {{width:'30%',justifyContent:'center',marginLeft:5}}>
+                                              <Text style = {{fontSize:12,fontWeight:'bold',color:'#006400',textAlign: 'left'}}>{item.value}</Text>
+                                            </View>
+                                          </View>
+                                      )}
+                                  />
+                                </View>
+                              </View>
                             </View>
                             <View style = {{width:'25%',height:120,alignItems:'center',justifyContent:'center'}}>
-                              <Image style = {styles.image}
-                                     source ={{uri:config.IMG_URL+item.img}}>
-                              </Image>
+                              <TouchableHighlight style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
+                                  underlayColor='transparent'
+                               onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>
+                                <Image style = {styles.image}
+                                       source ={{uri:config.IMG_URL+item.img}}>
+                                </Image>
+                              </TouchableHighlight>
                             </View>
                           </View>
                           <View style = {{width:'100%',padding:10,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                             <View style = {{width:'70%'}}></View>
                             <View style = {{width:'30%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                              <Text style = {{color:'#369',fontWeight:'bold'}}
+                              <Text style = {{color:'#369',fontWeight:'bold',fontSize:12}}
                                     onPress = {()=>this.setState({returnScreen:true,order_product_id:item.order_product_id})}>
                                 Return Product
                               </Text>
@@ -241,7 +282,7 @@ export default class ViewMyOrderProduct extends Component<{}>{
                 <Text style = {{marginTop:10,color:'#369',fontSize:15,fontWeight:'bold'}}>{this.state.address.name}</Text>
                 <Text>{this.state.address.street_address}</Text>
                 <Text>{this.state.address.area+','+this.state.address.building}</Text>
-                <Text>{this.state.address.city+','+this.state.address.district+','+this.state.address.state+','+this.state.address.country}</Text>
+                <Text>{this.state.address.country}</Text>
                 <Text style = {{color:'#360',fontWeight:'bold'}}>Pin Code - {this.state.address.postcode}</Text>
                 <Text style = {{color:'#000',fontWeight:'bold'}}>Mobile Number - {this.state.address.phone_no}</Text>
               </View>
@@ -374,4 +415,4 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     resizeMode:'stretch'
   }
-})
+});

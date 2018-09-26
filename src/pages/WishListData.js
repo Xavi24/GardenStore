@@ -100,6 +100,12 @@ export default class Cart extends Component<{}>{
           emptyScreen : true
         })
       }
+      if (response.data.length<1){
+        this.setState({
+          show : false,
+          emptyScreen : true
+        })
+      }
     })
   }
 
@@ -140,6 +146,7 @@ export default class Cart extends Component<{}>{
     .then((response)=>response.json())
     .catch((error)=>console.warn(error))
     .then((response)=>{
+      console.warn('response',response);
       this.setState({
         show : false
       })
@@ -185,7 +192,7 @@ export default class Cart extends Component<{}>{
 
   }
   render(){
-    const {goBack} = this.props.navigation
+    const {goBack} = this.props.navigation;
     let data = [{value: '32'},{value: '38'},{value: '40'}];
     return(
         <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
@@ -316,7 +323,7 @@ export default class Cart extends Component<{}>{
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
               <Image style = {{height:60,width:60,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
                 source = {require('../img/emptyCart.png')}></Image>
-              <Text style = {{marginTop:20,color:'#369'}}>Cart is Empty</Text>
+              <Text style = {{marginTop:20,color:'#369'}}>Wishlist is Empty</Text>
             </View>
           </AnimatedHideView>
 

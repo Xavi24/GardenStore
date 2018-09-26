@@ -8,8 +8,9 @@ import {View,
         AsyncStorage,
         TextInput,
         BackHandler,
-        StatusBar
-      } from 'react-native'
+        StatusBar,
+        WebView
+} from 'react-native'
 import config from '../API/config'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import AnimatedHideView from 'react-native-animated-hide-view'
@@ -20,8 +21,8 @@ import Toast from 'react-native-simple-toast'
 import { CheckBox } from 'react-native-elements'
 
 var radio_props = [
-  {label: 'Debit', value: 0 },
-  {label: 'Credit', value: 1 },
+  // {label: 'Debit', value: 0 },
+  {label: 'Pay Online', value: 1 },
   {label: 'Cash on Delivery', value: 2}
 ];
 let item = [];
@@ -118,8 +119,10 @@ export default class Buy_Now extends Component<{}>{
       coupon_disc : '',
       value : '',
       mes_name : '',
-      mes_value : ''
-
+      mes_value : '',
+      web_redirect : '',
+      web_redirect_screen : false,
+      web_screen : ''
     }
   }
   getAddress(){
@@ -202,13 +205,9 @@ export default class Buy_Now extends Component<{}>{
     })
   }
   payment_method(value){
-    if (value == '0') {
+    if (value == '1') {
       this.setState({
-        payment_method : 'DEBIT'
-      })
-    } else if (value == '1') {
-      this.setState({
-        payment_method : 'CREDIT'
+        payment_method : 'NOW'
       })
     } else if (value == '2') {
       this.setState({
@@ -227,38 +226,80 @@ export default class Buy_Now extends Component<{}>{
     checkOutData.points = this.state.user_point,
     checkOutData.measurements = JSON.stringify(this.state.measurements);
     console.warn('checkOutData',checkOutData);
-    var url = config.API_URL+'user/checkout';
-    fetch(url, {
-      method: 'POST',
-      body : JSON.stringify(checkOutData),
-      headers: new Headers({
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        'Authorization' : this.state.access_token
+    if (this.state.payment_method == 'NOW'){
+      var url = config.API_URL+'user/checkout';
+      fetch(url, {
+        method: 'POST',
+        body : JSON.stringify(checkOutData),
+        headers: new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
+        })
       })
-    })
-    .then((response)=>response.json())
-    .catch((error)=>console.warn(error))
-    .then((response)=>{
-      console.warn('response',response);
-      if (response.code == '200') {
-        this.setState({
-          emptyScreen : true
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+            console.warn('response',response);
+            console.log('paymentgate---api//',response);
+            if (response.code == '200') {
+              // this.setState({
+              //   web_redirect : response.redirect,
+              //   web_redirect_screen : true,
+              // });
+              this.props.navigation.navigate('web',{api:response.redirect});
+              console.warn('web_redirect',this.state.web_redirect);
+            } else {
+              this.setState({
+                error_screen : true
+              })
+            } if (response.code == '409') {
+              this.setState({
+                error_msg : response.message
+              })
+            } else {
+              this.setState({
+                error_msg : 'An error occured while buying your product go back and enter all the required data'
+              })
+            }
+          })
+    } else if (this.state.payment_method=='COD'){
+      var url = config.API_URL+'user/checkout';
+      fetch(url, {
+        method: 'POST',
+        body : JSON.stringify(checkOutData),
+        headers: new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
         })
-      } else {
-        this.setState({
-          error_screen : true
-        })
-      } if (response.code == '409') {
-        this.setState({
-          error_msg : response.message
-        })
-      } else {
-        this.setState({
-          error_msg : 'An error occured while buying your product go back and enter all the required data'
-        })
-      }
-    })
+      })
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+            console.warn('response',response);
+            console.log('paymentgate---api//',response);
+            if (response.code == '200') {
+              this.setState({
+                emptyScreen : true
+              })
+            } else {
+              this.setState({
+                error_screen : true
+              })
+            } if (response.code == '409') {
+              this.setState({
+                error_msg : response.message
+              })
+            } else {
+              this.setState({
+                error_msg : 'An error occured while buying your product go back and enter all the required data'
+              })
+            }
+          })
+    }
+
+
   }
   getPoints(){
     var url = config.API_URL+'user/points';
@@ -327,7 +368,7 @@ export default class Buy_Now extends Component<{}>{
   componentWillMount(){
     this.setState({
       show : true
-    })
+    });
     this._getAccessToken().done();
     const {params} = this.props.navigation.state;
     console.warn('params',params);
@@ -622,7 +663,7 @@ export default class Buy_Now extends Component<{}>{
         Data.total_price = this.state.price,
         Data.vendor = this.state.vendor_id
         console.warn('Data',Data);
-        var url = config.API_URL+'coupon/apply'
+        var url = config.API_URL+'coupon/apply';
         console.log('url',url);
         fetch(url,{
           method : 'POST',
@@ -642,7 +683,7 @@ export default class Buy_Now extends Component<{}>{
               this.setState({
                 coupon_disc : response.data.coupon_details.amount,
                 price : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount)
-              })
+              });
               Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
               console.warn('coupon',this.state.coupon_disc);
             }
@@ -668,7 +709,7 @@ export default class Buy_Now extends Component<{}>{
           discPoints : '',
           price : this.state.prizee,
           value:''
-        })
+        });
         this.getPoints();
         Toast.show('Applay the coupon first', Toast.LONG);
       }
@@ -725,7 +766,7 @@ export default class Buy_Now extends Component<{}>{
           this.setState({
             p_name : response.data.product_name,
             p_price : response.data.product_mrp,
-          })
+          });
           for (let data of response.data.product_vendors) {
             this.setState({
               p_sale_price : data.product_price,
@@ -1424,6 +1465,8 @@ export default class Buy_Now extends Component<{}>{
                 </AnimatedHideView>
             </View>
           </AnimatedHideView>
+
+
         <Spinner visible = {this.state.show}
           textContent = {"Loading..."}
           color = {'#369'}

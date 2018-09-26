@@ -27,7 +27,7 @@ let CMS_layout = [];
 export default class MainScreen extends Component<{}>{
   static navigationOptions = {
     header : null
-  }
+  };
 
   constructor(props){
     super(props);
@@ -44,6 +44,7 @@ export default class MainScreen extends Component<{}>{
       total_sec: 0,
       sections: [],
       cms : [],
+      search_container_style : 0
 
     }
   };
@@ -177,12 +178,15 @@ export default class MainScreen extends Component<{}>{
         }
       }
       getCMSData(){
-
+      this.setState({
+        show : true
+      });
         var url = config.API_URL+'mobile/home';
         fetch(url)
             .then((response)=>response.json())
             .catch((error)=>console.warn(error))
             .then((response)=>{
+
               console.warn('CMS response',response);
               if (response.data) {
                 this.setState({
@@ -652,7 +656,10 @@ export default class MainScreen extends Component<{}>{
                               </TouchableHighlight>
                             </View>
                           </View>
-                        })
+                        });
+                        this.setState({
+                          show : false
+                        });
                       }
                     }
                 }
@@ -704,11 +711,11 @@ export default class MainScreen extends Component<{}>{
             </View>
             <View style = {styles.wishlistView}>
               <TouchableHighlight underlayColor = 'transparent'
-                onPress = {()=>this.props.navigation.navigate('wishList')}>
+                                  onPress = {()=>this.setState({search_container_style:60})}>
                 <MaterialIcons
-                  name='favorite'
-                  size={26}
-                  style = {{color:'#fff'}}>
+                    name='search'
+                    size={22}
+                    style = {{color:'#fff'}}>
                 </MaterialIcons>
               </TouchableHighlight>
             </View>
@@ -733,7 +740,7 @@ export default class MainScreen extends Component<{}>{
               </TouchableHighlight>
             </View>
           </View>
-          <View style = {{width:'100%',height:'10%',backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
+          <View style = {{width:'100%',height:this.state.search_container_style,backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
             <View style = {{width:'95%',height:'80%',alignItems:'center',justifyContent:'space-between',backgroundColor:'#eee',flexDirection:'row'}}>
               <View style = {{width:'85%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                 <TextInput style = {{height:'95%',width:'95%',fontSize:14,color:'#000'}}

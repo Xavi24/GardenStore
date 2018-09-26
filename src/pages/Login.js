@@ -80,7 +80,7 @@ export default class Login extends Component<{}>{
         });
 
         if (response.code === 200) {
-          let access_token = response.token
+          let access_token = response.token;
           this._setAccessToken(access_token);
           this.props.navigation.navigate('mainscreen');
         }
