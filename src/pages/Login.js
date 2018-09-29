@@ -59,6 +59,8 @@ export default class Login extends Component<{}>{
     this.setState({
       show:true
     });
+    this.textInput.clear();
+    this.textInput2.clear();
     let data = {};
     data.cred1 = this.state.cred1;
     data.cred2 = this.state.cred2;
@@ -90,6 +92,16 @@ export default class Login extends Component<{}>{
           })
         }
       })
+    }
+    reg(){
+      this.textInput.clear();
+      this.textInput2.clear();
+      this.props.navigation.navigate('reg')
+    }
+    forgot(){
+      this.textInput.clear();
+      this.textInput2.clear();
+      this.props.navigation.navigate('forgot')
     }
 
     async _setAccessToken(token) {
@@ -137,6 +149,7 @@ export default class Login extends Component<{}>{
                 underlineColorAndroid='transparent'
                 placeholder="E-mail"
                 placeholderTextColor="#ffffff"
+                ref={input => { this.textInput = input }}
                 onChangeText = {(text)=>this.updateValue(text,'cred1')}>
               </TextInput>
               <TextInput style = {styles.input}
@@ -144,6 +157,7 @@ export default class Login extends Component<{}>{
                 placeholder="Password"
                 secureTextEntry={true}
                 placeholderTextColor="#ffffff"
+                ref={input => { this.textInput2 = input }}
                 onChangeText = {(text)=>this.updateValue(text,'cred2')}>
               </TextInput>
               <View style = {{width:'90%',marginBottom:10}}>
@@ -159,12 +173,12 @@ export default class Login extends Component<{}>{
               <Text style = {{color:'#ffffff',marginTop:20}}>OR</Text>
 
               <Text style = {{color:'#369',marginTop:20,fontSize:16,textDecorationLine:'underline'}}
-                onPress = {()=>this.props.navigation.navigate('forgot')}>
+                onPress = {()=>this.forgot()}>
                 Forgot Your Password</Text>
               <View style = {{flexDirection:'row',width:'100%',justifyContent:'center',alignItems:'center'}}>
                 <Text style = {{marginTop:20,marginLeft:10,color:'#ffffff',fontSize:16}}>Dont have an account.?</Text>
                 <Text style = {{marginTop:20,marginLeft:10,color:'#369',fontSize:16}}
-                  onPress = {()=>this.props.navigation.navigate('reg')}>Register</Text>
+                  onPress = {()=>this.reg()}>Register</Text>
               </View>
             </View>
             </ScrollView>

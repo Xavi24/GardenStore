@@ -436,7 +436,7 @@ export default class Details extends Component<{}>{
                 if (response.data.is_in_cart) {
                   this.setState({
                     show_cart:false,
-                    cart_text : 'Move To Cart'
+                    cart_text : 'Go To Cart'
                   })
                 } else {
                   this.setState({
@@ -502,6 +502,7 @@ export default class Details extends Component<{}>{
   }
   async localCart(){
     console.warn('entered into the local cart method');
+    Toast.show('Product added to cart', Toast.LONG);
     console.warn('stock--------->>>',this.state.out_of_stock_count);
     if (this.state.out_of_stock_count<1){
       Toast.show('Product is out of stock', Toast.LONG);
@@ -555,9 +556,9 @@ export default class Details extends Component<{}>{
           }
         }
       } else {
-        this.setState({
-          emptyScreen : true
-        })
+        // this.setState({
+        //   emptyScreen : true
+        // })
       }
     } catch (error) {
       // Error retrieving data
@@ -815,7 +816,7 @@ export default class Details extends Component<{}>{
               Toast.show(response.message, Toast.LONG);
             }
           })
-    } else if (this.state.cart_text == 'Move To Cart') {
+    } else if (this.state.cart_text == 'Go To Cart') {
       this.setState({
         customising_screen : false
       });
@@ -1484,7 +1485,8 @@ export default class Details extends Component<{}>{
                         style = {{color:'#000'}}>
                     </MaterialIcons>
                   </TouchableHighlight>
-                  <Text style={{color:'#000',fontSize:16,marginLeft:5,fontWeight:'bold'}}>Close</Text>
+                  <Text style={{color:'#000',fontSize:16,marginLeft:5,fontWeight:'bold'}}
+                    onPress={()=>this.setState({color_size_screen:false})}>Close</Text>
                 </View>
                 <ScrollView>
                   <View style={{width:'100%',marginTop:20}}>
@@ -1633,7 +1635,7 @@ const styles = StyleSheet.create({
   },
   cover_img:{
     color:'#595656',
-    fontSize:12
+    fontSize:14
   },
   cover_img_des:{
     color:'#ffffff',

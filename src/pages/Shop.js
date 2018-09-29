@@ -20,9 +20,9 @@ import config from '../API/config'
 import Spinner from 'react-native-loading-spinner-overlay'
 import AnimatedHideView from 'react-native-animated-hide-view'
 
-let product_data = []
-let filterdata = []
-let stockColor  = ''
+let product_data = [];
+let filterdata = [];
+let stockColor  = '';
 const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   const paddingToBottom = 20;
   return layoutMeasurement.height + contentOffset.y >=
@@ -153,6 +153,7 @@ export default class Shop extends Component<{}>{
            if (response.filters.cat) {
              if (response.filters.cat.sub_cat) {
                for(let sub_cat of response.filters.cat.sub_cat){
+                 console.log('filter---->>>>subcat',sub_cat);
                  cat_name.push({name:sub_cat.name})
                }
                this.setState({

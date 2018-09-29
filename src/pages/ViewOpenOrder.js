@@ -108,7 +108,7 @@ export default class ViewOpenOrder extends Component<{}>{
                     })
                   }
                   console.warn('{{{{{{{{}}}}}}}}}}}',this.state.mes);
-                  console.warn('status/////',data.order_last_status.status);
+                  console.warn('status/////',data.purchase_price);
                   console.warn('data',data);
                   if (data.order_last_status.status == 'Cancelled' || data.order_last_status.status == 'cancelled') {
                     orderProduct.btn_name = ''
@@ -124,6 +124,7 @@ export default class ViewOpenOrder extends Component<{}>{
                   orderProduct.img = data.single_var_img.variation_image;
                   orderProduct.status = data.order_last_status.status;
                   orderProduct.slug = data.variation.slug;
+                  orderProduct.purchased_price = data.purchase_price;
 
                   productArray.push({
                     date : orderProduct.date,
@@ -141,8 +142,9 @@ export default class ViewOpenOrder extends Component<{}>{
                     mes : this.state.mes,
                     fbin : orderProduct.fbin,
                     points : this.state.points,
-                    pointText : this.state.pointText
-                  })
+                    pointText : this.state.pointText,
+                    purchase_price : orderProduct.purchased_price
+                  });
                   this.setState({
                     productArray : productArray
                   })
@@ -178,6 +180,7 @@ export default class ViewOpenOrder extends Component<{}>{
           console.warn('response',response);
           if (response.code == '200') {
             this.getOrderDetails();
+            this.props.navigation.navigate('cancel')
           }
         })
   }
@@ -220,6 +223,7 @@ export default class ViewOpenOrder extends Component<{}>{
                           <Text style = {{color:'#360',fontSize:14,fontWeight:'bold'}}
                              onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>{item.product_name}</Text>
                           <Text style = {{color:'#369',fontSize:12}}>RS. {item.product_price}</Text>
+                          <Text style = {{color:'#369',fontSize:12}}>Purchase Price - {item.purchase_price}</Text>
                           <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
                           <Text style={{fontSize:12}}>{item.pointText} {item.points}</Text>
                           <Text style={{fontSize:12}}>Status - {item.status}</Text>

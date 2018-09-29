@@ -1,5 +1,6 @@
 import React,{Component} from 'react'
-import {View,
+import {
+  View,
   Text,
   StyleSheet,
   Image,
@@ -9,7 +10,7 @@ import {View,
   AsyncStorage,
   BackHandler,
   TextInput,
-  FlatList
+  FlatList, StatusBar
 } from 'react-native'
 import config from '../API/config'
 import GridView from 'react-native-super-grid'
@@ -18,6 +19,7 @@ import AnimatedHideView from 'react-native-animated-hide-view'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import Spinner from 'react-native-loading-spinner-overlay'
 import Toast from 'react-native-simple-toast'
+import ImageSlider from "react-native-image-slider";
 
 const cartData = [];
 var radio_props = [
@@ -349,390 +351,194 @@ export default class Cart extends Component<{}>{
     const {goBack} = this.props.navigation;
     let data = [{value: '32'},{value: '38'},{value: '40'}];
     return(
-        <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+        <View style = {{width:'100%',height:'100%'}}>
           <View style = {styles.container}>
+            <StatusBar
+                translucent = {false}
+                barStyle="light-content"
+                backgroundColor='#191a1c'
+            />
             <View style = {styles.toolbar}>
-              <TouchableHighlight underlayColor = 'transparent'
-                                  onPress = {()=>goBack()}>
-                <MaterialIcons
-                    name='arrow-back'
-                    size={22}
-                    style = {{color:'#fff'}}>
-                </MaterialIcons>
-              </TouchableHighlight>
-              <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+              <View style = {styles.menuView}>
+                <TouchableHighlight underlayColor = 'transparent'
+                                    onPress = {()=>this.props.navigation.openDrawer()}>
+                  <MaterialIcons
+                      name='menu'
+                      size={22}
+                      style = {{color:'#fff'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
               </View>
-            </View>
-            <ScrollView
-                showsVerticalScrollIndicator = {false}>
-              <View style={{width:'100%'}}>
-                <GridView
-                    showsVerticalScrollIndicator={false}
-                    itemDimension={180}
-                    items={this.state.crtData}
-                    renderItem={item => (
-                        <View style = {{width:'100%',height:350,elevation:2,backgroundColor:'#fff',borderWidth:1,borderColor:'#eee'}}>
-                          <TouchableHighlight style = {{height:'100%',width:'100%'}}>
-                            <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-                              <View style = {{width:'100%',height:'70%',alignItems:'center',justifyContent:'center'}}>
-                                <TouchableHighlight style={{width:'100%',height:'100%'}}
-                                                    underlayColor = 'transparent'
-                                                    onPress = {()=>this.props.navigation.navigate('details',{
-                                                      slug:item.slug,
-                                                      img:item.header_image,
-                                                      id:item.product_id,
-                                                      vendor_id:item.vendor_id
-                                                    })}>
-                                  <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                                         source ={{uri:config.IMG_URL+item.header_image}}>
-                                  </Image>
-                                </TouchableHighlight>
-                              </View>
-                              <View style = {{width:'95%',height:'30%',alignItems:'center',justifyContent:'center'}}>
-                                <Text style = {{color:'#595656',fontSize:12}}>{item.product_name}</Text>
-                                <View style={{flexDirection:'row',width:'95%',marginTop:10,alignItems:'center'}}>
-                                  <Text style={{marginRight: 10}}>Quantity</Text>
-                                  <TextInput style={{height:40,width:40,borderColor:'#595656',borderWidth:1,marginLeft:10,fontSize:12}}
-                                             underlineColorAndroid='transparent'
-                                             maxLength={1}
-                                             keyboardType='numeric'
-                                             onChangeText = {(text_name)=>{
-                                               if (text_name<6){
-                                                 this.addqty(text_name,item.var_id)
-                                               } else {
-                                                 Toast.show('Only 5 allowed', Toast.LONG);
-                                               }
-                                             }}>
-                                  </TextInput>
-                                </View>
-                                <View style = {{width:'100%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginBottom:5,marginTop:5}}>
-                                  <View style = {{flexDirection:'row'}}>
-                                    <Image style = {{width:11,height:11,alignItems:'center',justifyContent:'center',resizeMode:'stretch',marginTop:4}}
-                                           source = {require('../img/curr.png')}>
-                                    </Image>
-                                    <Text style = {{color:'#595656',marginLeft:2,fontSize:10}}>{item.sale_price}</Text>
-                                  </View>
-                                  <TouchableHighlight underlayColor = 'transparent'
-                                                      onPress = {()=>this.setState({var_id:item.var_id,movetowishScreen:true})}>
-                                    <MaterialIcons
-                                        name='favorite-border'
-                                        size={22}
-                                        style = {{color:'#800000'}}>
-                                    </MaterialIcons>
-                                  </TouchableHighlight>
-                                  <TouchableHighlight underlayColor = 'transparent'
-                                                      onPress = {()=>this.setState({removeScreen:true,var_id:item.var_id})}>
-                                    <MaterialIcons
-                                        name='delete'
-                                        size={22}
-                                        style = {{color:'#369'}}>
-                                    </MaterialIcons>
-                                  </TouchableHighlight>
-                                </View>
-                              </View>
-                            </View>
-                          </TouchableHighlight>
-                        </View>
-                    )}
-                />
+              <View style = {styles.textView}>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
               </View>
-            </ScrollView>
-            <View style = {styles.footer}>
-              <View style = {{width:'50%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
-                <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}>RS.</Text>
-                <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}>{this.state.total}</Text>
+              <View style = {styles.wishlistView}>
+                <TouchableHighlight underlayColor = 'transparent'
+                                    onPress = {()=>this.setState({search_container_style:60})}>
+                  <MaterialIcons
+                      name='search'
+                      size={22}
+                      style = {{color:'#fff'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
               </View>
-              <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
-                borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',
-                alignItems:'center',justifyContent:'center'}}>
-                <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
-                                    underlayColor = 'transparent'
-                                    onPress = {()=>this.props.navigation.navigate('cart_buy_now')}>
-                  <Text style = {{fontSize:16,color:'#fff'}}>Place Order</Text>
+              <View style = {styles.cartView}>
+                <TouchableHighlight underlayColor = 'transparent'
+                                    onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
+                  <MaterialIcons
+                      name='shopping-cart'
+                      size={22}
+                      style = {{color:'#fff'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
+              </View>
+              <View style = {styles.walletView}>
+                <TouchableHighlight underlayColor = 'transparent'
+                                    onPress = {()=>this.props.navigation.navigate('wallet')}>
+                  <MaterialIcons
+                      name='payment'
+                      size={20}
+                      style = {{color:'#fff'}}>
+                  </MaterialIcons>
                 </TouchableHighlight>
               </View>
             </View>
-          </View>
-          <AnimatedHideView
-              visible = {this.state.error_screen}
-              style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}>
-            <View style = {styles.toolbar}>
-              <TouchableHighlight underlayColor = 'transparent'
-                                  onPress = {()=>{this.props.navigation.navigate('mainscreen')}}>
-                <MaterialIcons
-                    name='arrow-back'
-                    size={22}
-                    style = {{color:'#fff'}}>
-                </MaterialIcons>
-              </TouchableHighlight>
-              <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
-              </View>
-            </View>
-            <View style = {{width:'100%',height:'92%'}}>
-              <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-                <Image style = {{width:80,height:80,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                       source = {require('../img/dislike.png')}>
-                </Image>
-                <Text style = {{fontSize:30,color:'#000',marginTop:10}}>Oops!</Text>
-                <Text style = {{fontSize:18,marginTop:20,textAlign:'center'}}>Seems like you are note a member here</Text>
-                <Text style = {{fontSize:18,textAlign:'center'}}>Your Attempt has failed. An error has occured, back and try again</Text>
-                <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
-                  <Text style = {{fontSize:16,marginTop:20}}>Already have an account ?</Text>
-                  <Text style = {{color:'#369',marginLeft:10,fontSize:16,marginTop:20}}
-                        onPress = {()=>this.props.navigation.navigate('logn')}>Login Here</Text>
+            <View style = {{width:'100%',height:this.state.search_container_style,backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
+              <View style = {{width:'95%',height:'80%',alignItems:'center',justifyContent:'space-between',backgroundColor:'#eee',flexDirection:'row'}}>
+                <View style = {{width:'85%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                  <TextInput style = {{height:'95%',width:'95%',fontSize:14,color:'#000'}}
+                             placeholder = 'Search'
+                             placeholderTextColor = '#bbb'
+                             underlineColorAndroid = 'transparent'
+                             onChangeText = {(text_search) => this.updateValue(text_search,'search')}>
+                  </TextInput>
                 </View>
-                <Text style = {{marginTop:10,marginBottom:10}}>OR</Text>
-                <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
-                  <Text style = {{fontSize:16}}>Dont have any account ?</Text>
-                  <Text style = {{color:'#369',marginLeft:10,fontSize:16}}
-                        onPress = {()=>this.props.navigation.navigate('reg')}>Register Here</Text>
-                </View>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{width:'100%',height:'100%',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}
-                            visible = {this.state.emptyScreen}>
-            <View style = {styles.toolbar}>
-              <TouchableHighlight underlayColor = 'transparent'
-                                  onPress = {()=>goBack()}>
-                <MaterialIcons
-                    name='arrow-back'
-                    size={22}
-                    style = {{color:'#fff'}}>
-                </MaterialIcons>
-              </TouchableHighlight>
-              <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
-              </View>
-            </View>
-            <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
-              <Image style = {{height:60,width:60,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                     source = {require('../img/emptyCart.png')}>
-              </Image>
-              <Text style = {{marginTop:20,color:'#369'}}>Cart is Empty</Text>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
-            position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
-                            visible={this.state.placeOrderScreen}>
-            <View style = {{width:'95%',height:'40%',alignItems:'center',justifyContent:'center',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6,backgroundColor:"#fff"}}>
-              <Text style = {{color:'#000',fontWeight:'bold',fontSize:20,textAlign:'center'}}>Are you sure you want to buy these product?</Text>
-              <View style = {{width:'95%'}}>
-                <Text style = {{marginTop:30,fontSize:16,fontWeight:'bold',marginBottom:10}}>Choose your payment method</Text>
-                <RadioForm
-                    radio_props={radio_props}
-                    initial={false}
-                    buttonColor={'#2196f3'}
-                    selectedLabelColor={'#66023c'}
-                    buttonSize={10}
-                    selectedButtonColor={'#66023c'}
-                    buttonOuterSize={20}
-                    animation={true}
-                    formHorizontal={true}
-                    onPress={(value) => this.payment_method(value)}
-                />
-              </View>
-              <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:30}}>
-                <View style = {{width:'50%'}}>
-                </View>
-                <View style = {{width:'50%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                  <Text style = {{color:'#369',fontSize:18,fontWeight:'bold'}}
-                        onPress = {()=>this.placeOrder()}>Proceed</Text>
-                  <Text style = {{color:'#800000',fontSize:18,fontWeight:'bold'}}
-                        onPress = {()=>this.setState({placeOrderScreen:false})}>Cancel</Text>
-                </View>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
-            backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
-                            visible = {this.state.success_screen}>
-            <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-              <Image style = {{height:80,width:80}}
-                     source = {require('../img/order.png')}>
-              </Image>
-              <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:10}}>Success</Text>
-              <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                <View>
-                </View>
-                <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                      onPress = {()=>this.props.navigation.navigate('mainscreen')}>OK</Text>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
-            position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
-                            visible = {this.state.placeorder_error_screen}>
-            <View style = {{width:'95%',height:'30%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-              <Image style = {{width:60,height:60}}
-                     source = {require('../img/attention.png')}>
-              </Image>
-              <Text style = {{fontSize:22,fontWeight:'bold',color:'#000'}}>Oops!</Text>
-              <View style = {{width:'95%',alignItems:'center',justifyContent:'center'}}>
-                <Text style = {{fontSize:16,textAlign:'center'}}>There is an error occured while ordering your product.
-                  Please go back and check all the details and try again</Text>
-              </View>
-              <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10}}>
-                <View>
-
-                </View>
-                <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                      onPress = {()=>this.setState({placeorder_error_screen : false})}>OK</Text>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
-                            visible = {this.state.movetowishScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants move this product to wish list ?</Text>
-              <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
-                <View style = {{width:'60%'}}></View>
-                <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
-                  <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
-                        onPress = {()=>this.setState({movetowishScreen:false})}>No</Text>
-                  <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
-                        onPress = {()=>this.movToWishlist(this.state.var_id)}>Yes</Text>
-                </View>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
-                            visible = {this.state.removeScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants remove the product ?</Text>
-              <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
-                <View style = {{width:'60%'}}></View>
-                <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
-                  <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
-                        onPress = {()=>this.setState({removeScreen:false})}>No</Text>
-                  <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
-                        onPress = {()=>this.removeFromCart(this.state.var_id)}>Yes</Text>
-                </View>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView visible={this.state.local_cart}
-                            style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}>
-            <View style = {styles.toolbar}>
-              <TouchableHighlight underlayColor = 'transparent'
-                                  onPress = {()=>goBack()}>
-                <MaterialIcons
-                    name='arrow-back'
-                    size={22}
-                    style = {{color:'#fff'}}>
-                </MaterialIcons>
-              </TouchableHighlight>
-              <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
-              </View>
-            </View>
-            <View style={{height:'92%',width:'100%',alignItems:'center',justifyContent:'center'}}>
-              <ScrollView style = {{width:'100%',height:'100%'}}
-                          showsVerticalScrollIndicator={false}>
-                <View style={{width:'100%'}}>
-                  <GridView
-                      showsVerticalScrollIndicator={false}
-                      itemDimension={180}
-                      items={cartData}
-                      renderItem={item => (
-                          <View style = {{width:'100%',height:350,elevation:2,backgroundColor:'#fff',borderWidth:1,borderColor:'#eee'}}>
-                            <TouchableHighlight style = {{height:'100%',width:'100%'}}>
-                              <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-                                <View style = {{width:'100%',height:'60%',alignItems:'center',justifyContent:'center'}}>
-                                  <TouchableHighlight style={{width:'100%',height:'100%'}}
-                                                      underlayColor = 'transparent'
-                                                      onPress = {()=>this.props.navigation.navigate('details',{
-                                                        slug:item.slug,
-                                                        img:item.image,
-                                                        id:item.id,
-                                                        vendor_id:item.vendor_id
-                                                      })}>
-                                    <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                                           source ={{uri:config.IMG_URL+item.image}}>
-                                    </Image>
-                                  </TouchableHighlight>
-                                </View>
-                                <View style = {{width:'95%',height:'40%',alignItems:'center',justifyContent:'center'}}>
-                                  <Text style = {{color:'#595656',fontSize:12}}>{item.name}</Text>
-                                  <View style={{flexDirection:'row',width:'95%',marginTop:10,alignItems:'center'}}>
-                                    <Text style={{marginRight: 10}}>Quantity</Text>
-                                    <TextInput style={{height:40,width:40,borderColor:'#595656',borderWidth:1,marginLeft:10,fontSize:12}}
-                                               underlineColorAndroid='transparent'
-                                               maxLength={1}
-                                               keyboardType='numeric'
-                                               onChangeText = {(text_name)=>{
-                                                 if (text_name<6){
-                                                   this.addqty(text_name,item.var_id)
-                                                 } else {
-                                                   Toast.show('Only 5 allowed', Toast.LONG);
-                                                 }
-                                               }}>
-                                    </TextInput>
-                                    <Text style={{fontSize:12,color:'#595656',marginLeft:10}}>{item.quantity}</Text>
-                                  </View>
-                                  <View style = {{width:'100%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginBottom:5,marginTop:5}}>
-                                    <View style = {{flexDirection:'row'}}>
-                                      <Image style = {{width:11,height:11,alignItems:'center',justifyContent:'center',resizeMode:'stretch',marginTop:4}}
-                                             source = {require('../img/curr.png')}>
-                                      </Image>
-                                      <Text style = {{color:'#595656',marginLeft:2,fontSize:10}}>{item.price}</Text>
-                                      <View style = {{width:'100%',marginLeft:5}}>
-                                        {/*<GridView*/}
-                                        {/*itemDimension={360}*/}
-                                        {/*items={item.mes}*/}
-                                        {/*renderItem={item => (*/}
-                                        {/*<View style = {{width:'100%',flexDirection:'row'}}>*/}
-                                        {/*<View style = {{width:'70%'}}>*/}
-                                        {/*<Text style = {{fontSize:12,color:'#000',fontWeight:'bold'}}>{item.name}</Text>*/}
-                                        {/*</View>*/}
-                                        {/*<View style = {{width:'30%',justifyContent:'center',marginLeft:5}}>*/}
-                                        {/*<Text style = {{fontSize:12,fontWeight:'bold',color:'#006400',textAlign: 'left'}}>{item.value}</Text>*/}
-                                        {/*</View>*/}
-                                        {/*</View>*/}
-                                        {/*)}*/}
-                                        {/*/>*/}
-                                      </View>
-                                    </View>
-
-                                  </View>
-                                </View>
-                              </View>
-                            </TouchableHighlight>
-                          </View>
-                      )}
-                  />
-                </View>
-              </ScrollView>
-              <View style = {styles.footer}>
-                <View style = {{width:'50%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
-                  <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}>RS.</Text>
-                  <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}>{this.state.total}</Text>
-                </View>
-                <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
-                  borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',
-                  alignItems:'center',justifyContent:'center'}}>
+                <View style = {{width:'15%',height:'100%',backgroundColor:'#2fdab8'}}>
                   <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
                                       underlayColor = 'transparent'
-                                      onPress = {()=>this.props.navigation.navigate('cart_buy_now')}>
-                    <Text style = {{fontSize:16,color:'#fff'}}>Place Order</Text>
+                                      onPress = {()=>this.goToSearch()}>
+                    <MaterialIcons
+                        name='search'
+                        size={26}
+                        style = {{color:'#fff'}}>
+                    </MaterialIcons>
                   </TouchableHighlight>
                 </View>
               </View>
             </View>
+            <View style = {{width:'100%',height:'92%',alignItems:'center',justifyContent:'center'}}>
+              <ScrollView style = {{marginBottom:5,width:'100%'}}
+                          showsVerticalScrollIndicator = {false}>
+                <View style = {styles.scrollContainer}>
+                  <View style = {styles.baseContainer}>
+                    <View style = {styles.headerImage}>
+                      <ImageSlider
+                          style = {{height:"100%",width:'100%'}}
+                          autoPlayWithInterval={3000}
+                          images={sliderData}
+                          customSlide={({ index, item, style, width }) => (
+                              <View key={index} style={[style, styles.customSlide]}>
+                                <Image source={{uri:config.IMG_URL+item.image}} style={styles.customImage} />
+                              </View>
+                          )}
+                          customButtons={(position, move) => (
+                              <View style={styles.buttons}>
+                                {sliderData.map((image, index) => {
+                                  return (
+                                      <TouchableHighlight
+                                          key={index}
+                                          underlayColor="#ccc"
+                                          onPress={() => move(index)}
+                                          style={styles.button}>
+                                        <View style={position === index && styles.buttonSelected}>
+                                        </View>
+                                      </TouchableHighlight>
+                                  );
+                                })}
+                              </View>
+                          )}
+                      />
+                      <AnimatedHideView visible={this.state.color_check_screen}
+                                        style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}>
+                        <View style={{height:'85%',width:'100%'}}>
+                        </View>
+                        <View style={{height:'15%',width:'100%',flexDirection:'row'}}>
+                          <View style={{width:'80%'}}>
+                          </View>
+                          <View style={{width:'20%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                            <View style={{height:40,width:40,alignItems:'center',justifyContent:'center',borderRadius:40/2,backgroundColor:'#fff',
+                              elevation:2,borderColor: '#eee',borderWidth:1}}>
+                              <TouchableHighlight style={{height:'70%',width:'70%',alignItems:'center',justifyContent:'center'}}
+                                                  underlayColor='transparent'
+                                                  onPress = {()=>this.SelectedSpec()}>
+                                <Image style = {{width:'80%',height:'80%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
+                                       source = {require('../img/rgb.png')}>
+                                </Image>
+                              </TouchableHighlight>
+                            </View>
+                          </View>
+                        </View>
+                      </AnimatedHideView>
+                    </View>
+                    {/*<View style = {styles.gridContainer}>*/}
+                    {/*<GridView*/}
+                    {/*itemDimension={90}*/}
+                    {/*spacing = {2}*/}
+                    {/*items={this.state.menu_data}*/}
+                    {/*renderItem={item => (*/}
+                    {/*<View style={{width:100,height:40,elevation: 2}}>*/}
+                    {/*<TouchableHighlight style = {{height:'100%',width:'100%',backgroundColor:'#2fdab8'}}*/}
+                    {/*underlayColor = 'transparent'*/}
+                    {/*onPress = {()=>this.props.navigation.navigate('shop',{name:item.name})}>*/}
+                    {/*<View style = {{width:'100%',height:'100%',justifyContent:'center',alignItems:'center'}}>*/}
+                    {/*<Text style = {{color:'#fff',fontWeight:'bold'}}>{item.name}</Text>*/}
+                    {/*</View>*/}
+                    {/*</TouchableHighlight>*/}
+                    {/*</View>*/}
+                    {/*)}*/}
+                    {/*/>*/}
+                    {/*</View>*/}
+
+                    <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
+                      <GridView
+                          itemDimension = {360}
+                          items = {CMS_layout}
+                          spacing = {1}
+                          renderItem = {item =>
+                              <View style={{width:'100%',elevation:2}}>
+                                {item.value}
+                              </View>
+                          }
+                      />
+                    </View>
+                  </View>
+                </View>
+              </ScrollView>
+            </View>
+            <Spinner visible = {this.state.show}
+                     textContent = {"Loading..."}
+                     textStyle = {{color: '#369'}}
+                     color = {'#369'}
+                     overlayColor = {'#fff'}
+            />
+          </View>
+          <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',
+            backgroundColor:'rgba(00, 00, 00, 0.4)'}}
+                            visible = {this.state.visible}>
+            <View style = {{width:'90%',backgroundColor:'rgba(00, 00, 00, 0.8)',alignItems:'center',justifyContent:'center',
+              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold',marginTop:30}}>Wants to exit your application?</Text>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:40,marginBottom:20}}>
+                <View style = {{width:'50%'}}></View>
+                <View style = {{width:'50%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                  <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
+                        onPress = {()=>this.setState({visible:false})}>Not now</Text>
+                  <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
+                        onPress = {()=>this.kickOut()}>Exit</Text>
+                </View>
+              </View>
+            </View>
           </AnimatedHideView>
-          <Spinner visible = {this.state.show}
-                   textContent = {"Loading..."}
-                   color = {'#369'}
-                   textStyle = {{color: '#369'}}
-                   overlayColor = {'#fff'}
-          />
         </View>
     );
   }

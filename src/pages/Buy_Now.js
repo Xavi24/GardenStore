@@ -122,9 +122,16 @@ export default class Buy_Now extends Component<{}>{
       mes_value : '',
       web_redirect : '',
       web_redirect_screen : false,
-      web_screen : ''
+      web_screen : '',
+      address_height : 30,
+      address_padding : 3,
+      address_border_width : 1,
+      purchased_price : 0
     }
   }
+  // componentDidMount(){
+  //   this.props.getLea
+  // }
   getAddress(){
     this.setState({
       show : true
@@ -151,6 +158,11 @@ export default class Buy_Now extends Component<{}>{
             height:150,
             width:1,
             padding:10
+          })
+          this.setState({
+            address_height:30,
+            address_padding : 3,
+            address_border_width : 1
           })
           for(let data of response.data){
             this.setState({
@@ -196,6 +208,12 @@ export default class Buy_Now extends Component<{}>{
                   postcode :''
                 })
                 console.warn('dataaaaaaaaaaaaaaaaaaaaaaa',this.state.dataValue);
+        } else {
+          this.setState({
+            address_height:0,
+            address_padding : 0,
+            address_border_width : 0
+          })
         }
       } else {
         this.setState({
@@ -354,7 +372,8 @@ export default class Buy_Now extends Component<{}>{
         }
         if (response.code == '409') {
           this.setState({
-            discPoints : response.message
+            discPoints : response.message,
+            user_point : 0
           })
         }
       })
@@ -503,6 +522,10 @@ export default class Buy_Now extends Component<{}>{
                         });
                         Toast.show('Address Deleted', Toast.LONG);
                         this.getUserAddress();
+                        this.setState({
+                          height : 0,
+                          padding : 0
+                        })
                     }
                 }
             })
@@ -522,11 +545,10 @@ export default class Buy_Now extends Component<{}>{
             err_building : '',
             err_landmark : '',
             err_district : '',
-            postcode : '',
         });
         console.warn('access/////save',this.state.name);
         let addressData = {};
-        addressData.postcode = this.state.postcode,
+            addressData.postcode = this.state.postcode,
             addressData.name = this.state.name,
             addressData.street_address = this.state.street_address,
             addressData.landmark = this.state.landmark,
@@ -563,7 +585,37 @@ export default class Buy_Now extends Component<{}>{
             .then((response)=>{
                 console.warn('response',response);
                 if (response.code == '200') {
-                    this.setState({add_new_screen:false})
+                  this._getAccessToken();
+                  this.textInput.clear();
+                  this.textInput2.clear();
+                  this.textInput3.clear();
+                  this.textInput4.clear();
+                  this.textInput5.clear();
+                  this.textInput6.clear();
+                  this.textInput7.clear();
+                  this.textInput8.clear();
+                  this.textInput9.clear();
+                  this.textInput10.clear();
+                  this.textInput11.clear();
+                  this.setState({
+                    homeChecked : false,
+                    officeChecked : false,
+                    checked : false
+                  });
+                  this.setState({add_new_screen:false});
+                  this.setState({
+                    name : '',
+                    street_address : '',
+                    landmark : '',
+                    city : '',
+                    state : '',
+                    district : '',
+                    country : '',
+                    phone_no : '',
+                    area : '',
+                    building : '',
+                    postcode :''
+                  })
                 } else {
                     this.setState({
                         error_screen : true,
@@ -830,22 +882,18 @@ export default class Buy_Now extends Component<{}>{
                     <Text style = {{fontSize:12}}>
                         {this.state.dataValue.street_address+','+this.state.dataValue.city}
                     </Text>
-
-                    <Text style = {{fontSize:12}}>
-                        {this.state.state+','+this.state.country}
-                    </Text>
                     <Text style={{fontWeight:'bold',color:'#360',fontSize:12}}>
                         Mobile Number : {this.state.dataValue.phone_no}
                     </Text>
                 </View>
                 <View style={{width:'98%', backgroundColor:'#ffffff',justifyContent:'space-between',elevation:2,padding:10,
                     alignItems:'center',flexDirection:'row',marginTop:2}}>
-                    <TouchableHighlight style={{padding:3,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#369',width:100}}
+                    <TouchableHighlight style={{padding:this.state.address_padding,alignItems:'center',justifyContent:'center',borderWidth:this.state.address_border_width,borderColor:'#369',width:100,height:this.state.address_height}}
                       underlayColor='transparent'
                       onPress = {()=>this.getUserAddress()}>
                         <Text style={{color:'#369',fontWeight:'bold',fontSize:12}}>Select Address</Text>
                     </TouchableHighlight>
-                    <TouchableHighlight style={{padding:3,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#369',width:100}}
+                    <TouchableHighlight style={{padding:3,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#369',width:100,height:30}}
                         underlayColor='transparent'
                          onPress = {()=>this.setState({add_new_screen:true})}>
                         <Text style={{color:'#369',fontWeight:'bold',fontSize:12}}>Add Address</Text>
@@ -1089,7 +1137,7 @@ export default class Buy_Now extends Component<{}>{
                   <View style = {styles.toolbar}>
                       <View style = {styles.menuView}>
                           <TouchableHighlight underlayColor = 'transparent'
-                                              onPress = {()=>goBack()}>
+                                              onPress = {()=>this.setState({select_address_view : false})}>
                               <MaterialIcons
                                   name='arrow-back'
                                   size={22}
@@ -1098,7 +1146,7 @@ export default class Buy_Now extends Component<{}>{
                           </TouchableHighlight>
                       </View>
                       <View style = {styles.titleView}>
-                          <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Check Out</Text>
+                          <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Saved Address</Text>
                       </View>
                       <View style = {styles.iconView}>
 
@@ -1231,7 +1279,7 @@ export default class Buy_Now extends Component<{}>{
                 <View style = {styles.toolbar}>
                     <View style = {styles.menuView}>
                         <TouchableHighlight underlayColor = 'transparent'
-                                            onPress = {()=>goBack()}>
+                                            onPress = {()=>this.setState({add_new_screen:false})}>
                             <MaterialIcons
                                 name='arrow-back'
                                 size={22}
@@ -1255,6 +1303,7 @@ export default class Buy_Now extends Component<{}>{
 
                                 <View style = {styles.topView}>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Pin Code"
                                                keyboardType='numeric'
@@ -1266,6 +1315,7 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_postcode}</Text>
                                     </View>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput2 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Area"
                                                onChangeText = {(text_area)=>this.updateValue2(text_area,'area')}>
@@ -1276,6 +1326,7 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_area}</Text>
                                     </View>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput3 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Building"
                                                onChangeText = {(text_building)=>this.updateValue2(text_building,'Building')}>
@@ -1286,11 +1337,13 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_building}</Text>
                                     </View>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput4 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Locality/Town"
                                                onChangeText = {(text_landmark)=>this.updateValue2(text_landmark,'landmark')}>
                                     </TextInput>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput5 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="City"
                                                onChangeText = {(text_city)=>this.updateValue2(text_city,'city')}>
@@ -1301,11 +1354,13 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_city}</Text>
                                     </View>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput6 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="District"
                                                onChangeText = {(text_district)=>this.updateValue2(text_district,'district')}>
                                     </TextInput>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput7 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="State"
                                                onChangeText = {(text_state)=>this.updateValue2(text_state,'state')}>
@@ -1316,6 +1371,7 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_state}</Text>
                                     </View>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput8 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Country"
                                                onChangeText = {(text_country)=>this.updateValue2(text_country,'country')}>
@@ -1329,6 +1385,7 @@ export default class Buy_Now extends Component<{}>{
 
                                 <View style = {styles.topView}>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput9 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Name"
                                                onChangeText = {(text_name)=>this.updateValue2(text_name,'name')}>
@@ -1339,6 +1396,7 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_name}</Text>
                                     </View>
                                     <TextInput style = {styles.addressBox}
+                                               ref={input => { this.textInput10 = input }}
                                                underlineColorAndroid = 'transparent'
                                                multiline={true}
                                                editable = {true}
@@ -1351,6 +1409,7 @@ export default class Buy_Now extends Component<{}>{
                                         <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_street}</Text>
                                     </View>
                                     <TextInput style = {styles.input}
+                                               ref={input => { this.textInput11 = input }}
                                                underlineColorAndroid = '#bbbbbb'
                                                placeholder="Mobile No"
                                                keyboardType='numeric'

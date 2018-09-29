@@ -18,7 +18,8 @@ export default class ForgotPassword extends Component<{}>{
     super(props);
     this.state = {
       email : '',
-      success_screen:false
+      success_screen:false,
+      error_message : ''
     }
   }
   updateValue(text,field){
@@ -30,10 +31,10 @@ export default class ForgotPassword extends Component<{}>{
     }
   }
 forgotPassword(){
+  let collection = {};
+  collection.name = this.state.email;
   console.warn('email',this.state.email);
-  let collection = {}
-  collection.name = this.state.email
-  var url = config.API_URL+'forgot-password'
+  var url = config.API_URL+'forgot-password';
     fetch(url, {
     method: 'POST',
     body: JSON.stringify(collection),
@@ -51,6 +52,12 @@ forgotPassword(){
       success_screen : true
     })
   }
+    if (response.code == '409') {
+      this.setState({
+        error_screen : true,
+        error_message : response.message
+      })
+    }
   })
 }
   render(){
@@ -113,6 +120,28 @@ forgotPassword(){
               <View></View>
               <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
                 onPress = {()=>this.setState({success_screen : false})}>OK</Text>
+            </View>
+          </View>
+        </AnimatedHideView>
+        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
+          position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
+                          visible = {this.state.error_screen}>
+          <View style = {{width:'80%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',elevation:2,height:150}}>
+            <TouchableHighlight underlayColor='transparent'
+                                onPress = {()=>goBack()}>
+              <MaterialIcons
+                  name='error'
+                  size={36 }
+                  style = {{color:'#800000'}}>
+              </MaterialIcons>
+            </TouchableHighlight>
+            <Text style = {{fontSize:16,color:'#565959',marginTop:10,textAlign:'center'}}>{this.state.error_message}</Text>
+            <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
+              <View>
+
+              </View>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                    onPress = {()=>this.setState({error_screen : false})}>OK</Text>
             </View>
           </View>
         </AnimatedHideView>

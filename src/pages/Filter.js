@@ -84,8 +84,9 @@ export default class Filter extends Component<{}>{
     let spec_name = [];
     let price = '';
     price = '['+'min='+this.state.min+','+'max='+this.state.max+']';
-    var url = this.state.url+this.state.pass_name+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max
-    console.log('url',url);
+    var url = this.state.url+this.state.pass_name+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max;
+    console.log('url???????????',url);
+    console.log('firstFilterurl??????',this.state.url);
     fetch(url)
         .then((response)=>response.json())
         .catch((error)=>console.warn(error))
@@ -168,6 +169,7 @@ export default class Filter extends Component<{}>{
     })
   }
   getFilterData(params){
+    console.log('paramsss////filter???',params);
     this.setState({
       cat_data:params.cat_data,
       min:params.min,
@@ -251,7 +253,7 @@ export default class Filter extends Component<{}>{
                                         underlayColor='transparent'
                                         onPress = {()=>this.setState({cat_screen:true,grid_data:this.state.cat_data,cat_grid_color:'#fff'})}>
                       <View style={{flexDirection:'row'}}>
-                        <Text style={{color:'#595656',fontSize:14}}>Categogy</Text>
+                        <Text style={{color:'#595656',fontSize:14}}>Category</Text>
                         <MaterialIcons
                             style = {{marginLeft:10}}
                             name='keyboard-arrow-up'
@@ -269,7 +271,7 @@ export default class Filter extends Component<{}>{
                                         underlayColor='transparent'
                                         onPress = {()=>this.setState({cat_screen:false,grid_data:this.state.empty})}>
                       <View style={{flexDirection:'row'}}>
-                        <Text style={{color:'#fff',fontSize:14}}>Categogy</Text>
+                        <Text style={{color:'#fff',fontSize:14}}>Category</Text>
                         <MaterialIcons
                             style = {{marginLeft:10}}
                             name='keyboard-arrow-down'
@@ -372,7 +374,7 @@ export default class Filter extends Component<{}>{
                   items={this.state.item_value_data}
                   renderItem={item => (
                       <View style = {{width:'100%',padding:10}}>
-                        <Text style = {{fontSize:16,color:'#369'}}
+                        <Text style = {{fontSize:12,color:'#369'}}
                               onPress = {()=>this.selFn(item.value)}>{item.value}</Text>
                       </View>
                   )}

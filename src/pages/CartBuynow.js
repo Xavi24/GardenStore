@@ -832,9 +832,6 @@ export default class CartBuynow extends Component<{}>{
                     <Text>
                         {this.state.dataValue.street_address+','+this.state.dataValue.city}
                     </Text>
-                    <Text>
-                        {this.state.dataValue.district+','+this.state.state+','+this.state.country}
-                    </Text>
                     <Text style={{fontWeight:'bold',color:'#360'}}>
                         Mobile Number : {this.state.dataValue.phone_no}
                     </Text>

@@ -37,7 +37,8 @@ export default class ReturnProduct extends Component<{}>{
       name : '',
       removeScreen : false,
       show : false,
-      success_screen : false
+      success_screen : false,
+      error_message : ''
     }
   }
     async _getAccessToken() {
@@ -87,10 +88,11 @@ export default class ReturnProduct extends Component<{}>{
                   success_screen : true
                 })
               }
-                console.warn('response',response)
-                if (response.errors) {
+                console.warn('response',response);
+                if (response.code == '409') {
                   this.setState({
-                    error_screen : true
+                    error_screen : true,
+                    error_message : response.message
                   })
                 }
             })
@@ -235,21 +237,23 @@ export default class ReturnProduct extends Component<{}>{
               <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
                 <View></View>
                 <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                  onPress = {()=>this.props.navigation.navigate('my_order')}>OK</Text>
+                  onPress = {()=>this.props.navigation.navigate('order')}>OK</Text>
               </View>
             </View>
           </AnimatedHideView>
           <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
               position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
                             visible = {this.state.error_screen}>
-              <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-                  borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-                  <Image style = {{width:60,height:60,marginTop:20}}
-                         source = {require('../img/attention.png')}>
-                  </Image>
-                  <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>
-                  There is some problem with re-fund your Product. Please select Your
-                      reson </Text>
+              <View style = {{width:'80%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',elevation:2,height:150}}>
+                <TouchableHighlight underlayColor='transparent'
+                                    onPress = {()=>goBack()}>
+                  <MaterialIcons
+                      name='error'
+                      size={36 }
+                      style = {{color:'#800000'}}>
+                  </MaterialIcons>
+                </TouchableHighlight>
+                  <Text style = {{fontSize:16,color:'#565959',marginTop:10,textAlign:'center'}}>{this.state.error_message}</Text>
                   <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
                       <View>
 

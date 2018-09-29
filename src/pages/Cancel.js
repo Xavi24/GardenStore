@@ -126,7 +126,7 @@ export default class Cancel extends Component<{}>{
                 itemDimension={360}
                 items={this.state.cArray}
                 renderItem={item => (
-                  <View style = {{width:'100%',elevation:3,backgroundColor:'#fff',height:250}}>
+                  <View style = {{width:'100%',elevation:3,backgroundColor:'#fff',height:280}}>
                     <View style = {{width:'100%',padding:10,height:'80%',alignItems:'center',justifyContent:'center',borderBottomWidth:1,
                       borderBottomColor:'#eee'}}>
                         <View style = {{width:'100%',height:'15%',borderBottomWidth:1,borderBottomColor:'#eee',alignItems:'center'}}>

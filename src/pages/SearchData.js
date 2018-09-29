@@ -165,7 +165,7 @@ export default class SearchData extends Component<{}>{
                  min : parseInt(response.filters.price.min.split('.')[0]),
                  max : parseInt(response.filters.price.max.split('.')[0]),
                  // urlPass : config.API_URL+'products/search?term=',
-                 urlPass : url
+                 urlPass : config.API_URL+'products/search?term='
                });
                console.warn('url//pass-->filter',this.state.urlPass);
                console.warn('url//pass-->name',this.state.name);

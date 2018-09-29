@@ -37,6 +37,7 @@ export default class replaceProduct extends Component<{}>{
       show : false,
       removeScreen: false,
       error_screen : false,
+      error_message : ''
 
     }
   }
@@ -75,11 +76,18 @@ export default class replaceProduct extends Component<{}>{
           .then((response)=>response.json())
           .catch((error)=>console.warn(error))
           .then((response)=>{
+            console.warn('response',response);
             this.setState({
               show : false
             });
             if (response.code == '200'){
               this.props.navigation.navigate('replacelist_view',{data:response,order_product_id:this.state.order_product_id,replaceValue:this.state.replaceValue});
+            }
+            if (response.code == '409') {
+              this.setState({
+                error_screen : true,
+                error_message : response.message
+              })
             }
           })
     }
@@ -213,7 +221,8 @@ export default class replaceProduct extends Component<{}>{
               borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
               <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants replace this product ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
-                <View style = {{width:'60%'}}></View>
+                <View style = {{width:'60%'}}>
+                </View>
                 <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
                   <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
                         onPress = {()=>this.setState({removeScreen:false})}>No</Text>
@@ -226,14 +235,15 @@ export default class replaceProduct extends Component<{}>{
           <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
             position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
                             visible = {this.state.error_screen}>
-            <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-              <Image style = {{width:60,height:60,marginTop:20}}
-                     source = {require('../img/attention.png')}>
-              </Image>
-              <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>
-                There is some problem with replace your Product. Please select Your
-                reson </Text>
+            <View style = {{width:'80%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',elevation:2,height:150}}>
+              <TouchableHighlight underlayColor='transparent'>
+                <MaterialIcons
+                    name='error'
+                    size={36 }
+                    style = {{color:'#800000'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+              <Text style = {{fontSize:16,color:'#565959',marginTop:10,textAlign:'center'}}>{this.state.error_message}</Text>
               <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
                 <View>
 

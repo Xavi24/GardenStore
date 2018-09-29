@@ -127,19 +127,19 @@ export default class Menu extends Component<{}>{
           backgroundColor='#282a2d'
         />
         <View style = {styles.profileView}>
-          <View style={{width:80,height:80,alignItems:'center',justifyContent:'center',marginBottom:10}}>
+          <View style={{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
             <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
                    source = {require('../img/garden_logo.png')}>
             </Image>
           </View>
-          <View style = {{width:'95%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-            <MaterialIcons
-                name='home'
-                size={22}
-                style = {{color:'#fff'}}>
-            </MaterialIcons>
-            <Text style={{color:'#fff',fontSize:14}}>Gardens Store</Text>
-          </View>
+          {/*<View style = {{width:'95%',alignItems:'center',flexDirection:'row'}}>*/}
+            {/*<MaterialIcons*/}
+                {/*name='home'*/}
+                {/*size={22}*/}
+                {/*style = {{color:'#fff'}}>*/}
+            {/*</MaterialIcons>*/}
+            {/*<Text style={{color:'#fff',fontSize:14,marginLeft:7}}>Home</Text>*/}
+          {/*</View>*/}
         </View>
         <ScrollView>
           <View style = {{width:'100%',borderBottomColor:'#1d3461',borderBottomWidth:0.5}}>
@@ -208,12 +208,12 @@ export default class Menu extends Component<{}>{
                     underlayColor = 'transparent'>
                     <MaterialIcons
                       name='shopping-cart'
-                      size={this.state.my_order_size}
-                      style = {{color:this.state.my_order_color}}>
+                      size={22}
+                      style = {{color:'#363a42'}}>
                     </MaterialIcons>
                 </TouchableHighlight>
                 <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
-                  onPress = {()=>this.props.navigation.navigate('order')}>{this.state.my_order}</Text>
+                  onPress = {()=>this.props.navigation.navigate('order')}>Oders</Text>
               </View>
               <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
                 <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}
@@ -250,14 +250,15 @@ const styles = StyleSheet.create({
   container:{
     height:'100%',
     width:'100%',
-    backgroundColor:'#f5f5f5'
+    backgroundColor:'#fff'
   },
   profileView:{
     height:'20%',
     width:'100%',
-    alignItems:'center',
     justifyContent:'center',
-    backgroundColor:'#282a2d',
-    paddingBottom: 10
+    paddingBottom: 10,
+    backgroundColor:'#fff',
+    borderBottomColor: '#1d3461',
+    borderBottomWidth: 0.5
   }
 });

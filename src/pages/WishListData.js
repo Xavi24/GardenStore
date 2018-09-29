@@ -207,7 +207,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Wish List</Text>
               </View>
             </View>
             <ScrollView
@@ -287,7 +287,8 @@ export default class Cart extends Component<{}>{
             <View style = {{width:'100%',height:'92%'}}>
               <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                 <Image style = {{width:80,height:80,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                  source = {require('../img/dislike.png')}></Image>
+                  source = {require('../img/dislike.png')}>
+                </Image>
                   <Text style = {{fontSize:30,color:'#000',marginTop:10}}>Oops!</Text>
                   <Text style = {{fontSize:18,marginTop:20,textAlign:'center'}}>Seems like you are note a member here</Text>
                   <Text style = {{fontSize:18,textAlign:'center'}}>Your Attempt has failed. An error has occured, back and try again</Text>
@@ -322,7 +323,8 @@ export default class Cart extends Component<{}>{
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
               <Image style = {{height:60,width:60,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                source = {require('../img/emptyCart.png')}></Image>
+                source = {require('../img/emptyCart.png')}>
+              </Image>
               <Text style = {{marginTop:20,color:'#369'}}>Wishlist is Empty</Text>
             </View>
           </AnimatedHideView>

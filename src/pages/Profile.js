@@ -33,7 +33,10 @@ export default class Profile extends Component<{}>{
       value : '+91',
       show : false,
       male_color : '#282a2d',
-      femal_color : '#282a2d'
+      femal_color : '#282a2d',
+      err_name : '',
+      err_ph : '',
+      err_mail : ''
     }
   }
   okProcess(){
@@ -164,8 +167,22 @@ export default class Profile extends Component<{}>{
         if (response.errors!= '') {
           this.setState({
             show : false,
-            error_screen : true
           })
+         if (response.errors.name){
+             this.setState({
+               err_name : response.errors.name
+             })
+         }
+         if (response.errors.email){
+             this.setState({
+               err_mail : response.errors.email
+             })
+         }
+          if (response.errors.phone_no){
+            this.setState({
+              err_ph : response.errors.phone_no
+            })
+          }
         }
       }
     })
@@ -281,6 +298,11 @@ export default class Profile extends Component<{}>{
                     placeholderTextColor='#369'
                     onChangeText = {(text_name)=>this.updateValue(text_name,'name')}>
                   </TextInput>
+                  <View style={{width:'90%',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                    <View>
+                    </View>
+                    <Text style={{marginTop:5,marginBottom:5,color:'#800000'}}>{this.state.err_name}</Text>
+                  </View>
                   <TextInput style = {{color:'#360',borderColor:'#eee',borderWidth:1,height:50,width:'90%',marginTop:20,padding:15}}
                     underlineColorAndroid='#369'
                     placeholder='E-mail id'
@@ -288,6 +310,11 @@ export default class Profile extends Component<{}>{
                     placeholderTextColor='#369'
                     onChangeText = {(text_email)=>this.updateValue(text_email,'email')}>
                   </TextInput>
+                  <View style={{width:'90%',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                    <View>
+                    </View>
+                    <Text style={{marginTop:5,marginBottom:5,color:'#800000'}}>{this.state.err_mail}</Text>
+                  </View>
                   <TextInput style = {{color:'#360',borderColor:'#eee',borderWidth:1,height:50,width:'90%',marginTop:20,padding:15}}
                     underlineColorAndroid='#369'
                     placeholder='Phone Number'
@@ -296,7 +323,11 @@ export default class Profile extends Component<{}>{
                     value = {this.state.phone_no}
                     onChangeText = {(text_number)=>this.updateValue(text_number,'number')}>
                   </TextInput>
-
+                  <View style={{width:'90%',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                    <View>
+                    </View>
+                    <Text style={{marginTop:5,marginBottom:5,color:'#800000'}}>{this.state.err_ph}</Text>
+                  </View>
                   <View style = {{width:'90%',marginTop:20,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                     <View style = {{width:'50%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                       <TouchableHighlight underlayColor = 'transparent'

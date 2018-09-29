@@ -60,7 +60,8 @@ export default class Cart extends Component<{}>{
       local_cart_img : '',
       local_cart_view : false,
       local_cart_check : [],
-      local_mes : []
+      local_mes : [],
+      refresh_cart : false
     }
   }
   updateSize = (size) => {
@@ -75,7 +76,8 @@ export default class Cart extends Component<{}>{
   };
   getCartData(){
     this.setState({
-      show : true
+      show : true,
+      refresh_cart : false
     });
 
     var totalPrize = 0;
@@ -191,6 +193,13 @@ export default class Cart extends Component<{}>{
     }
   }
   async syncCart(){
+    this.getCartData();
+    console.warn('cartDataLength',this.state.crtData.length);
+    if (this.state.crtData.length<0){
+      this.setState({
+        refresh_cart : true
+      })
+    }
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
       if (localCartData !== null) {
@@ -231,7 +240,6 @@ export default class Cart extends Component<{}>{
      .then((response)=>{
        console.log('syncCartResponse////////',response);
      });
-    this.getCartData();
     this._removeCartData();
   }
   async _removeCartData() {
@@ -314,6 +322,7 @@ export default class Cart extends Component<{}>{
         .catch((error)=>console.warn(error))
         .then((response)=>{
           console.warn('response',response);
+          this.getCartData();
         })
   }
   componentWillMount(){
@@ -742,6 +751,33 @@ export default class Cart extends Component<{}>{
                   </View>
                 </View>
               </View>
+            </View>
+          </AnimatedHideView>
+          <AnimatedHideView style = {{width:'100%',height:'100%',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}
+                            visible = {this.state.refresh_cart}>
+            <View style = {styles.toolbar}>
+              <TouchableHighlight underlayColor = 'transparent'
+                                  onPress = {()=>goBack()}>
+                <MaterialIcons
+                    name='arrow-back'
+                    size={22}
+                    style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+              <View style = {{width:'100%',alignItems:'center'}}>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+              </View>
+            </View>
+            <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
+              <TouchableHighlight underlayColor = 'transparent'
+                                  onPress = {()=>this.getCartData()}>
+                <MaterialIcons
+                    name='refresh'
+                    size={30}
+                    style = {{color:'#369'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+              <Text style = {{marginTop:20,color:'#369'}}>Refresh Your Cart</Text>
             </View>
           </AnimatedHideView>
           <Spinner visible = {this.state.show}

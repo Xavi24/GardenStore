@@ -13,7 +13,7 @@ import {View,
         FlatList
   } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Swiper from 'react-native-swiper'
+import ImageSlider from 'react-native-image-slider'
 import config from '../API/config'
 import GridView from 'react-native-super-grid'
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -23,6 +23,7 @@ import Toast from "react-native-simple-toast";
 var menu_name = [];
 var menu_data = [];
 let CMS_layout = [];
+let sliderData = [];
 
 export default class MainScreen extends Component<{}>{
   static navigationOptions = {
@@ -48,6 +49,29 @@ export default class MainScreen extends Component<{}>{
 
     }
   };
+   SliderImage(){
+    this.setState({
+      show : true
+    });
+    var url = config.API_URL+'mob-slides';
+    fetch(url)
+        .then((response)=> response.json())
+        .then((response)=> {
+            this.setState({
+              show : false
+            });
+            if (response.data){
+              sliderData.length = 0;
+              for (data of response.data){
+                console.log('response..?????',data);
+                sliderData.push({
+                  image : data.img_url
+                })
+              }
+              console.log('img//slider---------->>',sliderData);
+            }
+        })
+  }
   // componentDidMount() {
   //   const {goBack} = this.props.navigation
   //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -684,25 +708,20 @@ export default class MainScreen extends Component<{}>{
     });
     this.getMenu();
     this.getCMSData();
+    this.SliderImage();
   }
   render(){
 
     return(
-      <View style = {{width:'100%',height:'100%'}}>
-        <View style = {styles.container}>
-          <StatusBar
-            translucent = {false}
-            barStyle="light-content"
-            backgroundColor='#191a1c'
-          />
-          <View style = {styles.toolbar}>
+        <View style={styles.container}>
+          <View style={styles.toolbar}>
             <View style = {styles.menuView}>
               <TouchableHighlight underlayColor = 'transparent'
-                onPress = {()=>this.props.navigation.openDrawer()}>
+                                  onPress = {()=>this.props.navigation.openDrawer()}>
                 <MaterialIcons
-                  name='menu'
-                  size={22}
-                  style = {{color:'#fff'}}>
+                    name='menu'
+                    size={22}
+                    style = {{color:'#fff'}}>
                 </MaterialIcons>
               </TouchableHighlight>
             </View>
@@ -721,21 +740,21 @@ export default class MainScreen extends Component<{}>{
             </View>
             <View style = {styles.cartView}>
               <TouchableHighlight underlayColor = 'transparent'
-                onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
+                                  onPress = {()=>this.props.navigation.navigate('add_to_cart')}>
                 <MaterialIcons
-                  name='shopping-cart'
-                  size={22}
-                  style = {{color:'#fff'}}>
+                    name='shopping-cart'
+                    size={22}
+                    style = {{color:'#fff'}}>
                 </MaterialIcons>
               </TouchableHighlight>
             </View>
             <View style = {styles.walletView}>
               <TouchableHighlight underlayColor = 'transparent'
-                onPress = {()=>this.props.navigation.navigate('wallet')}>
+                                  onPress = {()=>this.props.navigation.navigate('wallet')}>
                 <MaterialIcons
-                  name='payment'
-                  size={20}
-                  style = {{color:'#fff'}}>
+                    name='payment'
+                    size={20}
+                    style = {{color:'#fff'}}>
                 </MaterialIcons>
               </TouchableHighlight>
             </View>
@@ -744,49 +763,56 @@ export default class MainScreen extends Component<{}>{
             <View style = {{width:'95%',height:'80%',alignItems:'center',justifyContent:'space-between',backgroundColor:'#eee',flexDirection:'row'}}>
               <View style = {{width:'85%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                 <TextInput style = {{height:'95%',width:'95%',fontSize:14,color:'#000'}}
-                  placeholder = 'Search'
-                  placeholderTextColor = '#bbb'
-                  underlineColorAndroid = 'transparent'
-                  onChangeText = {(text_search) => this.updateValue(text_search,'search')}>
+                           placeholder = 'Search'
+                           placeholderTextColor = '#bbb'
+                           underlineColorAndroid = 'transparent'
+                           onChangeText = {(text_search) => this.updateValue(text_search,'search')}>
                 </TextInput>
               </View>
               <View style = {{width:'15%',height:'100%',backgroundColor:'#2fdab8'}}>
                 <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.goToSearch()}>
+                                    underlayColor = 'transparent'
+                                    onPress = {()=>this.goToSearch()}>
                   <MaterialIcons
-                    name='search'
-                    size={26}
-                    style = {{color:'#fff'}}>
+                      name='search'
+                      size={26}
+                      style = {{color:'#fff'}}>
                   </MaterialIcons>
                 </TouchableHighlight>
               </View>
             </View>
           </View>
-          <View style = {{width:'100%',height:'82%',alignItems:'center',justifyContent:'center'}}>
-            <ScrollView style = {{marginBottom:5,width:'100%'}}
-              showsVerticalScrollIndicator = {false}>
-              <View style = {styles.scrollContainer}>
-                <View style = {styles.baseContainer}>
-                    <View style = {styles.gridContainer}>
-                      <GridView
-                        itemDimension={90}
-                        spacing = {2}
-                        items={this.state.menu_data}
-                        renderItem={item => (
-                            <View style={{width:100,height:40,elevation: 2}}>
-                              <TouchableHighlight style = {{height:'100%',width:'100%',backgroundColor:'#2fdab8'}}
-                                                  underlayColor = 'transparent'
-                                                  onPress = {()=>this.props.navigation.navigate('shop',{name:item.name})}>
-                                <View style = {{width:'100%',height:'100%',justifyContent:'center',alignItems:'center'}}>
-                                  <Text style = {{color:'#fff',fontWeight:'bold'}}>{item.name}</Text>
-                                </View>
-                              </TouchableHighlight>
-                            </View>
-                        )}
-                      />
-                    </View>
-
+          <View style={{height:'92%',width:'100%',alignItems:'center',justifyContent:'center'}}>
+            <ScrollView style = {{height:'100%',width:'100%'}}>
+              <View style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
+                <View style = {styles.headerImage}>
+                  <ImageSlider
+                      style = {{height:"100%",width:'100%'}}
+                      autoPlayWithInterval={3000}
+                      images={sliderData}
+                      customSlide={({ index, item, style, width }) => (
+                          <View key={index} style={[style, styles.customSlide]}>
+                            <Image source={{uri:config.IMG_URL+item.image}} style={styles.customImage} />
+                          </View>
+                      )}
+                      customButtons={(position, move) => (
+                          <View style={styles.buttons}>
+                            {sliderData.map((image, index) => {
+                              return (
+                                  <TouchableHighlight
+                                      key={index}
+                                      underlayColor="#ccc"
+                                      onPress={() => move(index)}
+                                      style={styles.button}>
+                                    <View style={position === index && styles.buttonSelected}>
+                                    </View>
+                                  </TouchableHighlight>
+                              );
+                            })}
+                          </View>
+                      )}
+                  />
+                </View>
                 <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
                   <GridView
                       itemDimension = {360}
@@ -799,35 +825,16 @@ export default class MainScreen extends Component<{}>{
                       }
                   />
                 </View>
-                </View>
               </View>
             </ScrollView>
           </View>
           <Spinner visible = {this.state.show}
-            textContent = {"Loading..."}
-            textStyle = {{color: '#369'}}
-            color = {'#369'}
-            overlayColor = {'#fff'}
+                   textContent = {"Loading..."}
+                   textStyle = {{color: '#369'}}
+                   color = {'#369'}
+                   overlayColor = {'#fff'}
           />
         </View>
-        <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',
-          backgroundColor:'rgba(00, 00, 00, 0.4)'}}
-          visible = {this.state.visible}>
-          <View style = {{width:'90%',backgroundColor:'rgba(00, 00, 00, 0.8)',alignItems:'center',justifyContent:'center',
-            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold',marginTop:30}}>Wants to exit your application?</Text>
-            <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:40,marginBottom:20}}>
-              <View style = {{width:'50%'}}></View>
-              <View style = {{width:'50%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                <Text style = {{color:'#2fdab8',fontSize:16,fontWeight:'bold'}}
-                  onPress = {()=>this.setState({visible:false})}>Not now</Text>
-                <Text style = {{color:'#800000',fontSize:16,fontWeight:'bold'}}
-                  onPress = {()=>this.kickOut()}>Exit</Text>
-              </View>
-            </View>
-          </View>
-        </AnimatedHideView>
-      </View>
     );
   }
 }
@@ -845,7 +852,7 @@ const styles = StyleSheet.create({
     marginBottom:10
   },
   baseContainer:{
-    width:'98%',
+    width:'100%',
     height:'100%',
     alignItems:'center',
     justifyContent:'center'
@@ -965,5 +972,49 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent:'space-between',
     marginTop:8
+  },
+  headerImage:{
+    height:220,
+    width:'100%',
+    alignItems:'center',
+    justifyContent:'center',
+    backgroundColor:'#fff',
+    elevation:2
+  },
+  customSlide: {
+    backgroundColor:'#fff',
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  customImage: {
+    width:'100%',
+    height:'100%',
+    alignItems:'center',
+    justifyContent:'center',
+    resizeMode:'stretch'
+  },
+  buttons: {
+    height: 15,
+    marginTop: -25,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  button: {
+    margin: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 8 / 2,
+    backgroundColor: '#bbb',
+    opacity: 1,
+  },
+  buttonSelected: {
+    opacity: 1,
+    backgroundColor: '#369',
+    width: 8,
+    height: 8,
+    borderRadius: 8 / 2,
+    elevation:3
   }
-})
+});

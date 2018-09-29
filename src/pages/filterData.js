@@ -20,8 +20,9 @@ import config from '../API/config'
 import Spinner from 'react-native-loading-spinner-overlay'
 import AnimatedHideView from 'react-native-animated-hide-view'
 
-let product_data = []
-let filterdata = []
+let product_data = [];
+let filterdata = [];
+let cat_name = [];
 const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   const paddingToBottom = 20;
   return layoutMeasurement.height + contentOffset.y >=
@@ -70,7 +71,6 @@ export default class filterData extends Component<{}>{
     this.getFilterDetails(response,url);
   }
   getFilterDetails(response,url){
-    let cat_name = [];
     let brand_name = [];
     let spec_name = [];
     let price : '';
@@ -132,13 +132,16 @@ export default class filterData extends Component<{}>{
         }
       }
         if (response.filters.cat) {
+          cat_name.length = 0;
           if (response.filters.cat.sub_cat) {
             for(let sub_cat of response.filters.cat.sub_cat){
+              console.log('filter_subcat///////////?????',sub_cat);
               cat_name.push({name:sub_cat.name})
             }
             this.setState({
               cat_data : cat_name
             })
+            console.log('catData??????????',cat_name)
           }
           if (response.filters.brands) {
             for(let brands of response.filters.brands){
@@ -507,7 +510,7 @@ export default class filterData extends Component<{}>{
               min:this.state.min,
               max:this.state.max,
               brand_data:this.state.brand_data,
-              cat_data:this.state.cat_data,
+              cat_data:cat_name,
               spec_data:this.state.spec_data,
               url:this.state.urlPass
             })}>
