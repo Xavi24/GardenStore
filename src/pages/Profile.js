@@ -36,7 +36,9 @@ export default class Profile extends Component<{}>{
       femal_color : '#282a2d',
       err_name : '',
       err_ph : '',
-      err_mail : ''
+      err_mail : '',
+      male_check  :'radio-button-unchecked',
+      female_check : 'radio-button-unchecked'
     }
   }
   okProcess(){
@@ -84,11 +86,13 @@ export default class Profile extends Component<{}>{
         });
         if (response.data.gender == 'female'||response.data.gender == 'Female') {
           this.setState({
-            femal_color : '#360'
+            femal_color : '#360',
+            female_check : 'radio-button-checked'
           })
         } else if (response.data.gender == 'Male'||response.data.gender == 'male') {
           this.setState({
-            male_color : '#360'
+            male_color : '#360',
+            male_check  :'radio-button-checked'
           })
         }
         let str = response.data.name.charAt(0);
@@ -194,7 +198,7 @@ export default class Profile extends Component<{}>{
     this._getAccessToken();
   }
   render(){
-    const {goBack} = this.props.navigation
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
@@ -334,10 +338,12 @@ export default class Profile extends Component<{}>{
                         onPress = {()=>this.setState({
                           male_color : '#360',
                           femal_color : '#282a2d',
-                          gender : 'male'
+                          gender : 'male',
+                          male_check  :'radio-button-checked',
+                          female_check : 'radio-button-unchecked'
                         })}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.male_check}
                           size={22}
                           style = {{color:this.state.male_color}}>
                         </MaterialIcons>
@@ -349,10 +355,12 @@ export default class Profile extends Component<{}>{
                         onPress = {()=>this.setState({
                           male_color : '#282a2d',
                           femal_color : '#360',
-                          gender : 'female'
+                          gender : 'female',
+                          male_check  :'radio-button-unchecked',
+                          female_check : 'radio-button-checked'
                         })}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.female_check}
                           size={22}
                           style = {{color:this.state.femal_color}}>
                         </MaterialIcons>
@@ -394,15 +402,19 @@ export default class Profile extends Component<{}>{
         <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
           position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
           visible = {this.state.error_screen}>
-          <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-            <Image style = {{width:60,height:60,marginTop:20}}
-              source = {require('../img/attention.png')}>
-            </Image>
-            <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your profile data. Please enter Your
+          <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
+            <TouchableHighlight style = {{marginTop:20}}
+                                underlayColor='transparent'>
+              <MaterialIcons
+                  name='error'
+                  size={36 }
+                  style = {{color:'#800000'}}>
+              </MaterialIcons>
+            </TouchableHighlight>
+            <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your profile data. Please enter Your
                 details correctly</Text>
             <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
-              <Text style = {{fontSize:16,textAlign:'center'}}>There is an error occured while Changing your Password.
+              <Text style = {{fontSize:14,textAlign:'center'}}>There is an error occured while Changing your Password.
                 Please go back and check all the details and try again</Text>
             </View>
             <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>

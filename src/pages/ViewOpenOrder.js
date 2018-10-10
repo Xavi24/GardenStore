@@ -34,7 +34,12 @@ export default class ViewOpenOrder extends Component<{}>{
       order_product_id : '',
       mes : [],
       points : '',
-      pointText : ''
+      pointText : '',
+      discount_text : '',
+      discount : '',
+      discountIcon  :'',
+      total : 0
+
     }
   }
   async _getAccessToken(){
@@ -97,6 +102,7 @@ export default class ViewOpenOrder extends Component<{}>{
             orderProduct.date = response.data.date_purchased;
             orderProduct.amount = response.data.amount;
             orderProduct.fbin = response.data.fbin;
+            orderProduct.payment_method = response.data.payment_method;
             if (response.data.orderproducts) {
               if (response.data.orderproducts.length >0) {
                 this.state.productArray.length = 0;
@@ -105,6 +111,13 @@ export default class ViewOpenOrder extends Component<{}>{
                     this.state.mes.push({
                       name : mesData.measurement_name,
                       value : mesData.value
+                    })
+                  }
+                  if (data.total_discount>0){
+                    this.setState({
+                      discount_text : 'Discount - ',
+                      discount : data.total_discount,
+                      discountIcon : ' %'
                     })
                   }
                   console.warn('{{{{{{{{}}}}}}}}}}}',this.state.mes);
@@ -125,6 +138,7 @@ export default class ViewOpenOrder extends Component<{}>{
                   orderProduct.status = data.order_last_status.status;
                   orderProduct.slug = data.variation.slug;
                   orderProduct.purchased_price = data.purchase_price;
+                  orderProduct.total = data.product_mrp;
 
                   productArray.push({
                     date : orderProduct.date,
@@ -143,7 +157,12 @@ export default class ViewOpenOrder extends Component<{}>{
                     fbin : orderProduct.fbin,
                     points : this.state.points,
                     pointText : this.state.pointText,
-                    purchase_price : orderProduct.purchased_price
+                    purchase_price : orderProduct.purchased_price,
+                    payment_method : orderProduct.payment_method,
+                    discountText : this.state.discount_text,
+                    discount : this.state.discount,
+                    discountIcon : this.state.discountIcon,
+                    total : orderProduct.total
                   });
                   this.setState({
                     productArray : productArray
@@ -223,8 +242,10 @@ export default class ViewOpenOrder extends Component<{}>{
                           <Text style = {{color:'#360',fontSize:14,fontWeight:'bold'}}
                              onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>{item.product_name}</Text>
                           <Text style = {{color:'#369',fontSize:12}}>RS. {item.product_price}</Text>
-                          <Text style = {{color:'#369',fontSize:12}}>Purchase Price - {item.purchase_price}</Text>
+                          <Text style = {{color:'#369',fontSize:12}}>Purchase Price - {item.amount}</Text>
                           <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
+                          <Text style={{fontSize:12}}>Payment Method - {item.payment_method}</Text>
+                          <Text>{item.discountText+''+item.discount+""+item.discountIcon}</Text>
                           <Text style={{fontSize:12}}>{item.pointText} {item.points}</Text>
                           <Text style={{fontSize:12}}>Status - {item.status}</Text>
                           <Text style = {{color:'#360',fontSize:12}}>Purchased on {item.date}</Text>
@@ -255,6 +276,7 @@ export default class ViewOpenOrder extends Component<{}>{
                                    source ={{uri:config.IMG_URL+item.img}}>
                             </Image>
                           </TouchableHighlight>
+                          <Text style={{fontSize : 12,color:'#360',marginTop:5}}>MRP - {item.total}</Text>
                         </View>
                       </View>
                       <View style = {{width:'100%',padding:10,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
@@ -281,8 +303,7 @@ export default class ViewOpenOrder extends Component<{}>{
         </View>
         <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
           visible = {this.state.removeScreen}>
-          <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-            borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+          <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
             <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants cancel the order ?</Text>
             <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
               <View style = {{width:'60%'}}></View>

@@ -149,7 +149,7 @@ export default class SearchData extends Component<{}>{
                })
              }
              if (response.filters.specs) {
-             let  spec_keys = Object.keys(response.filters.specs)
+             let  spec_keys = Object.keys(response.filters.specs);
                for (var i = 0; i < spec_keys.length; i++) {
                  spec_name.push({
                    name:spec_keys[i],
@@ -165,7 +165,7 @@ export default class SearchData extends Component<{}>{
                  min : parseInt(response.filters.price.min.split('.')[0]),
                  max : parseInt(response.filters.price.max.split('.')[0]),
                  // urlPass : config.API_URL+'products/search?term=',
-                 urlPass : config.API_URL+'products/search?term='
+                 urlPass : url
                });
                console.warn('url//pass-->filter',this.state.urlPass);
                console.warn('url//pass-->name',this.state.name);
@@ -325,7 +325,7 @@ export default class SearchData extends Component<{}>{
             </TouchableHighlight>
           </View>
           <View style = {styles.textView}>
-            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
+            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Gardens Store</Text>
           </View>
           <View style = {styles.iconView}>
             <TouchableHighlight underlayColor = 'transparent'

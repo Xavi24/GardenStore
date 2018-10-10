@@ -191,7 +191,7 @@ export default class Details extends Component<{}>{
   async _getAccessToken(){
     try {
       const value = await AsyncStorage.getItem('token');
-      console.warn('value',value);
+      // console.warn('value',value);
       if (value !== null) {
         this.setState({
           access_token : value
@@ -201,7 +201,7 @@ export default class Details extends Component<{}>{
         this.getDetails();
       }
     } catch (error) {
-      console.warn('error',error.message);
+      // console.warn('error',error.message);
     }
   }
   getAddressDetails(){
@@ -244,10 +244,10 @@ export default class Details extends Component<{}>{
         })
   }
   updateValue1(text,field,name,index){
-    console.warn('text',text);
-    console.warn('field',field);
-    console.warn('index',index);
-    console.warn('name',name);
+    // console.warn('text',text);
+    // console.warn('field',field);
+    // console.warn('index',index);
+    // console.warn('name',name);
     measures[index] = {
       product_measurement_id : field,
       value : text,
@@ -256,9 +256,10 @@ export default class Details extends Component<{}>{
     this.setState({
       measurements : measures
     });
-    console.warn('measures////',this.state.measurements);
+    // console.warn('measures////',this.state.measurements);
   }
   customNavigation(){
+
     this.state.custom_nav_data.push({
       product_name:this.state.product_name,
       prize:this.state.prize,
@@ -274,7 +275,23 @@ export default class Details extends Component<{}>{
     });
     // this.props.navigation.navigate('customization',{data:this.state.measurementData,p_data:this.state.custom_nav_data})
     // console.warn('custom_nav_data',this.state.custom_nav_data);
-    console.warn('measurementData........',this.state.Data);
+  }
+  customProductDataFetch(){
+    console.warn('...........///////....',this.state.out_of_stock_count);
+    if (this.state.out_of_stock_count < 1){
+      Toast.show('Product is out of stock', Toast.LONG);
+    } else {
+      this.props.navigation.navigate('buy_now',{
+        product_name:this.state.product_name,
+        prize:this.state.prize,
+        img:this.state.header_image,
+        product:this.state.product_id,
+        vendor:this.state.vendor_id,
+        measurements : this.state.measurements,
+        slug : this.state.slug,
+        spec : this.state.spec
+      })
+    }
   }
   getDetails(){
     let item;
@@ -300,7 +317,7 @@ export default class Details extends Component<{}>{
             if (response.code == 200){
               if (response.data) {
                 id = response.data.product_variation_id
-                console.warn('id.......?????',id);
+                // console.warn('id.......?????',id);
                 this.state.slider_Images.length = 0;
                 console.log('productDetailresponse',response);
 
@@ -340,8 +357,14 @@ export default class Details extends Component<{}>{
                       foo_color : '#800000',
                       availability_text : ''
                     })
+                  } else {
+                    this.setState({
+                      foo_color : '#2fdab8',
+                      foo_text : 'Buy Now',
+                      availability_text : 'Product Available'
+                    })
                   }
-                  console.warn('out_of_stock_screen_temp',this.state.out_of_stock_screen_temp);
+                  // console.warn('out_of_stock_screen_temp',this.state.out_of_stock_screen_temp);
                 }
                 p_specs_container.length = 0;
                 for (let product_specs of response.data.product_details.product_specs){
@@ -353,13 +376,13 @@ export default class Details extends Component<{}>{
                 }
                 spec_datas.length = 0;
                 for(let spec_data of p_specs_container){
-                  console.warn('Previousssssssssssss',spec_data.specs[0].spec_value);
+                  // console.warn('Previousssssssssssss',spec_data.specs[0].spec_value);
                   this.setState({
                     selected_size : spec_data.specs[0].spec_name,
                     selected_size_value : spec_data.specs[0].spec_value
                   });
                   for(let val of spec_data.specs){
-                    console.warn('Vallllllllllllllllllll',val);
+                    // console.warn('Vallllllllllllllllllll',val);
                     spec_datas.push({
                       spec_name : val.spec_name,
                       spec_value : val.spec_value
@@ -414,7 +437,7 @@ export default class Details extends Component<{}>{
                 }
                 this.state.selected_size_array.length = 0;
                 this.state.selected_size_array.push(var_spec_data[0]);
-                console.warn('?????????',var_spec_data);
+                // console.warn('?????????',var_spec_data);
                 console.log('............',this.state.selected_size_array);
                 spec_variation_datas.length = 0;
                 for(let spec_variation_data of p_spec_variation_container){
@@ -432,7 +455,7 @@ export default class Details extends Component<{}>{
                 this.setState({
                   spec_variation : spec_variation_datas
                 });
-                console.warn('spec_variation',this.state.spec_variation);
+                // console.warn('spec_variation',this.state.spec_variation);
                 if (response.data.is_in_cart) {
                   this.setState({
                     show_cart:false,
@@ -487,7 +510,7 @@ export default class Details extends Component<{}>{
                     vendor_id : this.state.vendor_id
                   })
                 }
-                console.warn('measurementData',this.state.measurementData);
+                // console.warn('measurementData',this.state.measurementData);
               }
             } else {
               this.setState({
@@ -501,9 +524,9 @@ export default class Details extends Component<{}>{
         })
   }
   async localCart(){
-    console.warn('entered into the local cart method');
+    // console.warn('entered into the local cart method');
     Toast.show('Product added to cart', Toast.LONG);
-    console.warn('stock--------->>>',this.state.out_of_stock_count);
+    // console.warn('stock--------->>>',this.state.out_of_stock_count);
     if (this.state.out_of_stock_count<1){
       Toast.show('Product is out of stock', Toast.LONG);
     } else {
@@ -547,8 +570,8 @@ export default class Details extends Component<{}>{
         });
         console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
         for (let data of this.state.local_cart_check) {
-          console.warn('local product_id-------->>', data.product_id);
-          console.warn('product_id-------->>', id);
+          // console.warn('local product_id-------->>', data.product_id);
+          // console.warn('product_id-------->>', id);
           if (id === data.product_id){
             this.setState({
               show_cart : false
@@ -666,7 +689,7 @@ export default class Details extends Component<{}>{
     for (let data of var_spec_data){
       let temp_array = [];
       slug_name = data.name;
-      console.warn('slug_name..............>>',slug_name);
+      // console.warn('slug_name..............>>',slug_name);
       for (let slugz of data.value){
         console.log('slugz----->>',slugz);
           if (slugz.variation_slug.includes(this.state.slug)) {
@@ -703,7 +726,7 @@ export default class Details extends Component<{}>{
       // console.log('[[[[[[[[[[[[[[[]]]]]]]]]]]]]',temp_slg_array);
   }
   addToWishList(){
-    console.warn('enterd into add to wishlist page');
+    // console.warn('enterd into add to wishlist page');
     var url = config.API_URL+'user/wishlistCreate/'+this.state.product_id;
     fetch(url, {
       headers : new Headers({
@@ -715,7 +738,7 @@ export default class Details extends Component<{}>{
         .then((response)=>response.json())
         .catch((error)=>console.warn(error))
         .then((response)=>{
-          console.warn('response',response);
+          // console.warn('response',response);
           if(response.message=='success'){
             this.setState({
               show_fav : false
@@ -788,7 +811,7 @@ export default class Details extends Component<{}>{
     if (this.state.cart_text == 'Add To Cart') {
       let cartData = {};
       cartData.measurements = JSON.stringify(this.state.measurements);
-      console.warn('cart,measurements',this.state.measurements);
+      // console.warn('cart,measurements',this.state.measurements);
       this.setState({
         customising_screen : false
       });
@@ -805,7 +828,7 @@ export default class Details extends Component<{}>{
           .then((response)=>response.json())
           .catch((error)=>console.warn(error))
           .then((response)=>{
-            console.warn('response',response);
+            // console.warn('response',response);
             if (response.message=='success') {
               Toast.show('Product Added To Cart', Toast.LONG);
               this.getDetails();
@@ -845,7 +868,7 @@ export default class Details extends Component<{}>{
   // }
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    console.warn('params',params);
+    // console.warn('params',params);
     this.setState({
       slug : params.slug,
       show : true,
@@ -1278,8 +1301,7 @@ export default class Details extends Component<{}>{
               <View style = {{width:'100%',height:'80%'}}>
 
               </View>
-              <View style = {{width:'95%',height:'15%',backgroundColor:'rgba(00, 00, 00, 0.7)',alignItems:'center',justifyContent:'center',
-                borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+              <View style = {{width:'95%',height:'15%',backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
                 <Text style = {{color:'#fff',fontWeight:'bold',fontSize:16,textAlign:'center'}}>Seems like you are not a member in here</Text>
                 <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10,flexDirection:'row'}}>
                   <View style = {{width:'60%',paddingLeft:10}}>
@@ -1358,11 +1380,15 @@ export default class Details extends Component<{}>{
                                     underlayColor = 'transparent'
                                     onPress = {()=>{
                                       if(this.state.access_token){
-                                        console.warn('access_token//',this.state.access_token);
+                                        // console.warn('access_token//',this.state.access_token);
                                         this.addToCart();
                                       } else {
-                                        console.warn('access_token',this.state.access_token);
+                                        // console.warn('access_token',this.state.access_token);
                                         // this.Cus_LocalCart();
+                                        this.setState({
+                                          login_cnfrm_screen : true,
+                                          customising_screen : false
+                                        })
                                       }
                                     }}>
                   <View style = {{width:'100%',height:'100%',backgroundColor:'#363a42',alignItems:'center',justifyContent:'center'}}>
@@ -1372,16 +1398,7 @@ export default class Details extends Component<{}>{
                 <TouchableHighlight style = {{width:'50%',height:'100%'}}>
                   <View style = {{width:'100%',height:'100%',backgroundColor:'#2fdab8',alignItems:'center',justifyContent:'center'}}>
                     <Text style = {{color:'#fff'}}
-                          onPress = {()=>this.props.navigation.navigate('buy_now',{
-                            product_name:this.state.product_name,
-                            prize:this.state.prize,
-                            img:this.state.header_image,
-                            product:this.state.product_id,
-                            vendor:this.state.vendor_id,
-                            measurements : this.state.measurements,
-                            slug : this.state.slug,
-                            spec : this.state.spec
-                          })}>Buy Now</Text>
+                          onPress = {()=>this.customProductDataFetch()}>Buy Now</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -1435,7 +1452,7 @@ export default class Details extends Component<{}>{
                   </TouchableHighlight>
                 </View>
                 <View style = {styles.titleView}>
-                  <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Customisation</Text>
+                  <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Custamization</Text>
                 </View>
                 <View style = {styles.iconView}></View>
               </View>

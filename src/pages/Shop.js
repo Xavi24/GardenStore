@@ -365,7 +365,7 @@ export default class Shop extends Component<{}>{
             </TouchableHighlight>
           </View>
           <View style = {styles.textView}>
-            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
+            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Gardens Store</Text>
           </View>
           <View style = {styles.iconView}>
             <TouchableHighlight underlayColor = 'transparent'
@@ -468,7 +468,7 @@ export default class Shop extends Component<{}>{
               {
                 // url:this.state.sortUrl,
                 name:this.state.name,
-                urlPass : this.state.urlPass
+                urlPass : this.state.sortUrl
               })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderRightWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>
@@ -490,7 +490,7 @@ export default class Shop extends Component<{}>{
               brand_data:this.state.brand_data,
               cat_data:this.state.cat_data,
               spec_data:this.state.spec_data,
-              url:this.state.urlPass
+              url:this.state.sortUrl
             })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderLeftWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>

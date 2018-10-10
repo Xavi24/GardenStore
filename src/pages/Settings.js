@@ -245,8 +245,7 @@ componentWillUnmount() {
           visible = {this.state.login_cnfrm_screen}>
           <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
             <View style = {{width:'100%',height:'80%'}}></View>
-            <View style = {{width:'95%',height:'15%',backgroundColor:'rgba(00, 00, 00, 0.7)',alignItems:'center',justifyContent:'center',
-              borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+            <View style = {{width:'95%',height:'15%',backgroundColor:'#282a2d',alignItems:'center',justifyContent:'center'}}>
               <Text style = {{color:'#fff',fontWeight:'bold',fontSize:16,textAlign:'center'}}>Seems like you are not a member in here</Text>
               <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10,flexDirection:'row'}}>
                 <View style = {{width:'60%',paddingLeft:10}}>
@@ -266,8 +265,7 @@ componentWillUnmount() {
         </AnimatedHideView>
         <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
           visible = {this.state.logConformscreen}>
-          <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-            borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+          <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
             <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants to go out ?</Text>
             <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
               <View style = {{width:'50%'}}></View>

@@ -131,7 +131,7 @@ export default class Wallet extends Component<{}>{
               </MaterialIcons>
             </TouchableHighlight>
             <View style = {{width:'100%',alignItems:'center'}}>
-              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Points</Text>
             </View>
           </View>
           <View style = {{width:'100%',height:'92%'}}>

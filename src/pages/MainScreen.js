@@ -726,7 +726,7 @@ export default class MainScreen extends Component<{}>{
               </TouchableHighlight>
             </View>
             <View style = {styles.textView}>
-              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Gardens Store</Text>
             </View>
             <View style = {styles.wishlistView}>
               <TouchableHighlight underlayColor = 'transparent'

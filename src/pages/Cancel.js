@@ -113,7 +113,7 @@ export default class Cancel extends Component<{}>{
             </TouchableHighlight>
           </View>
           <View style = {styles.textView}>
-            <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Order</Text>
+            <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Cancel Orders</Text>
           </View>
           <View style = {styles.iconView}>
           </View>

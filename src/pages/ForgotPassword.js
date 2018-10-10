@@ -110,8 +110,7 @@ forgotPassword(){
         <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
           justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
           visible = {this.state.success_screen}>
-          <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
-            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+          <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center'}}>
             <Image style = {{height:80,width:80}}
               source = {require('../img/thumbs.png')}>
             </Image>

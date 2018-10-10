@@ -113,7 +113,11 @@ export default class CartBuynow extends Component<{}>{
       err_district : '',
       point_screen : false,
       coupon : '',
-      coupon_disc : ''
+      coupon_disc : '',
+      edit_add_screen : false,
+      address_height : 0,
+      address_padding : 0,
+      address_border_width : 0,
     }
   }
   ApplyCoupon(){
@@ -176,7 +180,12 @@ export default class CartBuynow extends Component<{}>{
             height:150,
             width:1,
             padding:10
-          })
+          });
+          this.setState({
+            address_height:30,
+            address_padding : 3,
+            address_border_width : 1
+          });
           for(let data of response.data){
             this.setState({
               user_address_id : data.user_address_id,
@@ -221,11 +230,13 @@ export default class CartBuynow extends Component<{}>{
                   postcode :''
                 })
                 console.warn('dataaaaaaaaaaaaaaaaaaaaaaa',this.state.dataValue);
+        } else {
+          this.setState({
+            address_height:0,
+            address_padding : 0,
+            address_border_width : 0
+          })
         }
-      } else {
-        this.setState({
-          show : true
-        })
       }
     })
   }
@@ -332,7 +343,8 @@ export default class CartBuynow extends Component<{}>{
             var_id:data.variation_id,
             slug : data.variation_details.slug,
             id : data.id,
-            vendor_id : data.vendor_id
+            vendor_id : data.vendor_id,
+            quantity : data.count
           })
           this.setState({
             crtData:cartData,
@@ -357,7 +369,7 @@ export default class CartBuynow extends Component<{}>{
       if (value !== null) {
         this.setState({
           access_token : value
-        })
+        });
         this.getCartData();
         this.getAddress();
       } else {
@@ -372,7 +384,9 @@ export default class CartBuynow extends Component<{}>{
     this.setState({
       placeOrderScreen:false
     })
-
+    if(this.state.payment_method === ''){
+      Toast.show('Select Your Payment Method', Toast.LONG);
+    }
     console.warn('access_token',this.state.access_token);
     console.warn('user_address_id',this.state.user_address_id);
     console.warn('payment_method',this.state.payment_method);
@@ -681,7 +695,8 @@ export default class CartBuynow extends Component<{}>{
           .then((response)=>{
               console.warn('response',response);
               if (response.code == '200') {
-                  this.setState({add_new_screen:false})
+                  this.setState({add_new_screen:false});
+                this.getAddress();
               } else {
                   this.setState({
                       error_screen : true,
@@ -798,6 +813,181 @@ export default class CartBuynow extends Component<{}>{
           }
       }
   }
+  getEditData(postcode,area,building,landmark,city,district,state,country,name,type,phone_no,street,dflt,address_id){
+    console.warn('default',dflt);
+    this.setState({
+      postcode : postcode,
+      area : area,
+      building : building,
+      landmark : landmark,
+      city : city,
+      district : district,
+      state : state,
+      country : country,
+      name : name,
+      phone_no : phone_no,
+      street_address : street,
+      edit_add_screen : true,
+      user_address_id : address_id
+    });
+    if (dflt){
+      this.setState({
+        checked : true
+      })
+    } else {
+      this.setState({
+        checked : false
+      })
+    }
+    this.checkType(type);
+  }
+  updateValue3(text,field){
+    if (field == 'postcode') {
+      this.setState({
+        postcode:text
+      })
+    }
+    else if (field == 'name') {
+      this.setState({
+        name:text
+      })
+    }
+    else if (field == 'street_address') {
+      this.setState({
+        street_address:text
+      })
+    }
+    else if (field == 'landmark') {
+      this.setState({
+        landmark:text
+      })
+    }
+    else if (field == 'city') {
+      this.setState({
+        city:text
+      })
+    }
+    else if (field == 'state') {
+      this.setState({
+        state:text
+      })
+    }
+    else if (field == 'district') {
+      this.setState({
+        district:text
+      })
+    }
+    else if (field == 'country') {
+      this.setState({
+        country:text
+      })
+    }
+    else if (field == 'phone_no') {
+      this.setState({
+        phone_no:text
+      })
+    } else if (field == 'area') {
+      this.setState({
+        area:text
+      })
+    } else if (field == 'Building') {
+      this.setState({
+        building :text
+      })
+    }
+  }
+  updateAddress(){
+    this.setState({
+      err_msg : '',
+      err_postcode : '',
+      err_ph : '',
+      err_name : '',
+      err_type : '',
+      err_street : '',
+      err_city : '',
+      err_state : '',
+      err_country : '',
+      err_area : '',
+      err_building : '',
+      err_landmark : '',
+      err_district : '',
+      edit_add_screen : false
+    });
+    console.warn('access/////save',this.state.access_token);
+    let addressData = {};
+    addressData.postcode = this.state.postcode,
+        addressData.name = this.state.name,
+        addressData.street_address = this.state.street_address,
+        addressData.landmark = this.state.landmark,
+        addressData.city = this.state.city,
+        addressData.state = this.state.state,
+        addressData.district = this.state.district,
+        addressData.country = this.state.country,
+        addressData.type = this.state.type,
+        addressData.default = (this.state.checked)?1:0,
+        addressData.phone_no = this.state.phone_no,
+        addressData.area = this.state.area,
+        addressData.building = this.state.building
+    console.warn('address....',addressData);
+    if (addressData.postcode == '' || addressData.name == '' ||addressData.street_address == '' || addressData.landmark == '' ||
+        addressData.city == '' || addressData.state == '' ||addressData.district == '' || addressData.country == '' ||
+        addressData.type == '' || addressData.phone_no == '' ||addressData.area == '' || addressData.building == ''){
+      this.setState({
+        err_msg : 'seems like you have some problems with saving your address. Please go back and try again'
+      })
+    }
+
+    var url = config.API_URL+'updateAddress/'+this.state.user_address_id;
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(addressData),
+      headers: new Headers({
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+        'Authorization' : this.state.access_token
+      })
+    })
+        .then((response)=>response.json())
+        .catch((error)=>console.warn('error',error))
+        .then((response)=>{
+          console.warn('response',response);
+          if (response.code == '200') {
+            let dataValue = {};
+            dataValue.user_address_id = this.state.user_address_id;
+            dataValue.name = this.state.name;
+            dataValue.street_address = this.state.street_address;
+            dataValue.city = this.state.city;
+            dataValue.building = this.state.building;
+            dataValue.district = this.state.district;
+            dataValue.state = this.state.state;
+            dataValue.country = this.state.country;
+            dataValue.landmark = this.state.landmark;
+            dataValue.phone_no = this.state.phone_no;
+            dataValue.postcode = this.state.postcode;
+            console.warn("{{{{{}}}}}}}}",dataValue);
+            this.setState({
+              dataValue : dataValue,
+              edit_add_screen : false,
+              select_address_view : false
+            });
+            Toast.show('Address Updated', Toast.LONG);
+          } else {
+            this.setState({
+              error_screen : true,
+              err_postcode : response.errors.postcode,
+              err_ph : response.errors.phone_no,
+              err_name : response.errors.name,
+              err_type : response.errors.type,
+              err_street : response.errors.street_address,
+              err_city : response.errors.city,
+              err_state : response.errors.state,
+              err_country : response.errors.country,
+              err_area : response.errors.area,
+              err_building : response.errors.building
+            })
+          }
+        })
+  }
   render(){
     const {goBack} = this.props.navigation
     let data = [{value: '32'},{value: '38'},{value: '40'}];
@@ -839,11 +1029,11 @@ export default class CartBuynow extends Component<{}>{
                 <View style={{width:'95%', backgroundColor:'#ffffff',justifyContent:'space-between',elevation:0,marginBottom:10,borderTopLeftRadius:6,
                     borderTopRightRadius:6,borderBottomLeftRadius:6,borderBottomRightRadius:6,borderWidth:1,borderColor:'#cccccc',padding:10,
                     alignItems:'center',flexDirection:'row',marginTop:2}}>
-                    <TouchableHighlight style={{padding:3,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#369'}}
-                      underlayColor='transparent'
-                      onPress = {()=>this.getUserAddress()}>
-                        <Text style={{color:'#369',fontWeight:'bold',fontSize:14}}>Select Address</Text>
-                    </TouchableHighlight>
+                  <TouchableHighlight style={{padding:this.state.address_padding,alignItems:'center',justifyContent:'center',borderWidth:this.state.address_border_width,borderColor:'#369',width:100,height:this.state.address_height}}
+                                      underlayColor='transparent'
+                                      onPress = {()=>this.getUserAddress()}>
+                    <Text style={{color:'#369',fontWeight:'bold',fontSize:12}}>Select Address</Text>
+                  </TouchableHighlight>
                     <TouchableHighlight style={{padding:3,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#369'}}
                         underlayColor='transparent'
                          onPress = {()=>this.setState({add_new_screen:true})}>
@@ -863,8 +1053,9 @@ export default class CartBuynow extends Component<{}>{
                             source = {{uri:config.IMG_URL+item.image}}>
                           </Image>
                         </View>
-                        <Text style = {{color:'#360',fontWeight:'bold',marginTop:5}}>{item.name}</Text>
-                        <Text style = {{color:'#369',fontWeight:'bold',marginTop:5,marginBottom:5}}>RS.{item.price}</Text>
+                        <Text style = {{color:'#360',marginTop:5,fontSize:12}}>{item.name}</Text>
+                        <Text style = {{color:'#369',marginTop:5,marginBottom:5,fontSize:12}}>RS.{item.price}</Text>
+                        <Text style={{fontSize:12}}>Quantity - {item.quantity}</Text>
                       </View>
                     </TouchableHighlight>
                     )}
@@ -985,7 +1176,7 @@ export default class CartBuynow extends Component<{}>{
                   <View style = {styles.toolbar}>
                       <View style = {styles.menuView}>
                           <TouchableHighlight underlayColor = 'transparent'
-                                              onPress = {()=>goBack()}>
+                                              onPress = {()=>this.setState({select_address_view:false})}>
                               <MaterialIcons
                                   name='arrow-back'
                                   size={22}
@@ -994,7 +1185,7 @@ export default class CartBuynow extends Component<{}>{
                           </TouchableHighlight>
                       </View>
                       <View style = {styles.titleView}>
-                          <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Check Out</Text>
+                          <Text style = {{color:'#fff',fontWeight:'bold',fontSize:18}}>Saved Address</Text>
                       </View>
                       <View style = {styles.iconView}>
 
@@ -1010,24 +1201,24 @@ export default class CartBuynow extends Component<{}>{
                                   renderItem={item => (
                                       <View style={{width:'100%',padding:10,backgroundColor:'#fff',elevation:1}}>
                                           <View style={{width:'100%',flexDirection:'row'}}>
-                                              <Text style={{color:'#000',fontSize:18,fontWeight:'bold'}}>{item.name}</Text>
+                                              <Text style={{color:'#000',fontSize:16,fontWeight:'bold'}}>{item.name}</Text>
                                               <View style={{backgroundColor:'#eee',padding:3,marginLeft:10}}>
-                                                  <Text>
+                                                  <Text style={{fontSize:12}}>
                                                       {item.type}
                                                   </Text>
                                               </View>
                                           </View>
                                           <View style={{width:'100%',padding:10}}>
-                                              <Text style={{color:'#000',fontWeight:'bold',fontSize:16}}>
+                                              <Text style={{color:'#000',fontWeight:'bold',fontSize:12}}>
                                                   Postcode : {item.postcode}
                                               </Text>
-                                              <Text style={{fontSize:16}}>
+                                              <Text style={{fontSize:12}}>
                                                   {item.area+','+item.building}
                                               </Text>
-                                              <Text style={{fontSize:16}}>
+                                              <Text style={{fontSize:12}}>
                                                   {item.street+','+item.city+','+item.district+','+item.state+','+item.country}
                                               </Text>
-                                              <Text style={{fontSize:16,fontWeight:'bold',color:'#369'}}>
+                                              <Text style={{fontSize:12,fontWeight:'bold',color:'#369'}}>
                                                   Mobile Number : {item.phone_no}
                                               </Text>
                                           </View>
@@ -1056,24 +1247,22 @@ export default class CartBuynow extends Component<{}>{
                                               <View style={{width:'30%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',
                                                   padding:10}}>
                                                   <TouchableHighlight underlayColor='transparent'
-                                                     onPress = {()=>this.props.navigation.navigate('edit_address',
-                                                        {
-                                                           id:item.address_id,
-                                                           name : item.name,
-                                                           street : item.street,
-                                                           city : item.city,
-                                                           district : item.district,
-                                                           postcode : item.postcode,
-                                                           state : item.state,
-                                                           country : item.country,
-                                                           landmark : item.landmark,
-                                                           area : item.area,
-                                                           building : item.building,
-                                                           phone_no : item.phone_no,
-                                                           type : item.type,
-                                                           dflt : item.dflt
-                                                         }
-                                                     )}>
+                                                                      onPress = {()=>this.getEditData(
+                                                                          item.postcode,
+                                                                          item.area,
+                                                                          item.building,
+                                                                          item.landmark,
+                                                                          item.city,
+                                                                          item.district,
+                                                                          item.state,
+                                                                          item.country,
+                                                                          item.name,
+                                                                          item.type,
+                                                                          item.phone_no,
+                                                                          item.street,
+                                                                          item.dflt,
+                                                                          item.address_id
+                                                                      )}>
                                                   <MaterialIcons
                                                      name='edit'
                                                      size={22}
@@ -1100,9 +1289,8 @@ export default class CartBuynow extends Component<{}>{
           </AnimatedHideView>
           <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
             visible = {this.state.removeScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants remove the address ?</Text>
+            <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants remove the address ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                 <View style = {{width:'60%'}}></View>
                 <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
@@ -1125,7 +1313,7 @@ export default class CartBuynow extends Component<{}>{
                 <View style = {styles.toolbar}>
                     <View style = {styles.menuView}>
                         <TouchableHighlight underlayColor = 'transparent'
-                                            onPress = {()=>goBack()}>
+                                            onPress = {()=>this.setState({add_new_screen:false})}>
                             <MaterialIcons
                                 name='arrow-back'
                                 size={22}
@@ -1300,7 +1488,7 @@ export default class CartBuynow extends Component<{}>{
                                     <View style = {styles.savebtn}>
                                         <View style = {{width:'50%',alignItems:'center',justifyContent:'center'}}>
                                             <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}
-                                                  onPress = {()=>goBack()}>CANCEL</Text>
+                                                  onPress = {()=>this.setState({add_new_screen:false})}>CANCEL</Text>
                                         </View>
                                         <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
                                             borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',
@@ -1321,15 +1509,19 @@ export default class CartBuynow extends Component<{}>{
                 <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
                     position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
                                   visible = {this.state.error_screen}>
-                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-                        borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-                        <Image style = {{width:60,height:60,marginTop:20}}
-                               source = {require('../img/attention.png')}>
-                        </Image>
-                        <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
+                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',}}>
+                      <TouchableHighlight style = {{marginTop:20}}
+                                          underlayColor='transparent'>
+                        <MaterialIcons
+                            name='error'
+                            size={36 }
+                            style = {{color:'#800000'}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
+                        <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
                             details correctly</Text>
                         <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
-                            <Text style = {{fontSize:16,textAlign:'center'}}>{this.state.err_msg}</Text>
+                            <Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>
                         </View>
                         <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
                             <View>
@@ -1348,7 +1540,7 @@ export default class CartBuynow extends Component<{}>{
                         <Image style = {{height:80,width:80,marginTop:20}}
                                source = {require('../img/checked.png')}>
                         </Image>
-                        <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:20}}>Your address added successfully</Text>
+                        <Text style = {{color:'#000',fontSize:16,fontWeight:'bold',marginTop:20}}>Your address added successfully</Text>
                         <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:30,marginBottom:20}}>
                             <View></View>
                             <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
@@ -1395,6 +1587,331 @@ export default class CartBuynow extends Component<{}>{
                   <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                 </View>
               </View>
+            </View>
+          </AnimatedHideView>
+          <AnimatedHideView visible={this.state.edit_add_screen}
+                            style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}>
+            <View style = {styles.container}>
+              <StatusBar
+                  translucent = {false}
+                  barStyle="light-content"
+                  backgroundColor='#191a1c'
+              />
+              <View style = {styles.toolbar}>
+                <View style = {styles.menuView}>
+                  <TouchableHighlight underlayColor = 'transparent'
+                                      onPress = {()=>this.setState({edit_add_screen:false})}>
+                    <MaterialIcons
+                        name='arrow-back'
+                        size={22}
+                        style = {{color:'#fff'}}>
+                    </MaterialIcons>
+                  </TouchableHighlight>
+                </View>
+                <View style = {styles.textView}>
+                  <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Edit Address</Text>
+                </View>
+                <View style = {styles.iconView}>
+
+                </View>
+              </View>
+              <View style = {styles.baseContainer}>
+                <ScrollView style = {styles.scrollView}
+                            showsVerticalScrollIndicator={false}>
+                  <View style = {{marginBottom:20}}>
+                    <Text style = {{fontSize:18,marginTop:20,marginLeft:20,color:'#000'}}>Edit Your Address</Text>
+                    <View style = {styles.baseView}>
+
+                      <View style = {styles.topView}>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Pin Code
+                          </Text>
+                        </View>
+
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Pin Code"
+                                   keyboardType='numeric'
+                                   value={this.state.postcode}
+                                   onChangeText = {(text_postcode)=>this.updateValue3(text_postcode,'postcode')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_postcode}</Text>
+                        </View>
+
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Area
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Area"
+                                   value={this.state.area}
+                                   onChangeText = {(text_area)=>this.updateValue3(text_area,'area')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_area}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Building
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Building"
+                                   value={this.state.building}
+                                   onChangeText = {(text_building)=>this.updateValue3(text_building,'Building')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_building}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Locality/Town
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Locality/Town"
+                                   value={this.state.landmark}
+                                   onChangeText = {(text_landmark)=>this.updateValue3(text_landmark,'landmark')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_landmark}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            City
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="City"
+                                   value={this.state.city}
+                                   onChangeText = {(text_city)=>this.updateValue3(text_city,'city')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_city}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            District
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="District"
+                                   value={this.state.district}
+                                   onChangeText = {(text_district)=>this.updateValue3(text_district,'district')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_district}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            State
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="State"
+                                   value={this.state.state}
+                                   onChangeText = {(text_state)=>this.updateValue3(text_state,'state')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_state}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Country
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Country"
+                                   value={this.state.country}
+                                   onChangeText = {(text_country)=>this.updateValue3(text_country,'country')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_country}</Text>
+                        </View>
+                      </View>
+
+                      <View style = {styles.topView}>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Name
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Name"
+                                   value={this.state.name}
+                                   onChangeText = {(text_name)=>this.updateValue3(text_name,'name')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_name}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Address
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.addressBox}
+                                   underlineColorAndroid = 'transparent'
+                                   multiline={true}
+                                   editable = {true}
+                                   placeholder="Address"
+                                   value={this.state.street_address}
+                                   onChangeText = {(text_address)=>this.updateValue3(text_address,'street_address')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_street}</Text>
+                        </View>
+                        <View style={{width:'95%',marginTop:10}}>
+                          <Text style={{color:'#369'}}>
+                            Mobile No
+                          </Text>
+                        </View>
+                        <TextInput style = {styles.input}
+                                   underlineColorAndroid = '#bbbbbb'
+                                   placeholder="Mobile No"
+                                   keyboardType='numeric'
+                                   value={this.state.phone_no}
+                                   onChangeText = {(text_phone_no)=>this.updateValue3(text_phone_no,'phone_no')}>
+                        </TextInput>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_ph}</Text>
+                        </View>
+                        <View style = {{width:'100%'}}>
+                          <Text style = {{fontSize:14,marginLeft:15,marginTop:10,marginBottom:5}}>Type of Address</Text>
+                        </View>
+
+                        <View style = {{width:'100%',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                          <CheckBox
+                              center
+                              title='Office/Commercial'
+                              checkedIcon='dot-circle-o'
+                              uncheckedIcon='circle-o'
+                              textStyle={{color:'#369'}}
+                              containerStyle={{backgroundColor:'#fff',borderColor:'#ffffff'}}
+                              checked={this.state.officeChecked}
+                              onPress = {() => this.checkType('office')}
+                          />
+                          <CheckBox
+                              center
+                              title='Home'
+                              checkedIcon='dot-circle-o'
+                              uncheckedIcon='circle-o'
+                              textStyle={{color:'#369'}}
+                              containerStyle={{backgroundColor:'#fff',borderColor:'#ffffff'}}
+                              checked={this.state.homeChecked}
+                              onPress = {() => this.checkType('home')}
+                          />
+                        </View>
+                        <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+                          <View>
+                          </View>
+                          <Text style={{color:'#800000',fontWeight:'bold'}}>{this.state.err_type}</Text>
+                        </View>
+                        <CheckBox
+                            title='Make this as your default address'
+                            checked={this.state.checked}
+                            containerStyle={{backgroundColor:'#fff',borderColor:'#ffffff'}}
+                            onPress = {()=>this.setState({checked:!this.state.checked})}
+                        />
+
+                      </View>
+
+                      <View style = {styles.topView}>
+                        <View style = {styles.savebtn}>
+                          <View style = {{width:'50%',alignItems:'center',justifyContent:'center'}}>
+                            <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}
+                                  onPress = {()=>goBack()}>CANCEL</Text>
+                          </View>
+                          <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
+                            borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',
+                            alignItems:'center',justifyContent:'center'}}>
+                            <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                                                underlayColor='transparent'
+                                                onPress = {() =>this.updateAddress()}>
+                              <Text style = {{fontSize:16,color:'#fff'}}>SAVE</Text>
+                            </TouchableHighlight>
+                          </View>
+                        </View>
+                      </View>
+
+                    </View>
+                  </View>
+                </ScrollView>
+              </View>
+              <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
+                position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
+                                visible = {this.state.error_screen}>
+                <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
+                  <TouchableHighlight style = {{marginTop:20}}
+                                      underlayColor='transparent'>
+                    <MaterialIcons
+                        name='error'
+                        size={36 }
+                        style = {{color:'#800000'}}>
+                    </MaterialIcons>
+                  </TouchableHighlight>
+                  <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
+                    details correctly</Text>
+                  <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
+                    <Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>
+                  </View>
+                  <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
+                    <View>
+
+                    </View>
+                    <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                          onPress = {()=>this.setState({error_screen : false})}>OK</Text>
+                  </View>
+                </View>
+              </AnimatedHideView>
+              <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
+                justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
+                                visible = {this.state.success_screen}>
+                <View style = {{width:'95%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
+                  borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+                  <Image style = {{height:80,width:80,marginTop:20}}
+                         source = {require('../img/checked.png')}>
+                  </Image>
+                  <Text style = {{color:'#000',fontSize:16,fontWeight:'bold',marginTop:20}}>Your address updated successfully</Text>
+                  <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:30,marginBottom:20}}>
+                    <View></View>
+                    <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
+                          onPress = {()=>this.props.navigation.navigate('add_manage')}>OK</Text>
+                  </View>
+                </View>
+              </AnimatedHideView>
             </View>
           </AnimatedHideView>
           <Spinner visible = {this.state.show}

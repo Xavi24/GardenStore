@@ -168,7 +168,8 @@ export default class Change_Password extends Component<{}>{
           visible = {this.state.success_screen}>
           <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
             <Image style = {{height:100,width:100,alignItems:'center',justifyContent:'center',resizeMode:'stretch',marginTop:20}}
-              source = {require('../img/thumbs.png')}></Image>
+              source = {require('../img/thumbs.png')}>
+            </Image>
             <View style = {{width:'90%',alignItems:'center',justifyContent:'center',marginTop:20}}>
               <Text style = {{color:'#000',fontSize:16,textAlign:'center'}}>Your Password Has been Changed Successfully</Text>
             </View>
@@ -184,14 +185,18 @@ export default class Change_Password extends Component<{}>{
         <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
           position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
           visible = {this.state.error_screen}>
-          <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-            borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-            <Image style = {{width:60,height:60,marginTop:20}}
-              source = {require('../img/attention.png')}>
-            </Image>
-            <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10}}>{this.state.error_message}</Text>
+          <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
+            <TouchableHighlight style = {{marginTop:20}}
+                                underlayColor='transparent'>
+              <MaterialIcons
+                  name='error'
+                  size={36 }
+                  style = {{color:'#800000'}}>
+              </MaterialIcons>
+            </TouchableHighlight>
+            <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10}}>{this.state.error_message}</Text>
             <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
-              <Text style = {{fontSize:16,textAlign:'center'}}>There is an error occured while Changing your Password.
+              <Text style = {{fontSize:14,textAlign:'center'}}>There is an error occured while Changing your Password.
                 Please go back and check all the details and try again</Text>
             </View>
             <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>

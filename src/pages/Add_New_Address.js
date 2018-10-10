@@ -453,11 +453,14 @@ export default  class Add_New_Address extends Component<{}>{
                 <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
                     position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
                                   visible = {this.state.error_screen}>
-                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-                        borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-                        <Image style = {{width:60,height:60,marginTop:20}}
-                               source = {require('../img/attention.png')}>
-                        </Image>
+                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',}}>
+                      <TouchableHighlight underlayColor='transparent'>
+                        <MaterialIcons
+                            name='error'
+                            size={36 }
+                            style = {{color:'#800000'}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
                         <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
                             details correctly</Text>
                         <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>

@@ -84,7 +84,7 @@ export default class Filter extends Component<{}>{
     let spec_name = [];
     let price = '';
     price = '['+'min='+this.state.min+','+'max='+this.state.max+']';
-    var url = this.state.url+this.state.pass_name+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max;
+    var url = this.state.url+'&'+'category='+this.state.selected_cat+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max;
     console.log('url???????????',url);
     console.log('firstFilterurl??????',this.state.url);
     fetch(url)

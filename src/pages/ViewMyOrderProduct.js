@@ -40,7 +40,11 @@ export default class ViewMyOrderProduct extends Component<{}>{
       order_product_id : '',
       mes : [],
       points : '',
-      pointText : ''
+      pointText : '',
+      discount_text : '',
+      discount : '',
+      discountIcon  :'',
+      total : 0
 
     }
   }
@@ -104,6 +108,7 @@ export default class ViewMyOrderProduct extends Component<{}>{
             orderProduct.date = response.data.date_purchased;
             orderProduct.amount = response.data.amount;
             orderProduct.fbin = response.data.fbin;
+            orderProduct.payment_method = response.data.payment_method;
             if (response.data.orderproducts) {
               if (response.data.orderproducts.length >0) {
                 this.state.productArray.length = 0;
@@ -114,6 +119,13 @@ export default class ViewMyOrderProduct extends Component<{}>{
                       value : mesData.value
                     })
                   }
+                  if (data.total_discount>0){
+                    this.setState({
+                      discount_text : 'Discount - ',
+                      discount : data.total_discount,
+                      discountIcon : ' %'
+                    })
+                  }
                   console.warn('status/////',data.order_last_status.status);
                   console.warn('data',data);
                   if (data.order_last_status.status == 'Cancelled' || data.order_last_status.status == 'cancelled') {
@@ -121,15 +133,16 @@ export default class ViewMyOrderProduct extends Component<{}>{
                   } else if (data.order_last_status.status == 'processing' || data.order_last_status.status == 'Processing') {
                     orderProduct.btn_name = 'Cancel Item'
                   }
-                  orderProduct.order_product_id = data.order_product_id,
-                  orderProduct.product_id = data.product_id,
-                  orderProduct.product_name = data.product_name,
-                  orderProduct.product_price = data.product_price,
-                  orderProduct.product_qty = data.product_qty,
-                  orderProduct.measurements = data.measurements,
-                  orderProduct.img = data.single_var_img.variation_image,
-                  orderProduct.status = data.order_last_status.status,
-                  orderProduct.slug = data.variation.slug
+                  orderProduct.order_product_id = data.order_product_id;
+                  orderProduct.product_id = data.product_id;
+                  orderProduct.product_name = data.product_name;
+                  orderProduct.product_price = data.product_price;
+                  orderProduct.product_qty = data.product_qty;
+                  orderProduct.measurements = data.measurements;
+                  orderProduct.img = data.single_var_img.variation_image;
+                  orderProduct.status = data.order_last_status.status;
+                  orderProduct.slug = data.variation.slug;
+                  orderProduct.total = data.product_mrp;
 
                   productArray.push({
                     date : orderProduct.date,
@@ -147,7 +160,12 @@ export default class ViewMyOrderProduct extends Component<{}>{
                     mes : this.state.mes,
                     fbin : orderProduct.fbin,
                     points : this.state.points,
-                    pointText : this.state.pointText
+                    pointText : this.state.pointText,
+                    payment_method : orderProduct.payment_method,
+                    discountText : this.state.discount_text,
+                    discount : this.state.discount,
+                    discountIcon : this.state.discountIcon,
+                    total : orderProduct.total
                   });
                   this.setState({
                     productArray : productArray,
@@ -168,7 +186,7 @@ export default class ViewMyOrderProduct extends Component<{}>{
       show : true
     });
     console.warn('mainid',id);
-    var url = config.API_URL+'user/cancelProduct/'+id
+    var url = config.API_URL+'user/cancelProduct/'+id;
     fetch(url, {
       method : 'PUT',
       headers: new Headers({
@@ -231,6 +249,8 @@ export default class ViewMyOrderProduct extends Component<{}>{
                                  onPress = {()=>this.props.navigation.navigate('details',{slug:item.slug,header_image:item.img})}>{item.product_name}</Text>
                               <Text style = {{color:'#369',fontSize:12}}>RS. {item.product_price}</Text>
                               <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
+                              <Text style={{fontSize:12}}>Payment Method - {item.payment_method}</Text>
+                              <Text>{item.discountText+''+item.discount+""+item.discountIcon}</Text>
                               <Text style={{fontSize:12}}>Status - {item.status}</Text>
                               <Text style = {{color:'#360',fontSize:12}}>Purchased on {item.date}</Text>
                               <View style = {{width:'100%'}}>
@@ -260,6 +280,7 @@ export default class ViewMyOrderProduct extends Component<{}>{
                                        source ={{uri:config.IMG_URL+item.img}}>
                                 </Image>
                               </TouchableHighlight>
+                              <Text style={{fontSize : 12,color:'#360'}}>MRP - {item.total}</Text>
                             </View>
                           </View>
                           <View style = {{width:'100%',padding:10,alignItems:'center',justifyContent:'center',flexDirection:'row'}}>

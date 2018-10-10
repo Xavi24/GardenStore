@@ -135,7 +135,7 @@ export default class Cart extends Component<{}>{
       removeScreen:false
     })
     console.warn('variation_id',p_id);
-    var url = config.API_URL+'user/wishlistCreate/'+p_id
+    var url = config.API_URL+'user/wishlistCreate/'+p_id;
     fetch(url, {
       headers : new Headers({
         'Content-Type' : 'application/json',
@@ -281,7 +281,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Wish List</Text>
               </View>
             </View>
             <View style = {{width:'100%',height:'92%'}}>
@@ -347,9 +347,8 @@ export default class Cart extends Component<{}>{
           </AnimatedHideView>
           <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
             visible = {this.state.removeScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants remove the product ?</Text>
+            <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants remove the product ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                 <View style = {{width:'60%'}}></View>
                 <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
@@ -363,8 +362,7 @@ export default class Cart extends Component<{}>{
           </AnimatedHideView>
           <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
             visible = {this.state.movetocartScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+            <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
               <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants move the product to cart ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                 <View style = {{width:'60%'}}></View>

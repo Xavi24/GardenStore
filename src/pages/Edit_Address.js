@@ -578,15 +578,19 @@ export default class Edit_Address extends Component<{}>{
                 <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
                     position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
                                   visible = {this.state.error_screen}>
-                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-                        borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-                        <Image style = {{width:60,height:60,marginTop:20}}
-                               source = {require('../img/attention.png')}>
-                        </Image>
-                        <Text style = {{fontSize:22,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
+                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
+                      <TouchableHighlight style = {{marginTop:20}}
+                                          underlayColor='transparent'>
+                        <MaterialIcons
+                            name='error'
+                            size={36 }
+                            style = {{color:'#800000'}}>
+                        </MaterialIcons>
+                      </TouchableHighlight>
+                        <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
                             details correctly</Text>
                         <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
-                            <Text style = {{fontSize:16,textAlign:'center'}}>{this.state.err_msg}</Text>
+                            <Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>
                         </View>
                         <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
                             <View>
@@ -605,11 +609,11 @@ export default class Edit_Address extends Component<{}>{
                         <Image style = {{height:80,width:80,marginTop:20}}
                                source = {require('../img/checked.png')}>
                         </Image>
-                        <Text style = {{color:'#000',fontSize:22,fontWeight:'bold',marginTop:20}}>Your address updated successfully</Text>
+                        <Text style = {{color:'#000',fontSize:16,fontWeight:'bold',marginTop:20}}>Your address updated successfully</Text>
                         <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:30,marginBottom:20}}>
                             <View></View>
                             <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                                  onPress = {()=>this.setState({success_screen : false})}>OK</Text>
+                                  onPress = {()=>this.props.navigation.navigate('add_manage')}>OK</Text>
                         </View>
                     </View>
                 </AnimatedHideView>

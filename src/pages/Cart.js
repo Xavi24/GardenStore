@@ -61,7 +61,8 @@ export default class Cart extends Component<{}>{
       local_cart_view : false,
       local_cart_check : [],
       local_mes : [],
-      refresh_cart : false
+      refresh_cart : false,
+      local_data : []
     }
   }
   updateSize = (size) => {
@@ -158,13 +159,64 @@ export default class Cart extends Component<{}>{
         this.setState({
           access_token : value
         });
-        this.getCartData();
-        this.getAddress();
         this.syncCart();
+        // this.getCartData();
+        this.getAddress();
       } else {
         this.getLocalCart();
       }
     } catch (error) {
+    }
+  }
+  async deleteLocalCart(product_id){
+    try {
+      const LocalData = await AsyncStorage.getItem('@MySuperCart:key');
+      if (LocalData !== null){
+        this.setState({
+          local_data : JSON.parse(LocalData)
+        });
+        console.log('Data//For//Delete',this.state.local_data);
+        console.log('product_id//for//delete',product_id);
+        let indx = this.state.local_data.findIndex(x => x.product_id === product_id);
+        console.log('index//for//delete',indx);
+        this.state.local_data.splice(indx, 1);
+        console.log('Data//After//Delete',this.state.local_data);
+        // this._removeCartData();
+        this.dataAfterdelete(this.state.local_data);
+      }
+    } catch (e) {
+
+    }
+  }
+  async dataAfterdelete(data){
+    console.warn('Enetr into dataAfterdelete Method....',data);
+    try {
+      await AsyncStorage.setItem('@MySuperCart:key', JSON.stringify(data));
+    } catch (error) {
+      console.log('Error....//',error);
+    }
+    var totalPrize = 0;
+    try {
+      const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
+      if (localCartData !== null) {
+        this.setState({
+          local_cart_check : JSON.parse(localCartData),
+          local_cart_view : true
+        });
+        for (let data of this.state.local_cart_check) {
+          totalPrize = totalPrize+parseInt(data.sale_price)
+        }
+        this.setState({
+          total : totalPrize
+        });
+        console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
+      } else {
+        this.setState({
+          emptyScreen : true
+        })
+      }
+    } catch (error) {
+      // Error retrieving data
     }
   }
   async getLocalCart(){
@@ -193,7 +245,6 @@ export default class Cart extends Component<{}>{
     }
   }
   async syncCart(){
-    this.getCartData();
     console.warn('cartDataLength',this.state.crtData.length);
     if (this.state.crtData.length<0){
       this.setState({
@@ -239,6 +290,7 @@ export default class Cart extends Component<{}>{
      .catch((error)=> console.warn("fetch error:",error))
      .then((response)=>{
        console.log('syncCartResponse////////',response);
+       this.getCartData();
      });
     this._removeCartData();
   }
@@ -412,7 +464,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Gardens Store</Text>
               </View>
             </View>
             <ScrollView
@@ -520,7 +572,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>My Cart</Text>
               </View>
             </View>
             <View style = {{width:'100%',height:'92%'}}>
@@ -557,7 +609,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>My Cart</Text>
               </View>
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
@@ -568,43 +620,9 @@ export default class Cart extends Component<{}>{
             </View>
           </AnimatedHideView>
           <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
-            position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
-                            visible={this.state.placeOrderScreen}>
-            <View style = {{width:'95%',height:'40%',alignItems:'center',justifyContent:'center',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6,backgroundColor:"#fff"}}>
-              <Text style = {{color:'#000',fontWeight:'bold',fontSize:20,textAlign:'center'}}>Are you sure you want to buy these product?</Text>
-              <View style = {{width:'95%'}}>
-                <Text style = {{marginTop:30,fontSize:16,fontWeight:'bold',marginBottom:10}}>Choose your payment method</Text>
-                <RadioForm
-                    radio_props={radio_props}
-                    initial={false}
-                    buttonColor={'#2196f3'}
-                    selectedLabelColor={'#66023c'}
-                    buttonSize={10}
-                    selectedButtonColor={'#66023c'}
-                    buttonOuterSize={20}
-                    animation={true}
-                    formHorizontal={true}
-                    onPress={(value) => this.payment_method(value)}
-                />
-              </View>
-              <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:30}}>
-                <View style = {{width:'50%'}}>
-                </View>
-                <View style = {{width:'50%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-                  <Text style = {{color:'#369',fontSize:18,fontWeight:'bold'}}
-                        onPress = {()=>this.placeOrder()}>Proceed</Text>
-                  <Text style = {{color:'#800000',fontSize:18,fontWeight:'bold'}}
-                        onPress = {()=>this.setState({placeOrderScreen:false})}>Cancel</Text>
-                </View>
-              </View>
-            </View>
-          </AnimatedHideView>
-          <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
             backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
                             visible = {this.state.success_screen}>
-            <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
+            <View style = {{width:'95%',height:'30%',backgroundColor:'#fff',alignItems:'center',justifyContent:'center'}}>
               <Image style = {{height:80,width:80}}
                      source = {require('../img/order.png')}>
               </Image>
@@ -620,12 +638,16 @@ export default class Cart extends Component<{}>{
           <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
             position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
                             visible = {this.state.placeorder_error_screen}>
-            <View style = {{width:'95%',height:'30%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff',
-              borderBottomLeftRadius:6,borderBottomRightRadius:6,borderTopLeftRadius:6,borderTopRightRadius:6}}>
-              <Image style = {{width:60,height:60}}
-                     source = {require('../img/attention.png')}>
-              </Image>
-              <Text style = {{fontSize:22,fontWeight:'bold',color:'#000'}}>Oops!</Text>
+            <View style = {{width:'95%',height:'30%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
+              <TouchableHighlight style = {{marginTop:20}}
+                                  underlayColor='transparent'>
+                <MaterialIcons
+                    name='error'
+                    size={36 }
+                    style = {{color:'#800000'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+              <Text style = {{fontSize:18,fontWeight:'bold',color:'#000'}}>Oops!</Text>
               <View style = {{width:'95%',alignItems:'center',justifyContent:'center'}}>
                 <Text style = {{fontSize:16,textAlign:'center'}}>There is an error occured while ordering your product.
                   Please go back and check all the details and try again</Text>
@@ -641,9 +663,8 @@ export default class Cart extends Component<{}>{
           </AnimatedHideView>
           <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
                             visible = {this.state.movetowishScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants move this product to wish list ?</Text>
+            <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants move this product to wish list ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                 <View style = {{width:'60%'}}></View>
                 <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
@@ -657,9 +678,8 @@ export default class Cart extends Component<{}>{
           </AnimatedHideView>
           <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
                             visible = {this.state.removeScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-              borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants remove the product ?</Text>
+            <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants remove the product ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                 <View style = {{width:'60%'}}></View>
                 <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>
@@ -725,6 +745,17 @@ export default class Cart extends Component<{}>{
                                         </Image>
                                         <Text style = {{color:'#595656',marginLeft:2,fontSize:12,}}>{item.sale_price}</Text>
                                       </View>
+                                    </View>
+                                    <View style = {{width:'90%',height:20,flexDirection:'row',justifyContent:'space-between'}}>
+                                      <View></View>
+                                      <TouchableHighlight underlayColor = 'transparent'
+                                        onPress = {()=>this.deleteLocalCart(item.product_id)}>
+                                        <MaterialIcons
+                                            name='delete'
+                                            size={22}
+                                            style = {{color:'#369'}}>
+                                        </MaterialIcons>
+                                      </TouchableHighlight>
                                     </View>
                                   </View>
                                 </View>

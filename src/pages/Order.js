@@ -23,7 +23,8 @@ export default class Order extends Component<{}>{
       this.state = {
         access_token : '',
         myOrderArray : [],
-        show : false
+        show : false,
+        error_screen : false
       }
     }
     async _getAccessToken(){
@@ -34,6 +35,11 @@ export default class Order extends Component<{}>{
             access_token : value
           })
           this.getOrderDetails();
+        } else {
+          this.setState({
+            show : false,
+            error_screen : true
+          })
         }
       } catch (error) {
       }
@@ -202,6 +208,46 @@ export default class Order extends Component<{}>{
 
           </View>
         </View>
+        <AnimatedHideView
+            visible = {this.state.error_screen}
+            style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',position:'absolute',backgroundColor:'#fff'}}>
+          <View style = {styles.toolbar}>
+            <View style = {{height:'100%',width:'10%',alignItems:'center',justifyContent:'center'}}>
+              <TouchableHighlight underlayColor = 'transparent'
+                                  onPress = {()=>{this.props.navigation.navigate('mainscreen')}}>
+                <MaterialIcons
+                    name='arrow-back'
+                    size={22}
+                    style = {{color:'#fff'}}>
+                </MaterialIcons>
+              </TouchableHighlight>
+            </View>
+            <View style = {{width:'90%',alignItems:'center',justifyContent:'center',height:'100%'}}>
+              <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+            </View>
+          </View>
+          <View style = {{width:'100%',height:'92%'}}>
+            <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+              <Image style = {{width:80,height:80,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
+                     source = {require('../img/dislike.png')}>
+              </Image>
+              <Text style = {{fontSize:30,color:'#000',marginTop:10}}>Oops!</Text>
+              <Text style = {{fontSize:18,marginTop:20,textAlign:'center'}}>Seems like you are note a member here</Text>
+              <Text style = {{fontSize:18,textAlign:'center'}}>Your Attempt has failed. An error has occured, back and try again</Text>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                <Text style = {{fontSize:16,marginTop:20}}>Already have an account ?</Text>
+                <Text style = {{color:'#369',marginLeft:10,fontSize:16,marginTop:20}}
+                      onPress = {()=>this.props.navigation.navigate('logn')}>Login Here</Text>
+              </View>
+              <Text style = {{marginTop:10,marginBottom:10}}>OR</Text>
+              <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+                <Text style = {{fontSize:16}}>Dont have any account ?</Text>
+                <Text style = {{color:'#369',marginLeft:10,fontSize:16}}
+                      onPress = {()=>this.props.navigation.navigate('reg')}>Register Here</Text>
+              </View>
+            </View>
+          </View>
+        </AnimatedHideView>
         <Spinner visible = {this.state.show}
           textContent = {"Loading..."}
           color = {'#369'}

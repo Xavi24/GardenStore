@@ -157,9 +157,9 @@ export default class ViewAddress extends Component<{}>{
                                 renderItem={item => (
                                     <View style={{width:'100%',padding:10,backgroundColor:'#fff',elevation:1}}>
                                         <View style={{width:'100%',flexDirection:'row'}}>
-                                            <Text style={{color:'#000',fontSize:18,fontWeight:'bold'}}>{item.name}</Text>
+                                            <Text style={{color:'#000',fontSize:16,fontWeight:'bold'}}>{item.name}</Text>
                                             <View style={{backgroundColor:'#eee',padding:3,marginLeft:10}}>
-                                                <Text>
+                                                <Text style={{fontSize:12}}>
                                                     {item.type}
                                                 </Text>
                                             </View>
@@ -168,13 +168,13 @@ export default class ViewAddress extends Component<{}>{
                                             <Text style={{color:'#000',fontWeight:'bold',fontSize:16}}>
                                                 Postcode : {item.postcode}
                                             </Text>
-                                            <Text style={{fontSize:16}}>
+                                            <Text style={{fontSize:12}}>
                                                 {item.area+','+item.building}
                                             </Text>
-                                            <Text style={{fontSize:16}}>
+                                            <Text style={{fontSize:12}}>
                                                 {item.street+','+item.city+','+item.district+','+item.state+','+item.country}
                                             </Text>
-                                            <Text style={{fontSize:16,fontWeight:'bold',color:'#369'}}>
+                                            <Text style={{fontSize:12,fontWeight:'bold',color:'#369'}}>
                                                 Mobile Number : {item.phone_no}
                                             </Text>
                                         </View>
@@ -227,8 +227,7 @@ export default class ViewAddress extends Component<{}>{
                 </View>
                 <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
                   visible = {this.state.removeScreen}>
-                  <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
-                    borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{backgroundColor:'#282a2d',width:'95%',alignItems:'center',justifyContent:'center'}}>
                     <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30}}>Do u really wants remove the address ?</Text>
                     <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                       <View style = {{width:'60%'}}></View>

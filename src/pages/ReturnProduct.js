@@ -265,9 +265,9 @@ export default class ReturnProduct extends Component<{}>{
           </AnimatedHideView>
           <AnimatedHideView style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center',position:'absolute'}}
                             visible = {this.state.removeScreen}>
-            <View style = {{backgroundColor:'rgba(00,00,00,0.7)',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
+            <View style = {{backgroundColor:'#282a2d',borderBottomRightRadius:6,borderBottomLeftRadius:6,borderTopLeftRadius:6,
               borderTopRightRadius:6,width:'95%',alignItems:'center',justifyContent:'center'}}>
-              <Text style = {{fontSize:18,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants re-fund this product ?</Text>
+              <Text style = {{fontSize:16,fontWeight:'bold',color:'#fff',marginTop:30,marginLeft:10}}>Do u really wants re-fund this product ?</Text>
               <View style = {{width:'100%',marginTop:20,marginBottom:10,flexDirection:'row'}}>
                 <View style = {{width:'60%'}}></View>
                 <View style = {{width:'40%',flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:20}}>

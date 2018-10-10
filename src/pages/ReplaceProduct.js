@@ -138,7 +138,7 @@ export default class replaceProduct extends Component<{}>{
                 <View style = {{width:'96%',backgroundColor:'#fff',borderColor:'#eee',borderWidth:1,alignItems:'center',
                   justifyContent:'center',marginTop:20,padding:10,elevation:2}}>
                   <View style = {{width:'100%'}}>
-                    <Text style = {{fontSize:16,color:'#000',marginTop:5,marginBottom:10}}>Refond-Product</Text>
+                    <Text style = {{fontSize:16,color:'#000',marginTop:5,marginBottom:10}}>Replace Product</Text>
                   </View>
                   <TouchableHighlight style = {{width:'100%'}}
                     underlayColor = 'transparent'

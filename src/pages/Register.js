@@ -90,14 +90,15 @@ componentWillUnmount(){
       show:true
     });
     let collection = {};
-    collection.name = this.state.name,
-    collection.email = this.state.email,
-    collection.user_name = this.state.user_name,
-    collection.password = this.state.password,
-    collection.password_confirmation = this.state.password_confirmation,
-    collection.gender = this.state.gender,
-    collection.phone_no = this.state.phone_no,
-    collection.cc = this.state.cc
+    collection.name = this.state.name;
+    collection.email = this.state.email;
+    collection.user_name = this.state.user_name;
+    collection.password = this.state.password;
+    collection.password_confirmation = this.state.password_confirmation;
+    collection.gender = this.state.gender;
+    collection.phone_no = this.state.phone_no;
+    collection.cc = this.state.cc;
+    console.warn('collection',collection);
 
         var url = config.API_URL+'register';
         fetch(url, {
@@ -143,9 +144,9 @@ componentWillUnmount(){
                   err_pass:response.errors.password[0]
                 })
               }
-              if (obj.indexOf('phone_no') > -1) {
+              if (this.state.phone_no === '') {
                 this.setState({
-                  err_ph : response.errors.phone_no[0]
+                  err_ph : 'The phone number field is require'
                 })
               }
 

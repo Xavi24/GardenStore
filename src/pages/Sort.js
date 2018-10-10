@@ -44,9 +44,9 @@ export default class Sort extends Component<{}>{
   }
   getsortData(){
     console.warn('input',this.state.sortinput);
-    console.warn('url-->>//name',this.state.name);
+    console.log('url-->>//name',this.state.name);
     if (this.state.sortinput!='') {
-      var url = this.state.url+this.state.name+'&'+'sort='+this.state.sortinput
+      var url = this.state.url+'&'+'sort='+this.state.sortinput;
       console.warn('url',url);
       fetch(url)
        .then((response)=>response.json())

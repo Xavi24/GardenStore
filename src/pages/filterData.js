@@ -62,12 +62,12 @@ export default class filterData extends Component<{}>{
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    console.warn('params',params);
+    console.warn('params',params.url);
     let response = params.data;
     let url = params.url;
     this.setState({
       name : params.name
-    })
+    });
     this.getFilterDetails(response,url);
   }
   getFilterDetails(response,url){
@@ -80,11 +80,11 @@ export default class filterData extends Component<{}>{
     if (response.data!= '') {
       this.setState({
         show : false
-      })
-      product_data.length = 0
+      });
+      product_data.length = 0;
       this.setState({
         next_page_url : response.data.next_page_url
-      })
+      });
       if (response.data.data) {
         for(let product of response.data.data){
           let off ='% off',
@@ -390,7 +390,7 @@ export default class filterData extends Component<{}>{
             </TouchableHighlight>
           </View>
           <View style = {styles.textView}>
-            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>GardenStore</Text>
+            <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Gardens Store</Text>
           </View>
           <View style = {styles.iconView}>
             <TouchableHighlight underlayColor = 'transparent'

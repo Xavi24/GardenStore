@@ -67,7 +67,7 @@ export default class Open extends Component<{}>{
       .then((response)=>response.json())
       .catch((error)=>console.warn(error))
       .then((response)=>{
-        console.log('response//open orders............',response);
+        // console.log('response//open orders............',response);
         this.setState({
           show : false
         })
@@ -76,7 +76,7 @@ export default class Open extends Component<{}>{
             if (response.data.data.length > 0){
               this.state.openData.length = 0;
               for (let data of response.data.data){
-                console.log('////////////////',data);
+                console.log('////////////////',data.payment_data.payment_status);
                 if (data.payment_method == 'NOW'){
                   if (data.payment_data.payment_status == 'processing' || data.payment_data.payment_status == 'Processing'){
                     this.setState({
@@ -119,7 +119,7 @@ export default class Open extends Component<{}>{
                 this.setState({
                   openData : openDataArray
                 });
-                console.log('777777777777777777777',this.state.openData)
+                // console.log('777777777777777777777',this.state.openData)
               }
             }
           }
