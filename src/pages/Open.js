@@ -16,9 +16,13 @@ import AnimatedHideView from 'react-native-animated-hide-view'
 import {TabNavigator,TabBarBottom} from 'react-navigation'
 import config from '../API/config'
 import Spinner from 'react-native-loading-spinner-overlay'
-
 const cartData = [{'one':1,'two':2,'three':3}];
 let openData = {};
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+};
 export default class Open extends Component<{}>{
     constructor(props){
       super(props);
@@ -35,7 +39,8 @@ export default class Open extends Component<{}>{
         cancel_order : '',
         id : '',
         show : false,
-        pay_height : 0
+        pay_height : 0,
+        next_page_url : ''
       }
     }
     async _getAccessToken(){
@@ -67,18 +72,22 @@ export default class Open extends Component<{}>{
       .then((response)=>response.json())
       .catch((error)=>console.warn(error))
       .then((response)=>{
-        // console.log('response//open orders............',response);
         this.setState({
           show : false
         })
+        this.setState({
+          next_page_url : response.data.next_page_url
+        })
+        console.log('response//open orders............',this.state.next_page_url);
         if (response.data){
           if (response.data.data){
             if (response.data.data.length > 0){
               this.state.openData.length = 0;
               for (let data of response.data.data){
-                console.log('////////////////',data.payment_data.payment_status);
+                console.log('////////////////',data);
                 if (data.payment_method == 'NOW'){
-                  if (data.payment_data.payment_status == 'processing' || data.payment_data.payment_status == 'Processing'){
+                  if (data.payment_data.payment_status === 'processing' || data.payment_data.payment_status === 'Processing'
+                      || data.payment_data.payment_status === 'failed' || data.payment_data.payment_status === 'Failed'){
                     this.setState({
                       pay_height : 50
                     })
@@ -119,13 +128,93 @@ export default class Open extends Component<{}>{
                 this.setState({
                   openData : openDataArray
                 });
-                // console.log('777777777777777777777',this.state.openData)
+                console.log('777777777777777777777',this.state.openData)
               }
             }
           }
         }
       })
     }
+  handleScroll(){
+      console.warn('next??????',this.state.next_page_url);
+    let openDataArray = [];
+    if (this.state.next_page_url!==null) {
+      var url = this.state.next_page_url;
+      fetch(url,{
+        headers : new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
+        })
+      })
+          .then((response)=>response.json())
+          .catch((error)=>console.warn(error))
+          .then((response)=>{
+            this.setState({
+              show : false
+            })
+            this.setState({
+              next_page_url : response.data.next_page_url
+            })
+            console.log('response//open orders............',this.state.next_page_url);
+            if (response.data){
+              if (response.data.data){
+                if (response.data.data.length > 0){
+                  this.state.openData.length = 0;
+                  for (let data of response.data.data){
+                    console.log('////////////////',data);
+                    if (data.payment_method == 'NOW'){
+                      if (data.payment_data.payment_status === 'processing' || data.payment_data.payment_status === 'Processing'
+                          || data.payment_data.payment_status === 'failed' || data.payment_data.payment_status === 'Failed'){
+                        this.setState({
+                          pay_height : 50
+                        })
+                      } else {
+                        this.setState({
+                          pay_height : 0
+                        })
+                      }
+                    }
+                    if (data.order_status == 'processing' || data.order_status == 'Processing') {
+                      this.setState({
+                        cancel_order : 'Cancel Order'
+                      })
+                    }
+                    openData.order_id = data.order_id;
+                    openData.address_id = data.address_id;
+                    openData.date = data.date_purchased;
+                    openData.amount = data.amount;
+                    openData.order_status = data.order_status;
+                    openData.img = data.first_orderproduct.single_var_img.variation_image;
+                    openData.name = data.first_orderproduct.product_name;
+                    openData.product_order_id = data.first_orderproduct.order_product_id;
+                    openData.product_count = data.orderproducts_count;
+                    openData.height = this.state.pay_height;
+
+                    openDataArray.push({
+                      order_id : openData.order_id,
+                      address_id : openData.address_id,
+                      date : openData.date,
+                      amount : openData.amount,
+                      order_status : openData.order_status,
+                      img : openData.img,
+                      name : openData.name,
+                      product_order_id : openData.product_order_id,
+                      product_count : openData.product_count,
+                      height : openData.height
+                    });
+                    this.setState({
+                      openData : openDataArray
+                    });
+                    console.log('777777777777777777777',this.state.openData)
+                  }
+                }
+              }
+            }
+          })
+    }
+    // console.warn('entered into opn order method');
+  }
     cancelOrder(id){
       this.setState({
         show : true
@@ -202,7 +291,12 @@ export default class Open extends Component<{}>{
         </View>
         <View style = {styles.baseContainer}>
           <ScrollView style = {{width:'100%',height:'100%'}}
-            showsVerticalScrollIndicator = {false}>
+            showsVerticalScrollIndicator = {false}
+                      onScroll={({nativeEvent}) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                          this.handleScroll();
+                        }
+                      }}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
                   itemDimension={360}

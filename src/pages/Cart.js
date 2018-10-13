@@ -77,7 +77,6 @@ export default class Cart extends Component<{}>{
   };
   getCartData(){
     this.setState({
-      show : true,
       refresh_cart : false
     });
 
@@ -378,6 +377,9 @@ export default class Cart extends Component<{}>{
         })
   }
   componentWillMount(){
+    this.setState({
+      show  : true
+    })
     this._getAccessToken();
   }
   getView(){
@@ -464,7 +466,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Gardens Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Cart</Text>
               </View>
             </View>
             <ScrollView
@@ -473,7 +475,7 @@ export default class Cart extends Component<{}>{
                 <GridView
                     showsVerticalScrollIndicator={false}
                     items={this.state.crtData}
-                    itemDimension={180}
+                    itemDimension={150}
                     renderItem={item=> (
                         <View style = {{width:'100%',height:350,elevation:2,backgroundColor:'#fff',borderWidth:1,borderColor:'#eee'}}>
                           <TouchableHighlight style = {{height:'100%',width:'100%'}}>
@@ -572,7 +574,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>My Cart</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
               </View>
             </View>
             <View style = {{width:'100%',height:'92%'}}>
@@ -609,14 +611,19 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>My Cart</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
               </View>
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
-              <Image style = {{height:60,width:60,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                     source = {require('../img/emptyCart.png')}>
-              </Image>
-              <Text style = {{marginTop:20,color:'#369'}}>Cart is Empty</Text>
+              <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                       source = {require('../img/cartempty.png')}>
+                </Image>
+              </View>
+              <View style = {{width:'42%',height:'6%',backgroundColor:'#282a2d',elevation:2,alignItems:'center',justifyContent:'center'}}>
+                <Text style={{color:'#fff'}}
+                      onPress = {()=>this.props.navigation.navigate('mainscreen')}>Continue Shopping</Text>
+              </View>
             </View>
           </AnimatedHideView>
           <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
@@ -706,7 +713,7 @@ export default class Cart extends Component<{}>{
                   </TouchableHighlight>
                 </View>
                 <View style={{height:'100%',width:'80%',alignItems:'center',justifyContent:'center'}}>
-                  <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                  <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Cart</Text>
                 </View>
                 <View style={{height:'100%',width:'10%',alignItems:'center',justifyContent:'center'}}>
                 </View>

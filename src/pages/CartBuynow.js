@@ -118,6 +118,7 @@ export default class CartBuynow extends Component<{}>{
       address_height : 0,
       address_padding : 0,
       address_border_width : 0,
+      mes_data : ''
     }
   }
   ApplyCoupon(){
@@ -151,6 +152,9 @@ export default class CartBuynow extends Component<{}>{
           Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
           console.warn('coupon',this.state.coupon_disc);
         }
+      } 
+      if (response.code == '409'){
+        Toast.show(response.message, Toast.LONG);
       }
     })
   }
@@ -335,6 +339,17 @@ export default class CartBuynow extends Component<{}>{
         })
         cartData.length = 0;
         for(let data of response.data){
+          console.log('//////////\\\\\\\\\\',JSON.parse(data.measurements));
+          console.log('+++++++++++++++++',JSON.parse(data.measurements).length);
+          if (JSON.parse(data.measurements).length>0){
+            this.setState({
+              mes_data : 'Customised'
+            })
+          } else {
+            this.setState({
+              mes_data : ''
+            })
+          }
           cartData.push({
             name:data.variation_details.name,
             price:data.variation_details.price,
@@ -344,7 +359,8 @@ export default class CartBuynow extends Component<{}>{
             slug : data.variation_details.slug,
             id : data.id,
             vendor_id : data.vendor_id,
-            quantity : data.count
+            quantity : data.count,
+            mes_data : this.state.mes_data
           })
           this.setState({
             crtData:cartData,
@@ -395,7 +411,7 @@ export default class CartBuynow extends Component<{}>{
     checkOutData.address_id = this.state.user_address_id,
     checkOutData.payment_method = this.state.payment_method,
     checkOutData.measurements = this.state.measurements,
-    checkOutData.Points = this.state.points
+    checkOutData.points = this.state.points
     console.warn('checkOutData',checkOutData);
     if (this.state.payment_method == 'NOW'){
       var url = config.API_URL+'user/checkout'
@@ -1004,7 +1020,7 @@ export default class CartBuynow extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Check Out</Text>
               </View>
             </View>
             <ScrollView style = {{width:'100%',height:'100%'}}
@@ -1056,6 +1072,7 @@ export default class CartBuynow extends Component<{}>{
                         <Text style = {{color:'#360',marginTop:5,fontSize:12}}>{item.name}</Text>
                         <Text style = {{color:'#369',marginTop:5,marginBottom:5,fontSize:12}}>RS.{item.price}</Text>
                         <Text style={{fontSize:12}}>Quantity - {item.quantity}</Text>
+                        <Text style={{fontSize:12,color:'#369'}}>{item.mes_data}</Text>
                       </View>
                     </TouchableHighlight>
                     )}
@@ -1269,14 +1286,14 @@ export default class CartBuynow extends Component<{}>{
                                                      style = {{color:'#369'}}>
                                                   </MaterialIcons>
                                                   </TouchableHighlight>
-                                                  <TouchableHighlight underlayColor='transparent'
-                                                     onPress = {()=>this.setState({removeScreen:true,address_id:item.address_id})}>
-                                                      <MaterialIcons
-                                                          name='delete'
-                                                          size={22}
-                                                          style = {{color:'#369'}}>
-                                                      </MaterialIcons>
-                                                  </TouchableHighlight>
+                                                  {/*<TouchableHighlight underlayColor='transparent'*/}
+                                                     {/*onPress = {()=>this.setState({removeScreen:true,address_id:item.address_id})}>*/}
+                                                      {/*<MaterialIcons*/}
+                                                          {/*name='delete'*/}
+                                                          {/*size={22}*/}
+                                                          {/*style = {{color:'#369'}}>*/}
+                                                      {/*</MaterialIcons>*/}
+                                                  {/*</TouchableHighlight>*/}
                                               </View>
                                           </View>
                                       </View>
@@ -1852,7 +1869,7 @@ export default class CartBuynow extends Component<{}>{
                         <View style = {styles.savebtn}>
                           <View style = {{width:'50%',alignItems:'center',justifyContent:'center'}}>
                             <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}
-                                  onPress = {()=>goBack()}>CANCEL</Text>
+                                  onPress = {()=>this.setState({edit_add_screen:false})}>CANCEL</Text>
                           </View>
                           <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
                             borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',

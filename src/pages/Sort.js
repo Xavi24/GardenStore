@@ -28,7 +28,12 @@ export default class Sort extends Component<{}>{
       sortinput : '',
       url : '',
       name : '',
-      pressed : ''
+      pressed : '',
+      p_icon : 'radio-button-unchecked',
+      plth_icon : 'radio-button-unchecked',
+      phtl_icon : 'radio-button-unchecked',
+      r_icon : 'radio-button-unchecked',
+      n_icon : 'radio-button-unchecked'
     }
   }
   componentWillUnmount() {
@@ -66,7 +71,12 @@ export default class Sort extends Component<{}>{
       relevenceColor : '#7a7979',
       phtlcolor : '#7a7979',
       plthcolor : '#7a7979',
-      arrivalscolor : '#7a7979'
+      arrivalscolor : '#7a7979',
+      p_icon : 'radio-button-checked',
+      plth_icon : 'radio-button-unchecked',
+      phtl_icon : 'radio-button-unchecked',
+      r_icon : 'radio-button-unchecked',
+      n_icon : 'radio-button-unchecked'
     })
   }
   getrelevanceData(input){
@@ -76,7 +86,12 @@ export default class Sort extends Component<{}>{
       arrivalscolor : '#7a7979',
       phtlcolor : '#7a7979',
       popularityColor : '#7a7979',
-      plthcolor : '#7a7979'
+      plthcolor : '#7a7979',
+      p_icon : 'radio-button-unchecked',
+      plth_icon : 'radio-button-unchecked',
+      phtl_icon : 'radio-button-unchecked',
+      r_icon : 'radio-button-checked',
+      n_icon : 'radio-button-unchecked'
     })
   }
   getpricehtlData(input){
@@ -86,7 +101,12 @@ export default class Sort extends Component<{}>{
       relevenceColor : '#7a7979',
       arrivalscolor : '#7a7979',
       popularityColor : '#7a7979',
-      plthcolor : '#7a7979'
+      plthcolor : '#7a7979',
+      p_icon : 'radio-button-unchecked',
+      plth_icon : 'radio-button-unchecked',
+      phtl_icon : 'radio-button-checked',
+      r_icon : 'radio-button-unchecked',
+      n_icon : 'radio-button-unchecked'
     })
   }
   getpricelthData(input){
@@ -96,7 +116,12 @@ export default class Sort extends Component<{}>{
       relevenceColor : '#7a7979',
       arrivalscolor : '#7a7979',
       phtlcolor : '#7a7979',
-      popularityColor : '#7a7979'
+      popularityColor : '#7a7979',
+      p_icon : 'radio-button-unchecked',
+      plth_icon : 'radio-button-checked',
+      phtl_icon : 'radio-button-unchecked',
+      r_icon : 'radio-button-unchecked',
+      n_icon : 'radio-button-unchecked'
     })
   }
   getnewarrivalsData(input){
@@ -106,7 +131,12 @@ export default class Sort extends Component<{}>{
       relevenceColor : '#7a7979',
       phtlcolor : '#7a7979',
       popularityColor : '#7a7979',
-      plthcolor : '#7a7979'
+      plthcolor : '#7a7979',
+      p_icon : 'radio-button-unchecked',
+      plth_icon : 'radio-button-unchecked',
+      phtl_icon : 'radio-button-unchecked',
+      r_icon : 'radio-button-unchecked',
+      n_icon : 'radio-button-checked'
     })
   }
     render(){
@@ -151,7 +181,7 @@ export default class Sort extends Component<{}>{
                         </View>
                         <View style = {{width:'7%'}}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.p_icon}
                           size={18}
                           style = {{color:this.state.popularityColor}}>
                         </MaterialIcons>
@@ -167,7 +197,7 @@ export default class Sort extends Component<{}>{
                         </View>
                         <View style = {{width:'7%'}}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.r_icon}
                           size={18}
                           style = {{color:this.state.relevenceColor}}>
                         </MaterialIcons>
@@ -183,7 +213,7 @@ export default class Sort extends Component<{}>{
                         </View>
                         <View style = {{width:'7%'}}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.plth_icon}
                           size={18}
                           style = {{color:this.state.plthcolor}}>
                         </MaterialIcons>
@@ -199,7 +229,7 @@ export default class Sort extends Component<{}>{
                         </View>
                         <View style = {{width:'7%'}}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.phtl_icon}
                           size={18}
                           style = {{color:this.state.phtlcolor}}>
                         </MaterialIcons>
@@ -215,7 +245,7 @@ export default class Sort extends Component<{}>{
                         </View>
                         <View style = {{width:'7%'}}>
                         <MaterialIcons
-                          name='radio-button-checked'
+                          name={this.state.n_icon}
                           size={18}
                           style = {{color:this.state.arrivalscolor}}>
                         </MaterialIcons>

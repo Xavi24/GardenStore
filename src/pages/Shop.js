@@ -411,7 +411,7 @@ export default class Shop extends Component<{}>{
             scrollEventThrottle={400}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
-                itemDimension = {180}
+                itemDimension = {150}
                 items = {this.state.product_data}
                 style = {styles.gridView}
                 spacing = {2}
@@ -490,7 +490,7 @@ export default class Shop extends Component<{}>{
               brand_data:this.state.brand_data,
               cat_data:this.state.cat_data,
               spec_data:this.state.spec_data,
-              url:this.state.sortUrl
+              url:this.state.urlPass
             })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderLeftWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>
@@ -526,12 +526,14 @@ export default class Shop extends Component<{}>{
           </View>
           <View style = {styles.baseContainer2}>
             <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-              <Image style = {{width:40,height:40,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                source = {require('../img/rotate.png')}>
-
-              </Image>
-                <Text>No product to show</Text>
-                <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+              <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                       source = {require('../img/productempty.png')}>
+                </Image>
+              </View>
+              <View style = {{width:'42%',height:'6%',backgroundColor:'#282a2d',elevation:2,alignItems:'center',justifyContent:'center'}}>
+                <Text style={{color:'#fff'}}
+                      onPress = {()=>this.props.navigation.navigate('mainscreen')}>Continue Shopping</Text>
               </View>
             </View>
           </View>

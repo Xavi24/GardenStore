@@ -580,6 +580,7 @@ export default class Buy_Now extends Component<{}>{
                         });
                         Toast.show('Address Deleted', Toast.LONG);
                         this.getUserAddress();
+                        this.getAddress();
                         this.setState({
                           height : 0,
                           padding : 0
@@ -661,19 +662,19 @@ export default class Buy_Now extends Component<{}>{
                     checked : false
                   });
                   this.setState({add_new_screen:false});
-                  this.setState({
-                    name : '',
-                    street_address : '',
-                    landmark : '',
-                    city : '',
-                    state : '',
-                    district : '',
-                    country : '',
-                    phone_no : '',
-                    area : '',
-                    building : '',
-                    postcode :''
-                  })
+                  // this.setState({
+                  //   name : '',
+                  //   street_address : '',
+                  //   landmark : '',
+                  //   city : '',
+                  //   state : '',
+                  //   district : '',
+                  //   country : '',
+                  //   phone_no : '',
+                  //   area : '',
+                  //   building : '',
+                  //   postcode :''
+                  // })
                 } else {
                     this.setState({
                         error_screen : true,
@@ -797,6 +798,9 @@ export default class Buy_Now extends Component<{}>{
               Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
               console.warn('coupon',this.state.coupon_disc);
             }
+          }
+          if (response.code == '409'){
+            Toast.show(response.message, Toast.LONG);
           }
         })
       } else {
@@ -1136,16 +1140,16 @@ export default class Buy_Now extends Component<{}>{
                     </View>
                   </View>
                 </View>
-                <View style = {{padding:5,borderTopColor:'#cccccc',borderTopWidth:1,flexDirection:'row',marginTop:20}}>
-                  <View style = {{flexDirection:'row'}}>
-                    <View style = {{width:'70%',justifyContent:'center'}}>
-                      <Text style = {{fontSize:14,color:'#000',fontWeight:'bold'}}>Total Payable</Text>
-                    </View>
-                    <View style = {{width:'30%'}}>
-                      <Text style = {{fontSize:14,textAlign: 'right',color:'#360',fontWeight:'bold'}}>Rs.{this.state.price}</Text>
-                    </View>
-                  </View>
-                </View>
+                {/*<View style = {{padding:5,borderTopColor:'#cccccc',borderTopWidth:1,flexDirection:'row',marginTop:20}}>*/}
+                  {/*/!*<View style = {{flexDirection:'row'}}>*!/*/}
+                    {/*/!*<View style = {{width:'70%',justifyContent:'center'}}>*!/*/}
+                      {/*/!*<Text style = {{fontSize:14,color:'#000',fontWeight:'bold'}}>Total Payable</Text>*!/*/}
+                    {/*/!*</View>*!/*/}
+                    {/*/!*<View style = {{width:'30%'}}>*!/*/}
+                      {/*/!*<Text style = {{fontSize:14,textAlign: 'right',color:'#360',fontWeight:'bold'}}>Rs.{this.state.price}</Text>*!/*/}
+                    {/*/!*</View>*!/*/}
+                  {/*/!*</View>*!/*/}
+                {/*</View>*/}
               </View>
               <View style = {styles.topView}>
                 <View style = {{width:'95%',flexDirection:'row'}}>
@@ -1425,14 +1429,14 @@ export default class Buy_Now extends Component<{}>{
                                                      style = {{color:'#369'}}>
                                                   </MaterialIcons>
                                                   </TouchableHighlight>
-                                                  <TouchableHighlight underlayColor='transparent'
-                                                     onPress = {()=>this.setState({removeScreen:true,address_id:item.address_id})}>
-                                                      <MaterialIcons
-                                                          name='delete'
-                                                          size={22}
-                                                          style = {{color:'#369'}}>
-                                                      </MaterialIcons>
-                                                  </TouchableHighlight>
+                                                  {/*<TouchableHighlight underlayColor='transparent'*/}
+                                                     {/*onPress = {()=>this.setState({removeScreen:true,address_id:item.address_id})}>*/}
+                                                      {/*<MaterialIcons*/}
+                                                          {/*name='delete'*/}
+                                                          {/*size={22}*/}
+                                                          {/*style = {{color:'#369'}}>*/}
+                                                      {/*</MaterialIcons>*/}
+                                                  {/*</TouchableHighlight>*/}
                                               </View>
                                           </View>
                                       </View>
@@ -1982,7 +1986,7 @@ export default class Buy_Now extends Component<{}>{
                       <View style = {styles.savebtn}>
                         <View style = {{width:'50%',alignItems:'center',justifyContent:'center'}}>
                           <Text style = {{fontSize:16,color:'#363a42',fontWeight:'bold'}}
-                                onPress = {()=>goBack()}>CANCEL</Text>
+                                onPress = {()=>this.setState({edit_add_screen:false})}>CANCEL</Text>
                         </View>
                         <View style = {{width:'48%',height:'70%',borderTopLeftRadius:6,borderTopRightRadius: 6,
                           borderBottomLeftRadius:6,borderBottomRightRadius:6, backgroundColor:'#48c7f0',

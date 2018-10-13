@@ -17,13 +17,19 @@ import {TabNavigator,TabBarBottom} from 'react-navigation'
 import config from '../API/config'
 import Spinner from 'react-native-loading-spinner-overlay'
 
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+};
 export default class Cancel extends Component<{}>{
     constructor(props){
       super(props);
       this.state = {
         access_token : '',
         cArray : [],
-        show : false
+        show : false,
+        next_page_url : ''
       }
     }
     async _getAccessToken(){
@@ -54,6 +60,9 @@ export default class Cancel extends Component<{}>{
       .catch((error)=>console.warn(error))
       .then((response)=>{
         console.warn('response//cancelorder',response);
+        this.setState({
+          next_page_url : response.data.next_page_url
+        });
         if (response) {
           if (response.data) {
             if (response.data.data.length >0) {
@@ -98,6 +107,69 @@ export default class Cancel extends Component<{}>{
     componentWillMount(){
       this._getAccessToken();
     }
+  handleScroll(){
+      console.warn('next???',this.state.next_page_url);
+      if (this.state.next_page_url!==null){
+        let c_data = {};
+        let cArray = [];
+        console.warn('entered into cancel method');
+        var url = config.API_URL+'user/cancelledOrders'
+        fetch(url,{
+          headers : new Headers({
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json',
+            'Authorization' : this.state.access_token
+          })
+        })
+            .then((response)=>response.json())
+            .catch((error)=>console.warn(error))
+            .then((response)=>{
+              console.warn('response//cancelorder',response);
+              this.setState({
+                next_page_url : response.data.next_page_url
+              });
+              if (response) {
+                if (response.data) {
+                  if (response.data.data.length >0) {
+                    for(let data of response.data.data){
+                      // console.warn('data',data);
+                      c_data.order_id = data.order_id,
+                          c_data.date_purchased = data.date_purchased,
+                          c_data.amount = data.amount,
+                          c_data.fbin = data.fbin
+                      for(let innerData of data.orderproducts){
+                        c_data.order_product_id = innerData.order_product_id,
+                            c_data.name = innerData.product_name,
+                            c_data.price = innerData.product_price,
+                            c_data.product_qty = innerData.product_qty,
+                            c_data.img = innerData.single_var_img.variation_image,
+                            c_data.status = innerData.order_last_status.status,
+                            c_data.product_id = innerData.product_id,
+                            c_data.slug = innerData.variation.slug
+                        cArray.push({
+                          order_id : c_data.order_id,
+                          date : c_data.date_purchased,
+                          amount : c_data.amount,
+                          fbin : c_data.fbin,
+                          order_product_id : c_data.order_product_id,
+                          name : c_data.name,
+                          price : c_data.price,
+                          product_qty : c_data.product_qty,
+                          img : c_data.img,
+                          status : c_data.status,
+                          slug : c_data.slug
+                        });
+                        this.setState({
+                          cArray : cArray
+                        })
+                      }
+                    }
+                  }
+                }
+              }
+            })
+      }
+  }
   render(){
     return(
       <View style = {styles.container}>
@@ -120,7 +192,12 @@ export default class Cancel extends Component<{}>{
         </View>
         <View style = {styles.baseContainer}>
           <ScrollView style = {{width:'100%',height:'100%'}}
-            showsVerticalScrollIndicator = {false}>
+            showsVerticalScrollIndicator = {false}
+                      onScroll={({nativeEvent}) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                          this.handleScroll();
+                        }
+                      }}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
                 itemDimension={360}

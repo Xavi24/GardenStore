@@ -189,7 +189,7 @@ export default class Menu extends Component<{}>{
                     </MaterialIcons>
                 </TouchableHighlight>
                 <Text style = {{fontSize:16,color:'#363a42',marginLeft:10}}
-                  onPress = {()=>this.props.navigation.navigate('wallet')}>Points</Text>
+                  onPress = {()=>this.props.navigation.navigate('wallet')}>Wallet</Text>
               </View>
               <View style = {{flexDirection:'row',width:'100%',marginTop:20}}>
                 <TouchableHighlight style = {{alignItems:'center',justifyContent:'center',marginLeft:10}}

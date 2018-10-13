@@ -84,7 +84,7 @@ export default class Filter extends Component<{}>{
     let spec_name = [];
     let price = '';
     price = '['+'min='+this.state.min+','+'max='+this.state.max+']';
-    var url = this.state.url+'&'+'category='+this.state.selected_cat+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max;
+    var url = this.state.url+this.state.selected_cat+'&'+'brand='+this.state.selected_brand+'&'+this.state.arr+'price[min]='+this.state.min+'&'+'price[max]='+this.state.max;
     console.log('url???????????',url);
     console.log('firstFilterurl??????',this.state.url);
     fetch(url)
@@ -100,7 +100,7 @@ export default class Filter extends Component<{}>{
                   emptyScreen : true
                 })
               } else {
-                this.props.navigation.navigate('filter_page',{data:response,url:this.state.url});
+                this.props.navigation.navigate('filter_page',{data:response,url:url,name:this.state.pass_name});
               }
             }
           }
@@ -148,7 +148,7 @@ export default class Filter extends Component<{}>{
     }, 500)
     console.warn('filterdata',this.state.filterdata);
     let data = '';
-    for(let key of this.state.filterdata){
+    for(let key of filterdata){
       arr.length = 0;
       // data[key.name] = [key.value]
       // console.warn('name',key.name);
@@ -177,7 +177,7 @@ export default class Filter extends Component<{}>{
       brand_data:params.brand_data,
       spec_data:params.spec_data,
       url : params.url,
-      pass_name : params.name
+      selected_cat : params.name
     });
   }
   render() {
@@ -260,7 +260,7 @@ export default class Filter extends Component<{}>{
                             size={24}
                             style = {{color:'#595656'}}>
                         </MaterialIcons>
-                        <Text style = {{color:this.state.selected_item_color,fontSize:14,marginLeft:10}}>{this.state.selected_cat}</Text>
+                        <Text style = {{color:this.state.selected_item_color,fontSize:12,marginLeft:10}}>{this.state.selected_cat}</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
@@ -309,7 +309,7 @@ export default class Filter extends Component<{}>{
                             size={24}
                             style = {{color:'#595656'}}>
                         </MaterialIcons>
-                        <Text style = {{color:this.state.selected_brand_color,fontSize:14,marginLeft:5}}>{this.state.selected_brand}</Text>
+                        <Text style = {{color:this.state.selected_brand_color,fontSize:12,marginLeft:5}}>{this.state.selected_brand}</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
@@ -415,11 +415,15 @@ export default class Filter extends Component<{}>{
             </View>
             <View style = {styles.baseContainer}>
               <View style = {{width:'95%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-                <Image style = {{width:40,height:40,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                       source = {require('../img/rotate.png')}>
-
-                </Image>
-                <Text>No product to show</Text>
+                <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                  <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                         source = {require('../img/productempty.png')}>
+                  </Image>
+                </View>
+                <View style = {{width:'42%',height:'6%',backgroundColor:'#282a2d',elevation:2,alignItems:'center',justifyContent:'center'}}>
+                  <Text style={{color:'#fff'}}
+                        onPress = {()=>this.props.navigation.navigate('mainscreen')}>Continue Shopping</Text>
+                </View>
                 <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                 </View>
               </View>

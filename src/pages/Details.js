@@ -692,21 +692,21 @@ export default class Details extends Component<{}>{
       // console.warn('slug_name..............>>',slug_name);
       for (let slugz of data.value){
         console.log('slugz----->>',slugz);
-          if (slugz.variation_slug.includes(this.state.slug)) {
-            temp_array.push({
-              variation_slug : slugz.variation_slug,
-              variation_spec_value : slugz.variation_spec_value,
-              img : slugz.img,
-              color:'#369'
-            })
-          } else {
-            temp_array.push({
-              variation_slug : slugz.variation_slug,
-              variation_spec_value : slugz.variation_spec_value,
-              img : slugz.img,
-              color:'#eee'
-            })
-          }
+        if (slugz.variation_slug.includes(this.state.slug)) {
+          temp_array.push({
+            variation_slug : slugz.variation_slug,
+            variation_spec_value : slugz.variation_spec_value,
+            img : slugz.img,
+            color:'#369'
+          })
+        } else {
+          temp_array.push({
+            variation_slug : slugz.variation_slug,
+            variation_spec_value : slugz.variation_spec_value,
+            img : slugz.img,
+            color:'#eee'
+          })
+        }
 
       }
       temp_slg_array.push({
@@ -715,15 +715,15 @@ export default class Details extends Component<{}>{
       });
       this.state.contentArray = temp_slg_array;
 
-        console.log('temp_slg_array------>>>',temp_slg_array)
+      console.log('temp_slg_array------>>>',temp_slg_array)
     }
     this.setState({
       color_size_screen : true
     });
 
 
-      console.log('temp_slg_array----->>', temp_slg_array);
-      // console.log('[[[[[[[[[[[[[[[]]]]]]]]]]]]]',temp_slg_array);
+    console.log('temp_slg_array----->>', temp_slg_array);
+    // console.log('[[[[[[[[[[[[[[[]]]]]]]]]]]]]',temp_slg_array);
   }
   addToWishList(){
     // console.warn('enterd into add to wishlist page');
@@ -1214,11 +1214,11 @@ export default class Details extends Component<{}>{
             </ScrollView>
             <View style = {styles.footer}>
               {/*<View style = {{width:'50%',height:'100%',backgroundColor:'#363a42'}}>*/}
-                {/*<TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}*/}
-                                    {/*underlayColor = 'transparent'*/}
-                                    {/*onPress = {()=>goBack()}>*/}
-                  {/*<Text style = {{color:'#fff'}}>Cancel</Text>*/}
-                {/*</TouchableHighlight>*/}
+              {/*<TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}*/}
+              {/*underlayColor = 'transparent'*/}
+              {/*onPress = {()=>goBack()}>*/}
+              {/*<Text style = {{color:'#fff'}}>Cancel</Text>*/}
+              {/*</TouchableHighlight>*/}
               {/*</View>*/}
               <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:this.state.foo_color}}>
                 <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
@@ -1503,7 +1503,7 @@ export default class Details extends Component<{}>{
                     </MaterialIcons>
                   </TouchableHighlight>
                   <Text style={{color:'#000',fontSize:16,marginLeft:5,fontWeight:'bold'}}
-                    onPress={()=>this.setState({color_size_screen:false})}>Close</Text>
+                        onPress={()=>this.setState({color_size_screen:false})}>Close</Text>
                 </View>
                 <ScrollView>
                   <View style={{width:'100%',marginTop:20}}>
@@ -1519,15 +1519,15 @@ export default class Details extends Component<{}>{
                                   horizontal={true}
                                   showsHorizontalScrollIndicator={false}>
                                 <FlatList style = {{marginTop:10}}
-                                data={item.detail}
-                                numColumns={item.detail.length}
-                                renderItem={({ item, index })=> (
-                                <TouchableHighlight underlayColor='transparent'
-                                onPress={()=>this.speckChoose(item.variation_slug,index)}
-                                style = {{width:80,height:50,borderRadius:30/2,backgroundColor:'#fff',borderWidth:2,borderColor:item.color,marginLeft:10,alignItems:'center',justifyContent:'center',elevation:3}}>
-                                <Text style={{fontWeight:'bold',fontSize:12,color:'#595656'}}>{item.variation_spec_value}</Text>
-                                </TouchableHighlight>
-                                )}
+                                          data={item.detail}
+                                          numColumns={item.detail.length}
+                                          renderItem={({ item, index })=> (
+                                              <TouchableHighlight underlayColor='transparent'
+                                                                  onPress={()=>this.speckChoose(item.variation_slug,index)}
+                                                                  style = {{width:80,height:50,borderRadius:30/2,backgroundColor:'#fff',borderWidth:2,borderColor:item.color,marginLeft:10,alignItems:'center',justifyContent:'center',elevation:3}}>
+                                                <Text style={{fontWeight:'bold',fontSize:12,color:'#595656'}}>{item.variation_spec_value}</Text>
+                                              </TouchableHighlight>
+                                          )}
                                 />
                               </ScrollView>
                             </View>
@@ -1549,7 +1549,7 @@ export default class Details extends Component<{}>{
                   {/*</View>*/}
                 </ScrollView>
                 {/*<View style={{width:'100%',height:50,elevation:2,backgroundColor:'#48c7f0',alignItems:'center',justifyContent:'center'}}>*/}
-                  {/*<Text style={{fontSize:16,fontWeight:'bold',color:'#fff'}}>PROCEED</Text>*/}
+                {/*<Text style={{fontSize:16,fontWeight:'bold',color:'#fff'}}>PROCEED</Text>*/}
                 {/*</View>*/}
               </View>
             </View>

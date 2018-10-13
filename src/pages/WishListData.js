@@ -215,7 +215,7 @@ export default class Cart extends Component<{}>{
               <View>
                 <GridView
                   showsVerticalScrollIndicator={false}
-                  itemDimension={180}
+                  itemDimension={150}
                   items={this.state.WishListData}
                   renderItem={item => (
                     <View style = {{width:'100%',height:300,elevation:2,backgroundColor:'#fff'}}>
@@ -322,10 +322,15 @@ export default class Cart extends Component<{}>{
               </View>
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
-              <Image style = {{height:60,width:60,alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
-                source = {require('../img/emptyCart.png')}>
-              </Image>
-              <Text style = {{marginTop:20,color:'#369'}}>Wishlist is Empty</Text>
+              <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                       source = {require('../img/productempty.png')}>
+                </Image>
+              </View>
+              <View style = {{width:'42%',height:'6%',backgroundColor:'#282a2d',elevation:2,alignItems:'center',justifyContent:'center'}}>
+                <Text style={{color:'#fff'}}
+                      onPress = {()=>this.props.navigation.navigate('mainscreen')}>Continue Shopping</Text>
+              </View>
             </View>
           </AnimatedHideView>
 

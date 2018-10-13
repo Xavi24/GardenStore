@@ -16,6 +16,11 @@ import AnimatedHideView from 'react-native-animated-hide-view'
 import {TabNavigator,TabBarBottom} from 'react-navigation'
 import config from '../API/config'
 import Spinner from 'react-native-loading-spinner-overlay'
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+};
 
 export default class Order extends Component<{}>{
     constructor(props){
@@ -24,7 +29,8 @@ export default class Order extends Component<{}>{
         access_token : '',
         myOrderArray : [],
         show : false,
-        error_screen : false
+        error_screen : false,
+        next_page_url : ''
       }
     }
     async _getAccessToken(){
@@ -48,6 +54,7 @@ export default class Order extends Component<{}>{
       let myOrderData = {};
       let myOrderArray = [];
       var url = config.API_URL+'user/orders';
+      console.log('+++++++++++++?????????????????????',this.state.access_token);
       fetch(url,{
         headers : new Headers({
           'Content-Type' : 'application/json',
@@ -61,7 +68,10 @@ export default class Order extends Component<{}>{
         this.setState({
           show : false
         })
-        console.warn('response//myorders',response);
+        this.setState({
+          next_page_url : response.data.next_page_url
+        })
+        console.log('response//myorders........',this.state.next_page_url);
         if (response) {
           if (response.data) {
             if (response.data.data.length >0) {
@@ -93,13 +103,76 @@ export default class Order extends Component<{}>{
                 this.setState({
                   myOrderArray : myOrderArray
                 });
-                console.warn('myOrderData',this.state.myOrderArray);
+                // console.warn('myOrderData',this.state.myOrderArray);
               }
             }
           }
         }
       })
     }
+  handleScroll(){
+      console.warn('reached to bottom');
+      if (this.state.next_page_url !== null){
+        let myOrderData = {};
+        let myOrderArray = [];
+        var url = this.state.next_page_url;
+        console.log('+++++++++++++?????????????????????',this.state.access_token);
+        fetch(url,{
+          headers : new Headers({
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json',
+            'Authorization' : this.state.access_token
+          })
+        })
+            .then((response)=>response.json())
+            .catch((error)=>console.warn(error))
+            .then((response)=>{
+              this.setState({
+                show : false
+              })
+              this.setState({
+                next_page_url : response.data.next_page_url
+              })
+              console.log('response//myorders........',this.state.next_page_url);
+              if (response) {
+                if (response.data) {
+                  if (response.data.data.length >0) {
+                    for(let data of response.data.data){
+                      console.warn('data',data);
+                      myOrderData.order_id = data.order_id;
+                      myOrderData.address_id = data.address_id;
+                      myOrderData.date = data.date_purchased;
+                      myOrderData.amount = data.amount;
+                      myOrderData.order_status = data.order_status;
+                      myOrderData.img = data.first_orderproduct.single_var_img.variation_image;
+                      myOrderData.name = data.first_orderproduct.product_name;
+                      myOrderData.product_order_id = data.first_orderproduct.order_product_id;
+                      myOrderData.product_count = data.orderproducts_count;
+                      myOrderData.fbin = data.fbin;
+
+                      myOrderArray.push({
+                        order_id : myOrderData.order_id,
+                        address_id : myOrderData.address_id,
+                        date : myOrderData.date,
+                        amount : myOrderData.amount,
+                        order_status : myOrderData.order_status,
+                        img : myOrderData.img,
+                        name : myOrderData.name,
+                        product_order_id : myOrderData.product_order_id,
+                        product_count : myOrderData.product_count,
+                        fbin : myOrderData.fbin
+                      });
+                      this.setState({
+                        myOrderArray : myOrderArray
+                      });
+                      // console.warn('myOrderData',this.state.myOrderArray);
+                    }
+                  }
+                }
+              }
+            })
+      }
+  }
     componentWillMount(){
       this.setState({
         show : true
@@ -128,7 +201,12 @@ export default class Order extends Component<{}>{
         </View>
         <View style = {styles.baseContainer}>
           <ScrollView style = {{width:'100%',height:'100%'}}
-            showsVerticalScrollIndicator = {false}>
+            showsVerticalScrollIndicator = {false}
+                      onScroll={({nativeEvent}) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                          this.handleScroll();
+                        }
+                      }}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
                   itemDimension={360}

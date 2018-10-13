@@ -29,7 +29,7 @@ export default class Settings extends Component<{}>{
     this.state = {
       access_token : '',
       userAction : '',
-      name : 'GardenStore User',
+      name : 'Gardens Store User',
       number : '',
       email : '',
       gender : '',
@@ -45,7 +45,7 @@ export default class Settings extends Component<{}>{
     this.setState({
       access_token : '',
       userAction : 'Login',
-      name : 'GardenStore User',
+      name : 'Gardens Store User',
       profileName : '!',
       email : '',
       logConformscreen : false

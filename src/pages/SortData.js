@@ -364,7 +364,7 @@ export default class SortData extends Component<{}>{
           scrollEventThrottle={400}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <GridView
-                itemDimension = {180}
+                itemDimension = {150}
                 items = {this.state.product_data}
                 style = {styles.gridView}
                 spacing = {4}

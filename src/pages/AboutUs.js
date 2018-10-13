@@ -44,7 +44,7 @@ export default class AboutUs extends Component<{}>{
           <ScrollView style = {{width:'100%',height:'100%'}}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <View style = {{width:'95%',alignItems:'center',justifyContent:'center'}}>
-                <Text style = {{color:'#000',fontSize:20,fontWeight:'bold',marginTop:20}}>About GardenStore</Text>
+                <Text style = {{color:'#000',fontSize:20,fontWeight:'bold',marginTop:20}}>About Gardens Store</Text>
 
               </View>
             </View>
