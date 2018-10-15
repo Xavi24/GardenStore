@@ -22,7 +22,7 @@ import { CheckBox } from 'react-native-elements'
 
 var radio_props = [
   // {label: 'Debit', value: 0 },
-  {label: 'Pay Online', value: 1 },
+  {label: 'Pay Online   ', value: 1 },
   {label: 'Cash on Delivery', value: 2}
 ];
 let item = [];
@@ -133,7 +133,10 @@ export default class Buy_Now extends Component<{}>{
       p_border : 0,
       p_padding : 0,
       p_icon : 'check-box-outline-blank',
-      p_underline : 'transparent'
+      p_underline : 'transparent',
+      checked : false,
+      temp_prize :0,
+      temp_points : '0',
     }
   }
   // componentDidMount(){
@@ -227,6 +230,36 @@ export default class Buy_Now extends Component<{}>{
         })
       }
     })
+  }
+  pointCheck(){
+    this.setState({
+      checked:!this.state.checked,
+      p_height : 45,
+      p_width : '95%',
+      p_border : 1,
+      p_padding : 1,
+      p_underline : 'transparent'
+    });
+    if(this.state.checked){
+      this.setState({
+        checked:!this.state.checked,
+        p_height : 0,
+        p_width : 0,
+        p_border : 0,
+        p_padding : 0,
+        p_underline : 'transparent'
+      })
+    }
+    // else {
+    //   this.setState({
+    //     checked:!this.state.checked,
+    //     p_height : 45,
+    //     p_width : '95%',
+    //     p_border : 1,
+    //     p_padding : 1,
+    //     p_underline : '#360'
+    //   });
+    // }
   }
   payment_method(value){
     if (value == '1') {
@@ -346,7 +379,8 @@ export default class Buy_Now extends Component<{}>{
       console.warn('response',response);
       if (response.code == '200') {
         this.setState({
-          points1 : response.data.points
+          points1 : response.data.points,
+          temp_points : response.data.points
         });
         console.warn('points--->>>',this.state.points);
       }
@@ -360,6 +394,9 @@ export default class Buy_Now extends Component<{}>{
     }
   }
   convertPartialPoints(){
+    this.setState({
+      price : this.state.temp_prize
+    });
     if (this.state.points<=this.state.points1) {
       // this.setState({
       //   user_point:this.state.points
@@ -429,6 +466,9 @@ export default class Buy_Now extends Component<{}>{
       slug : params.slug,
       spec : params.spec
     });
+    this.setState({
+      temp_prize : params.prize
+    })
   }
   updateValue(text,field){
     if (field == 'points') {
@@ -1110,10 +1150,10 @@ export default class Buy_Now extends Component<{}>{
                   <Text style = {{color:'#369',fontWeight:'bold',fontSize:14}}>Order Details</Text>
                 </View>
                 <Text style = {{fontSize:12,color:'#000',marginTop:10,fontWeight:'bold'}}>{this.state.p_name}</Text>
-                <View style = {{width:'60%',height:150,alignItems:'center',justifyContent:'center',marginTop:10}}>
-                <Image style = {styles.imageView}
-                  source = {{uri:config.IMG_URL+this.state.product_image}}>
-                </Image>
+                <View style = {{width:'60%',height:250,alignItems:'center',justifyContent:'center',marginTop:10}}>
+                  <Image style = {styles.imageView}
+                    source = {{uri:config.IMG_URL+this.state.product_image}}>
+                  </Image>
                 </View>
                 <View style = {{width:'100%'}}>
                     <View style = {{width:'60%',marginLeft:5}}>
@@ -1175,119 +1215,87 @@ export default class Buy_Now extends Component<{}>{
                   {/*/!*</View>*!/*/}
                 {/*</View>*/}
               </View>
-              <View style = {styles.topView}>
-                <View style = {{width:'95%',flexDirection:'row'}}>
+              <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10}}>
+                <View style = {{width:'97%',flexDirection:'row',backgroundColor:'#fff',elevation:2,alignItems:'center',justifyContent:'center'}}>
                   <TextInput style = {styles.input1}
-                    underlineColorAndroid='#360'
-                    placeholderTextColor="#360"
-                    placeholder='Your coupon'
-                    onChangeText = {(text_coupon)=>this.updateCouponValue(text_coupon,'coupon')}>
+                             underlineColorAndroid='transparent'
+                             placeholderTextColor="#360"
+                             placeholder='Your coupon'
+                             onChangeText = {(text_coupon)=>this.updateCouponValue(text_coupon,'coupon')}>
                   </TextInput>
-                  <View style = {{width:'20%',height:45,marginTop:10,backgroundColor:'#2fdab8',borderTopWidth:1,borderBottomWidth:1,
+                  <View style = {{width:'20%',height:45,marginTop:10,backgroundColor:'#2fdab8',borderTopWidth:1,borderBottomWidth:1,marginBottom:20,
                     borderRightWidth:1,borderColor:'#363a42',alignItems:'center',justifyContent:'center'}}>
                     <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
-                      underlayColor = 'transparent'
-                      onPress = {()=>this.ApplyCoupon()}>
+                                        underlayColor = 'transparent'
+                                        onPress = {()=>this.ApplyCoupon()}>
                       <Text style = {{color:'#fff'}}>GO</Text>
                     </TouchableHighlight>
                   </View>
                 </View>
-                <View style = {{width:'95%',height:40,marginTop:20,marginBottom:10}}>
-                  <Text style = {{color:'#360',fontSize:14,fontWeight:'bold',marginBottom:10}}>Your total point : {this.state.points1}</Text>
-                  <View style = {{width:'100%',flexDirection:'row'}}>
-                    <TouchableHighlight underlayColor = 'transparent'
-                        onPress = {()=>this.setState({
-                          p_icon : 'check-box',
-                          p_height : 45,
-                          p_width : '95%',
-                          p_border : 1,
-                          p_padding : 1,
-                          p_underline : '#360'
-                        })}>
-                      <MaterialIcons
-                          name={this.state.p_icon}
-                          size={26}
-                          style = {{color:'#565959'}}>
-                      </MaterialIcons>
-                    </TouchableHighlight>
-                    <Text style={{fontSize:14,color:'#369',fontWeight:'bold',marginLeft:15,marginTop:2}}>Want To Use Points</Text>
+              </View>
+              <View style = {{width:'100%',alignItems:'center',justifyContent:'center',marginTop:10}}>
+                <View style = {{width:'97%',backgroundColor:'#fff',elevation:2}}>
+                  <View style = {{width:'95%',height:40,marginTop:20,marginBottom:10}}>
+                    <Text style = {{color:'#360',fontSize:14,fontWeight:'bold',marginBottom:10,marginLeft:10}}>Your total point : {this.state.temp_points}</Text>
+                    <CheckBox
+                        title='User Points'
+                        checked={this.state.checked}
+                        containerStyle={{backgroundColor:'#fff',borderColor:'#fff'}}
+                        onPress = {()=>this.pointCheck()}
+                    />
                   </View>
-                </View>
-                <View style = {{width:'100%',marginTop:10,marginBottom:10,alignItems:'center',justifyContent:'center'}}>
-                  {/*<TouchableHighlight style = {{width:'100%',height:40,borderColor:'#bbb',borderWidth:1,marginTop:10}}*/}
-                    {/*underlayColor = 'transparent'*/}
-                    {/*onPress = {()=>this.setState({pointViewHeight:120,pointsBorder:1,partialPointColor:'#369',point_screen:true,*/}
-                      {/*allPointColor:'#7a7979',partialpointSubView:20,inputpoints:40,  partialBtn:30,placeholder:'Enter the points here',*/}
-                      {/*discountSize:0,allpointsubView:0,underlayColor:'#bbb',ptrl_font:16,convertedValue:0})}>*/}
-                    {/*<View style = {{alignItems:'center',justifyContent:'center',flexDirection:'row',width:'100%',height:'100%'}}>*/}
-                      {/*<Text style = {{fontSize:14,marginRight:10,color:'#000'}}>Want to use your point?</Text>*/}
-                      {/*<MaterialIcons*/}
-                        {/*name='keyboard-arrow-up'*/}
-                        {/*size={26}*/}
-                        {/*style = {{color:'#360'}}>*/}
-                      {/*</MaterialIcons>*/}
-                    {/*</View>*/}
-                  {/*</TouchableHighlight>*/}
-
-                  {/*<AnimatedHideView style = {{position:'absolute',width:'100%',height:45,borderColor:'#bbb',borderWidth:1,backgroundColor:'#360',*/}
-                    {/*marginTop:30}}*/}
-                    {/*visible = {this.state.point_screen}>*/}
-                    {/*<TouchableHighlight style = {{alignItems:'center',justifyContent:'center'}}*/}
-                      {/*underlayColor = 'transparent'*/}
-                      {/*onPress = {()=>this.setState({pointViewHeight:0,pointsBorder:0,partialpointSubView:0,inputpoints:0,partialBtn:0,*/}
-                          {/*ptrl_font:0,point_screen:false,placeholder:''})}>*/}
-                      {/*<View style = {{alignItems:'center',justifyContent:'center',flexDirection:'row',width:'100%',height:'100%'}}>*/}
-                        {/*<Text style = {{fontSize:14,marginRight:10,color:'#fff'}}>Want to use your point?</Text>*/}
-                        {/*<MaterialIcons*/}
-                          {/*name='keyboard-arrow-down'*/}
-                          {/*size={26}*/}
-                          {/*style = {{color:'#fff'}}>*/}
-                        {/*</MaterialIcons>*/}
-                      {/*</View>*/}
-                    {/*</TouchableHighlight>*/}
-                  {/*</AnimatedHideView>*/}
-                  <View style = {{width:this.state.p_width,flexDirection:'row'}}>
-                    <TextInput style = {{width:'80%',height:this.state.p_height,paddingLeft:16,color:'#363a42',borderColor:'#363a42',
-                      marginTop:10, alignItems:'center',justifyContent:'center',borderTopWidth:this.state.p_border,borderBottomWidth:this.state.p_border,
+                  <View style = {{width:'100%',marginTop:10,marginBottom:10,alignItems:'center',justifyContent:'center'}}>
+                    <View style = {{width:this.state.p_width,flexDirection:'row'}}>
+                      <TextInput style = {{width:'80%',height:this.state.p_height,paddingLeft:16,color:'#363a42',borderColor:'#363a42',
+                        marginTop:10, alignItems:'center',justifyContent:'center',borderTopWidth:this.state.p_border,borderBottomWidth:this.state.p_border,
                         borderLeftWidth:this.state.p_border}}
-                               underlineColorAndroid={this.state.p_underline}
-                               placeholderTextColor="#360"
-                               placeholder='Enter Your Points'
-                               onChangeText = {(text_point)=>this.updatePointValue(text_point,'point')}>
-                    </TextInput>
-                    <View style = {{width:'20%',height:this.state.p_height,marginTop:10,backgroundColor:'#2fdab8',borderTopWidth:this.state.p_border,
-                      borderBottomWidth:this.state.p_border,borderRightWidth:this.state.p_border,borderColor:'#363a42',alignItems:'center',
+                                 underlineColorAndroid={this.state.p_underline}
+                                 placeholderTextColor="#360"
+                                 placeholder='Enter Your Points'
+                                 onChangeText = {(text_point)=>this.updatePointValue(text_point,'point')}>
+                      </TextInput>
+                      <View style = {{width:'20%',height:this.state.p_height,marginTop:10,backgroundColor:'#2fdab8',borderTopWidth:this.state.p_border,
+                        borderBottomWidth:this.state.p_border,borderRightWidth:this.state.p_border,borderColor:'#363a42',alignItems:'center',
                         justifyContent:'center'}}>
-                      <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
-                                          underlayColor = 'transparent'
-                                          onPress = {()=>this.convertPartialPoints()}>
-                        <Text style = {{color:'#fff'}}>GO</Text>
-                      </TouchableHighlight>
+                        <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
+                                            underlayColor = 'transparent'
+                                            onPress = {()=>this.convertPartialPoints()}>
+                          <Text style = {{color:'#fff'}}>GO</Text>
+                        </TouchableHighlight>
+                      </View>
                     </View>
                   </View>
-                  {/*<View style = {{width:'100%',height:this.state.pointViewHeight,borderColor:'#bbb',borderWidth:this.state.pointsBorder,*/}
-                      {/*marginTop:5,padding:10}}>*/}
-                    {/*<View style = {{width:'80%',height:this.state.partialpointSubView,alignItems:'center',*/}
-                      {/*justifyContent:'center',flexDirection:'row',marginTop:10}}>*/}
-                      {/*<TextInput style = {{width:'90%',height:40,paddingLeft:10,color:'#000',marginRight:10,*/}
-                        {/*marginLeft:10}}*/}
-                        {/*placeholder={this.state.placeholder}*/}
-                        {/*placeholderTextColor="#369"*/}
-                        {/*keyboardType={'numeric'}*/}
-                        {/*value={this.state.value}*/}
-                        {/*onChangeText = {(txt_points)=>this.updateValue(txt_points,'points')}>*/}
-                      {/*</TextInput>*/}
-                      {/*<View style = {{width:50,height:this.state.partialBtn,alignItems:'center',justifyContent:'center',backgroundColor:'#360',*/}
-                        {/*borderBottomLeftRadius:2,borderBottomRightRadius:2,borderTopLeftRadius:2,borderTopRightRadius:2}}>*/}
-                        {/*<TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}*/}
-                          {/*underlayColor = 'transparent'*/}
-                          {/*onPress = {()=>this.convertPartialPoints()}>*/}
-                          {/*<Text style = {{color:'#fff'}}>GO</Text>*/}
-                        {/*</TouchableHighlight>*/}
-                      {/*</View>*/}
-                    {/*</View>*/}
-                    {/*<Text style = {{marginLeft:3,color:'#360',fontSize:this.state.ptrl_font,marginTop:15,marginBottom:10}}>{this.state.discPoints}</Text>*/}
-                  {/*</View>*/}
+                </View>
+              </View>
+              <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
+                <View style = {{width:'97%',alignItems:'center',justifyContent:'center',marginTop:10,backgroundColor:'#fff',elevation:2}}>
+                  <View style = {{width:'95%'}}>
+                    <Text style={{color:'#565959',fontWeight:'bold',fontSize:16,marginTop:10,marginBottom:10}}>Summary : </Text>
+                  </View>
+                  <View style = {{width:'95%',flexDirection:'row'}}>
+                    <View style = {{width:'70%'}}>
+                      <Text>Total :</Text>
+                    </View>
+                    <View style = {{width:'30%'}}>
+                      <Text>INR. {this.state.temp_prize}</Text>
+                    </View>
+                  </View>
+                  <View style = {{width:'95%',flexDirection:'row',marginBottom:10}}>
+                    <View style = {{width:'70%'}}>
+                      <Text>Point Discount Amount :</Text>
+                    </View>
+                    <View style = {{width:'30%'}}>
+                      <Text> - {this.state.convertedValue}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style = {styles.topView}>
+
+
+
+                <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
+
                 </View>
                 <View style = {{width:'95%'}}>
                   <Text style = {{color:'#000',fontSize:14,fontWeight:'bold'}}>Choose Your Payment Details</Text>
@@ -2292,7 +2300,7 @@ const styles = StyleSheet.create({
       justifyContent:'center'
   },
   input1:{
-    width:'80%',
+    width:'70%',
     height:45,
     paddingLeft:16,
     color:'#363a42',
@@ -2302,6 +2310,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     borderTopWidth:1,
     borderBottomWidth:1,
-    borderLeftWidth:1
+    borderLeftWidth:1,
+    marginBottom:20
   },
 });

@@ -315,11 +315,9 @@ export default class ViewOpenOrder extends Component<{}>{
               <View style = {{width:'95%',padding:10,backgroundColor:'#fff',marginBottom:10,elevation:1}}>
                 <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Payment Details : </Text>
                 <Text style = {{marginTop:10,color:'#369',fontSize:15,fontWeight:'bold'}}>Payed - {this.state.pay_amount}</Text>
-                <Text>MRP - {this.state.pay_product_mrp}</Text>
                 <Text>{this.state.discount_text+''+this.state.discount+""+this.state.discountIcon}</Text>
                 <Text>Status - {this.state.pay_status}</Text>
                 <Text style = {{color:'#360',fontWeight:'bold'}}>Date - {this.state.pay_date}</Text>
-                <Text style={{fontSize:12}}>{this.state.pointText} {this.state.points}</Text>
                 <Text style = {{color:'#000',fontWeight:'bold',fontSize:12}}>Payment Method - {this.state.pay_payment_method}</Text>
               </View>
             </View>
