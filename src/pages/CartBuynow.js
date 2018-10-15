@@ -118,7 +118,22 @@ export default class CartBuynow extends Component<{}>{
       address_height : 0,
       address_padding : 0,
       address_border_width : 0,
-      mes_data : ''
+      mes_data : '',
+      p_height : 0,
+      p_width : 0,
+      p_border : 0,
+      p_padding : 0,
+      p_icon : 'check-box-outline-blank',
+      p_underline : 'transparent',
+      temp_prize :0,
+      temp_points : '0'
+    }
+  }
+  updatePointValue(data,value){
+    if (value == 'point') {
+      this.setState({
+        points : data
+      })
     }
   }
   ApplyCoupon(){
@@ -270,9 +285,10 @@ export default class CartBuynow extends Component<{}>{
       console.warn('response',response);
       if (response.code == '200') {
         this.setState({
-          points1 : response.data.points
+          points1 : response.data.points,
+          temp_points : response.data.points
         });
-        console.warn('points--->>>',this.state.points);
+        console.warn('points--->>>',this.state.temp_points);
       }
     })
   }
@@ -303,6 +319,15 @@ export default class CartBuynow extends Component<{}>{
               price : parseInt(this.state.price) - response.data.value,
               discPoints : 'You will get Rs. '+response.data.value+' of discount for this product',
               points1 : this.state.points1 - this.state.points
+            });
+            Toast.show('You will get '+this.state.discPoints+' amount discount', Toast.LONG);
+            this.setState({
+              p_height : 0,
+              p_width : 0,
+              p_border : 0,
+              p_padding : 0,
+              p_icon : 'check-box-outline-blank',
+              p_underline : 'transparent'
             })
           } else {
             this.setState({
@@ -360,7 +385,8 @@ export default class CartBuynow extends Component<{}>{
             id : data.id,
             vendor_id : data.vendor_id,
             quantity : data.count,
-            mes_data : this.state.mes_data
+            mes_data : this.state.mes_data,
+            temp_prize :data.variation_details.price,
           })
           this.setState({
             crtData:cartData,
@@ -406,7 +432,7 @@ export default class CartBuynow extends Component<{}>{
     console.warn('access_token',this.state.access_token);
     console.warn('user_address_id',this.state.user_address_id);
     console.warn('payment_method',this.state.payment_method);
-    let checkOutData = {}
+    let checkOutData = {};
     checkOutData.currency = 'INR',
     checkOutData.address_id = this.state.user_address_id,
     checkOutData.payment_method = this.state.payment_method,
@@ -1098,59 +1124,101 @@ export default class CartBuynow extends Component<{}>{
                 </View>
               </View>
               <View style = {{width:'100%',marginTop:10,marginBottom:10,alignItems:'center',justifyContent:'center',padding:10}}>
-                <Text style = {{color:'#360',fontSize:18,fontWeight:'bold'}}>Your total point : {this.state.points1}</Text>
-                <TouchableHighlight style = {{width:'100%',height:40,borderColor:'#bbb',borderWidth:1,marginTop:10}}
-                  underlayColor = 'transparent'
-                  onPress = {()=>this.setState({pointViewHeight:100,pointsBorder:1,partialPointColor:'#369',
-                    allPointColor:'#7a7979',partialpointSubView:20,inputpoints:40,  partialBtn:30,placeholder:'Enter the points here',
-                    discountSize:0,allpointsubView:0,underlayColor:'#bbb',ptrl_font:16,convertedValue:0})}>
-                  <View style = {{alignItems:'center',justifyContent:'center',flexDirection:'row',width:'100%',height:'100%'}}>
-                    <Text style = {{fontSize:16,marginRight:10,color:'#000'}}>Want to use your point?</Text>
-                    <MaterialIcons
-                      name='keyboard-arrow-down'
-                      size={26}
-                      style = {{color:'#360'}}>
-                    </MaterialIcons>
-                  </View>
-                </TouchableHighlight>
-                <AnimatedHideView style = {{position:'absolute',width:'100%',height:45,borderColor:'#bbb',borderWidth:1,backgroundColor:'#360',
-                  marginTop:30}}
-                  visible = {this.state.point_screen}>
-                  <TouchableHighlight style = {{alignItems:'center',justifyContent:'center'}}
-                    underlayColor = 'transparent'
-                    onPress = {()=>this.setState({pointViewHeight:0,pointsBorder:0,partialpointSubView:0,inputpoints:0,partialBtn:0,
-                        ptrl_font:0,point_screen:false,placeholder:''})}>
-                    <View style = {{alignItems:'center',justifyContent:'center',flexDirection:'row',width:'100%',height:'100%'}}>
-                      <Text style = {{fontSize:16,marginRight:10,color:'#fff'}}>Want to use your point?</Text>
+                {/*<Text style = {{color:'#360',fontSize:18,fontWeight:'bold'}}>Your total point : {this.state.points1}</Text>*/}
+                {/*<TouchableHighlight style = {{width:'100%',height:40,borderColor:'#bbb',borderWidth:1,marginTop:10}}*/}
+                  {/*underlayColor = 'transparent'*/}
+                  {/*onPress = {()=>this.setState({pointViewHeight:100,pointsBorder:1,partialPointColor:'#369',*/}
+                    {/*allPointColor:'#7a7979',partialpointSubView:20,inputpoints:40,  partialBtn:30,placeholder:'Enter the points here',*/}
+                    {/*discountSize:0,allpointsubView:0,underlayColor:'#bbb',ptrl_font:16,convertedValue:0})}>*/}
+                  {/*<View style = {{alignItems:'center',justifyContent:'center',flexDirection:'row',width:'100%',height:'100%'}}>*/}
+                    {/*<Text style = {{fontSize:16,marginRight:10,color:'#000'}}>Want to use your point?</Text>*/}
+                    {/*<MaterialIcons*/}
+                      {/*name='keyboard-arrow-down'*/}
+                      {/*size={26}*/}
+                      {/*style = {{color:'#360'}}>*/}
+                    {/*</MaterialIcons>*/}
+                  {/*</View>*/}
+                {/*</TouchableHighlight>*/}
+                {/*<AnimatedHideView style = {{position:'absolute',width:'100%',height:45,borderColor:'#bbb',borderWidth:1,backgroundColor:'#360',*/}
+                  {/*marginTop:30}}*/}
+                  {/*visible = {this.state.point_screen}>*/}
+                  {/*<TouchableHighlight style = {{alignItems:'center',justifyContent:'center'}}*/}
+                    {/*underlayColor = 'transparent'*/}
+                    {/*onPress = {()=>this.setState({pointViewHeight:0,pointsBorder:0,partialpointSubView:0,inputpoints:0,partialBtn:0,*/}
+                        {/*ptrl_font:0,point_screen:false,placeholder:''})}>*/}
+                    {/*<View style = {{alignItems:'center',justifyContent:'center',flexDirection:'row',width:'100%',height:'100%'}}>*/}
+                      {/*<Text style = {{fontSize:16,marginRight:10,color:'#fff'}}>Want to use your point?</Text>*/}
+                      {/*<MaterialIcons*/}
+                        {/*name='keyboard-arrow-down'*/}
+                        {/*size={26}*/}
+                        {/*style = {{color:'#fff'}}>*/}
+                      {/*</MaterialIcons>*/}
+                    {/*</View>*/}
+                  {/*</TouchableHighlight>*/}
+                {/*</AnimatedHideView>*/}
+                {/*<View style = {{width:'100%',height:this.state.pointViewHeight,borderColor:'#bbb',borderWidth:this.state.pointsBorder,*/}
+                    {/*marginTop:5,padding:10}}>*/}
+                  {/*<View style = {{width:'80%',height:this.state.partialpointSubView,alignItems:'center',*/}
+                    {/*justifyContent:'center',flexDirection:'row',marginTop:10}}>*/}
+                    {/*<TextInput style = {{width:'90%',height:40,paddingLeft:10,color:'#000',marginRight:10,*/}
+                      {/*marginLeft:10}}*/}
+                      {/*placeholder={this.state.placeholder}*/}
+                      {/*placeholderTextColor="#369"*/}
+                      {/*keyboardType={'numeric'}*/}
+                      {/*onChangeText = {(txt_points)=>this.updateValue(txt_points,'points')}>*/}
+                    {/*</TextInput>*/}
+                    {/*<View style = {{width:50,height:this.state.partialBtn,alignItems:'center',justifyContent:'center',backgroundColor:'#360',*/}
+                      {/*borderBottomLeftRadius:2,borderBottomRightRadius:2,borderTopLeftRadius:2,borderTopRightRadius:2}}>*/}
+                      {/*<TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}*/}
+                        {/*underlayColor = 'transparent'*/}
+                        {/*onPress = {()=>this.convertPartialPoints()}>*/}
+                        {/*<Text style = {{color:'#fff'}}>GO</Text>*/}
+                      {/*</TouchableHighlight>*/}
+                    {/*</View>*/}
+                  {/*</View>*/}
+                  {/*<Text style = {{marginLeft:3,color:'#360',fontSize:this.state.ptrl_font,marginTop:15,marginBottom:10}}>{this.state.discPoints}</Text>*/}
+                {/*</View>*/}
+                <View style = {{width:'95%',height:40,marginTop:20,marginBottom:10}}>
+                  <Text style = {{color:'#360',fontSize:14,fontWeight:'bold',marginBottom:10}}>Your total point : {this.state.points1}</Text>
+                  <View style = {{width:'100%',flexDirection:'row'}}>
+                    <TouchableHighlight underlayColor = 'transparent'
+                                        onPress = {()=>this.setState({
+                                          p_icon : 'check-box',
+                                          p_height : 45,
+                                          p_width : '95%',
+                                          p_border : 1,
+                                          p_padding : 1,
+                                          p_underline : '#360'
+                                        })}>
                       <MaterialIcons
-                        name='keyboard-arrow-down'
-                        size={26}
-                        style = {{color:'#fff'}}>
+                          name={this.state.p_icon}
+                          size={26}
+                          style = {{color:'#565959'}}>
                       </MaterialIcons>
-                    </View>
-                  </TouchableHighlight>
-                </AnimatedHideView>
-                <View style = {{width:'100%',height:this.state.pointViewHeight,borderColor:'#bbb',borderWidth:this.state.pointsBorder,
-                    marginTop:5,padding:10}}>
-                  <View style = {{width:'80%',height:this.state.partialpointSubView,alignItems:'center',
-                    justifyContent:'center',flexDirection:'row',marginTop:10}}>
-                    <TextInput style = {{width:'90%',height:40,paddingLeft:10,color:'#000',marginRight:10,
-                      marginLeft:10}}
-                      placeholder={this.state.placeholder}
-                      placeholderTextColor="#369"
-                      keyboardType={'numeric'}
-                      onChangeText = {(txt_points)=>this.updateValue(txt_points,'points')}>
+                    </TouchableHighlight>
+                    <Text style={{fontSize:14,color:'#369',fontWeight:'bold',marginLeft:15,marginTop:2}}>Want To Use Points</Text>
+                  </View>
+                </View>
+                <View style = {{width:'100%',marginTop:10,marginBottom:10,alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{width:this.state.p_width,flexDirection:'row'}}>
+                    <TextInput style = {{width:'80%',height:this.state.p_height,paddingLeft:16,color:'#363a42',borderColor:'#363a42',
+                      marginTop:10, alignItems:'center',justifyContent:'center',borderTopWidth:this.state.p_border,borderBottomWidth:this.state.p_border,
+                      borderLeftWidth:this.state.p_border}}
+                               underlineColorAndroid={this.state.p_underline}
+                               placeholderTextColor="#360"
+                               placeholder='Enter Your Points'
+                               onChangeText = {(text_point)=>this.updatePointValue(text_point,'point')}>
                     </TextInput>
-                    <View style = {{width:50,height:this.state.partialBtn,alignItems:'center',justifyContent:'center',backgroundColor:'#360',
-                      borderBottomLeftRadius:2,borderBottomRightRadius:2,borderTopLeftRadius:2,borderTopRightRadius:2}}>
-                      <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
-                        underlayColor = 'transparent'
-                        onPress = {()=>this.convertPartialPoints()}>
+                    <View style = {{width:'20%',height:this.state.p_height,marginTop:10,backgroundColor:'#2fdab8',borderTopWidth:this.state.p_border,
+                      borderBottomWidth:this.state.p_border,borderRightWidth:this.state.p_border,borderColor:'#363a42',alignItems:'center',
+                      justifyContent:'center'}}>
+                      <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
+                                          underlayColor = 'transparent'
+                                          onPress = {()=>this.convertPartialPoints()}>
                         <Text style = {{color:'#fff'}}>GO</Text>
                       </TouchableHighlight>
                     </View>
                   </View>
-                  <Text style = {{marginLeft:3,color:'#360',fontSize:this.state.ptrl_font,marginTop:15,marginBottom:10}}>{this.state.discPoints}</Text>
                 </View>
                 <View style = {{width:'95%'}}>
                   <Text style = {{color:'#000',fontSize:18,fontWeight:'bold'}}>Choose Your Payment Details</Text>
@@ -1573,7 +1641,7 @@ export default class CartBuynow extends Component<{}>{
             <View style = {styles.toolbar}>
               <View style = {styles.menuView}>
                 <TouchableHighlight underlayColor = 'transparent'
-                  onPress = {()=>goBack()}>
+                  onPress = {()=>this.props.navigation.navigate('open')}>
                   <MaterialIcons
                     name='close'
                     size={22}

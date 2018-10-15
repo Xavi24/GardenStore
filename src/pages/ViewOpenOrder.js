@@ -38,7 +38,12 @@ export default class ViewOpenOrder extends Component<{}>{
       discount_text : '',
       discount : '',
       discountIcon  :'',
-      total : 0
+      total : 0,
+      pay_amount : '',
+      pay_product_mrp : '',
+      pay_status : '',
+      pay_date : '',
+      pay_payment_method : ''
 
     }
   }
@@ -99,6 +104,11 @@ export default class ViewOpenOrder extends Component<{}>{
                 pointText : 'Points Used - '
               })
             }
+            this.setState({
+              pay_amount : response.data.amount,
+              pay_date : response.data.date_purchased,
+              pay_payment_method : response.data.payment_method
+            })
             orderProduct.date = response.data.date_purchased;
             orderProduct.amount = response.data.amount;
             orderProduct.fbin = response.data.fbin;
@@ -128,6 +138,10 @@ export default class ViewOpenOrder extends Component<{}>{
                   } else if (data.order_last_status.status == 'processing' || data.order_last_status.status == 'Processing') {
                     orderProduct.btn_name = 'Cancel Item'
                   }
+                  this.setState({
+                    pay_product_mrp : data.product_mrp,
+                    pay_status : data.order_last_status.status
+                  });
                   orderProduct.order_product_id = data.order_product_id;
                   orderProduct.product_id = data.product_id;
                   orderProduct.product_name = data.product_name;
@@ -244,10 +258,10 @@ export default class ViewOpenOrder extends Component<{}>{
                           <Text style = {{color:'#369',fontSize:12}}>RS. {item.product_price}</Text>
                           <Text style = {{color:'#369',fontSize:12}}>Purchase Price - {item.amount}</Text>
                           <Text style={{fontSize:12}}>Quantity - {item.product_qty}</Text>
-                          <Text style={{fontSize:12}}>Payment Method - {item.payment_method}</Text>
-                          <Text>{item.discountText+''+item.discount+""+item.discountIcon}</Text>
-                          <Text style={{fontSize:12}}>{item.pointText} {item.points}</Text>
-                          <Text style={{fontSize:12}}>Status - {item.status}</Text>
+                          {/*<Text style={{fontSize:12}}>Payment Method - {item.payment_method}</Text>*/}
+                          {/*<Text>{item.discountText+''+item.discount+""+item.discountIcon}</Text>*/}
+                          {/*<Text style={{fontSize:12}}>{item.pointText} {item.points}</Text>*/}
+                          {/*<Text style={{fontSize:12}}>Status - {item.status}</Text>*/}
                           <Text style = {{color:'#360',fontSize:12}}>Purchased on {item.date}</Text>
                           <View style = {{width:'100%'}}>
                             <View style = {{width:'100%',marginLeft:5}}>
@@ -297,6 +311,16 @@ export default class ViewOpenOrder extends Component<{}>{
                 <Text>{this.state.address.country}</Text>
                 <Text style = {{color:'#360',fontWeight:'bold'}}>Pin Code - {this.state.address.postcode}</Text>
                 <Text style = {{color:'#000',fontWeight:'bold'}}>Mobile Number - {this.state.address.phone_no}</Text>
+              </View>
+              <View style = {{width:'95%',padding:10,backgroundColor:'#fff',marginBottom:10,elevation:1}}>
+                <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Payment Details : </Text>
+                <Text style = {{marginTop:10,color:'#369',fontSize:15,fontWeight:'bold'}}>Payed - {this.state.pay_amount}</Text>
+                <Text>MRP - {this.state.pay_product_mrp}</Text>
+                <Text>{this.state.discount_text+''+this.state.discount+""+this.state.discountIcon}</Text>
+                <Text>Status - {this.state.pay_status}</Text>
+                <Text style = {{color:'#360',fontWeight:'bold'}}>Date - {this.state.pay_date}</Text>
+                <Text style={{fontSize:12}}>{this.state.pointText} {this.state.points}</Text>
+                <Text style = {{color:'#000',fontWeight:'bold',fontSize:12}}>Payment Method - {this.state.pay_payment_method}</Text>
               </View>
             </View>
           </ScrollView>

@@ -71,7 +71,7 @@ export default class Order extends Component<{}>{
         this.setState({
           next_page_url : response.data.next_page_url
         })
-        console.log('response//myorders........',this.state.next_page_url);
+        console.log('response//myorders........',response);
         if (response) {
           if (response.data) {
             if (response.data.data.length >0) {
