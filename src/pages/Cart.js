@@ -76,6 +76,7 @@ export default class Cart extends Component<{}>{
     })
   };
   getCartData(){
+    console.warn('enter in to get cart method')
     this.setState({
       refresh_cart : false
     });
@@ -91,7 +92,7 @@ export default class Cart extends Component<{}>{
     })
         .then((response)=>response.json())
         .then((response)=> {
-          console.log('cartResponse--->>>',response);
+          console.warn('cartResponse--->>>',response);
           if (response.data.length > 0) {
             this.setState({
               show : false
@@ -154,6 +155,7 @@ export default class Cart extends Component<{}>{
   async _getAccessToken(){
     try {
       const value = await AsyncStorage.getItem('token');
+
       if (value !== null) {
         this.setState({
           access_token : value
@@ -219,12 +221,15 @@ export default class Cart extends Component<{}>{
     }
   }
   async getLocalCart(){
+    console.warn('get it..................');
     var totalPrize = 0;
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
+      console.warn(localCartData);
       if (localCartData !== null) {
         this.setState({
           local_cart_check : JSON.parse(localCartData),
+          show : false,
           local_cart_view : true
         });
         for (let data of this.state.local_cart_check) {
@@ -236,7 +241,8 @@ export default class Cart extends Component<{}>{
         console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
       } else {
         this.setState({
-          emptyScreen : true
+          emptyScreen : true,
+          show : false
         })
       }
     } catch (error) {
@@ -244,6 +250,7 @@ export default class Cart extends Component<{}>{
     }
   }
   async syncCart(){
+    console.warn('get it..................');
     console.warn('cartDataLength',this.state.crtData.length);
     if (this.state.crtData.length<0){
       this.setState({

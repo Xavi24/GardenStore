@@ -275,7 +275,9 @@ export default  class Add_New_Address extends Component<{}>{
                 <View style = {styles.baseContainer}>
                     <Text style = {{fontSize:18,marginBottom:10,color:'#369'}}>Add New Address</Text>
                     <ScrollView style = {styles.scrollView}
-                                showsVerticalScrollIndicator={false}>
+                                showsVerticalScrollIndicator={false}
+                                keyboardDismissMode='on-drag'
+                                keyboardShouldPersistTaps={true}>
                         <View>
                             <View style = {styles.baseView}>
 

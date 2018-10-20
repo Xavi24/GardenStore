@@ -50,7 +50,8 @@ export default class SearchData extends Component<{}>{
       search_container_style : 0,
       color : '#333',
       price :'',
-      empty_product_screen : false
+      empty_product_screen : false,
+      search_size : 0
     }
   }
   componentWillMount(){
@@ -336,7 +337,7 @@ export default class SearchData extends Component<{}>{
               </View>
               <View style = {styles.iconView}>
                 <TouchableHighlight underlayColor = 'transparent'
-                                    onPress = {()=>this.setState({search_container_style:60})}>
+                                    onPress = {()=>this.setState({search_container_style:60,search_size:24})}>
                   <MaterialIcons
                       name='search'
                       size={22}
@@ -362,7 +363,7 @@ export default class SearchData extends Component<{}>{
                                         onPress = {()=>this.goToSearch()}>
                       <MaterialIcons
                           name='search'
-                          size={26}
+                          size={this.state.search_size}
                           style = {{color:'#fff'}}>
                       </MaterialIcons>
                     </TouchableHighlight>

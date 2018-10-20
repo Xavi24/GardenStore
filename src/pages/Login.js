@@ -143,7 +143,9 @@ export default class Login extends Component<{}>{
               source = {require('../img/login.jpg')}>
           </Image>
           <View style = {styles.base_view}>
-            <ScrollView style = {{width:'100%'}}>
+            <ScrollView style = {{width:'100%'}}
+                        keyboardDismissMode='on-drag'
+                        keyboardShouldPersistTaps={true}>
             <View style = {styles.content_view}>
               <TextInput style = {styles.input}
                 underlineColorAndroid='transparent'

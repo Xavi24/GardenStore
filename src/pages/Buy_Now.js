@@ -137,6 +137,7 @@ export default class Buy_Now extends Component<{}>{
       checked : false,
       temp_prize :0,
       temp_points : '0',
+      pay : true,
     }
   }
   // componentDidMount(){
@@ -425,9 +426,6 @@ export default class Buy_Now extends Component<{}>{
               points1 : this.state.points1 - this.state.points
             })
             this.setState({
-              p_height : 0,
-              p_width : 0,
-              p_border : 0,
               p_padding : 0,
               p_icon : 'check-box-outline-blank',
               p_underline : 'transparent'
@@ -1260,7 +1258,7 @@ export default class Buy_Now extends Component<{}>{
                         <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                             underlayColor = 'transparent'
                                             onPress = {()=>this.convertPartialPoints()}>
-                          <Text style = {{color:'#fff'}}>GO</Text>
+                          <Text style = {{color:'#fff'}}>Use</Text>
                         </TouchableHighlight>
                       </View>
                     </View>
@@ -1317,7 +1315,6 @@ export default class Buy_Now extends Component<{}>{
                   </View>
                 </View>
               </View>
-
             </View>
           </ScrollView>
           <View style = {styles.footer}>
@@ -1564,7 +1561,9 @@ export default class Buy_Now extends Component<{}>{
                 <View style = {styles.baseContainer}>
                     <Text style = {{fontSize:18,marginBottom:10,color:'#369'}}>Add New Address</Text>
                     <ScrollView style = {styles.scrollView}
-                                showsVerticalScrollIndicator={false}>
+                                showsVerticalScrollIndicator={false}
+                                keyboardDismissMode='on-drag'
+                                keyboardShouldPersistTaps={true}>
                         <View>
                             <View style = {styles.baseView}>
 
@@ -1750,33 +1749,33 @@ export default class Buy_Now extends Component<{}>{
                         </View>
                     </ScrollView>
                 </View>
-                <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
-                    position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
-                                  visible = {this.state.error_screen}>
-                    <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
-                      <TouchableHighlight style = {{marginTop:20}}
-                                          underlayColor='transparent'>
-                        <MaterialIcons
-                            name='error'
-                            size={36 }
-                            style = {{color:'#800000'}}>
-                        </MaterialIcons>
-                      </TouchableHighlight>
-                        <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>
-                        There is some problem with saving your address. Please enter Your
-                            details correctly</Text>
-                        <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
-                            <Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>
-                        </View>
-                        <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                            <View>
+                {/*<AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',*/}
+                    {/*position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}*/}
+                                  {/*visible = {this.state.error_screen}>*/}
+                    {/*<View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>*/}
+                      {/*<TouchableHighlight style = {{marginTop:20}}*/}
+                                          {/*underlayColor='transparent'>*/}
+                        {/*<MaterialIcons*/}
+                            {/*name='error'*/}
+                            {/*size={36 }*/}
+                            {/*style = {{color:'#800000'}}>*/}
+                        {/*</MaterialIcons>*/}
+                      {/*</TouchableHighlight>*/}
+                        {/*<Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>*/}
+                        {/*There is some problem with saving your address. Please enter Your*/}
+                            {/*details correctly</Text>*/}
+                        {/*<View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>*/}
+                            {/*<Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>*/}
+                        {/*</View>*/}
+                        {/*<View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>*/}
+                            {/*<View>*/}
 
-                            </View>
-                            <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                                  onPress = {()=>this.setState({error_screen : false})}>OK</Text>
-                        </View>
-                    </View>
-                </AnimatedHideView>
+                            {/*</View>*/}
+                            {/*<Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}*/}
+                                  {/*onPress = {()=>this.setState({error_screen : false})}>OK</Text>*/}
+                        {/*</View>*/}
+                    {/*</View>*/}
+                {/*</AnimatedHideView>*/}
                 <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
                     justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
                                   visible = {this.state.success_screen}>
@@ -1822,7 +1821,9 @@ export default class Buy_Now extends Component<{}>{
             </View>
             <View style = {styles.baseContainer}>
               <ScrollView style = {styles.scrollView}
-                          showsVerticalScrollIndicator={false}>
+                          showsVerticalScrollIndicator={false}
+                          keyboardDismissMode='on-drag'
+                          keyboardShouldPersistTaps={true}>
                 <View>
                   <Text style = {{fontSize:18,marginTop:20,marginLeft:20,color:'#000'}}>Edit Your Address</Text>
                   <View style = {styles.baseView}>

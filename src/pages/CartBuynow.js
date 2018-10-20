@@ -1494,7 +1494,9 @@ export default class CartBuynow extends Component<{}>{
                 <View style = {styles.baseContainer}>
                     <Text style = {{fontSize:18,marginBottom:10,color:'#369'}}>Add New Address</Text>
                     <ScrollView style = {styles.scrollView}
-                                showsVerticalScrollIndicator={false}>
+                                showsVerticalScrollIndicator={false}
+                                keyboardDismissMode='on-drag'
+                                keyboardShouldPersistTaps={true}>
                         <View>
                             <View style = {styles.baseView}>
 
@@ -1780,7 +1782,9 @@ export default class CartBuynow extends Component<{}>{
               </View>
               <View style = {styles.baseContainer}>
                 <ScrollView style = {styles.scrollView}
-                            showsVerticalScrollIndicator={false}>
+                            showsVerticalScrollIndicator={false}
+                            keyboardDismissMode='on-drag'
+                            keyboardShouldPersistTaps={true}>
                   <View style = {{marginBottom:20}}>
                     <Text style = {{fontSize:18,marginTop:20,marginLeft:20,color:'#000'}}>Edit Your Address</Text>
                     <View style = {styles.baseView}>

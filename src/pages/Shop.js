@@ -57,7 +57,8 @@ export default class Shop extends Component<{}>{
       price : '',
       show_fav : false,
       like : false,
-      access_token : ''
+      access_token : '',
+      search_size : 0
     }
   }
   componentWillMount(){
@@ -369,7 +370,7 @@ export default class Shop extends Component<{}>{
           </View>
           <View style = {styles.iconView}>
             <TouchableHighlight underlayColor = 'transparent'
-              onPress = {()=>this.setState({search_container_style:60})}>
+              onPress = {()=>this.setState({search_container_style:60,search_size:24})}>
               <MaterialIcons
                 name='search'
                 size={22}
@@ -395,7 +396,7 @@ export default class Shop extends Component<{}>{
                   onPress = {()=>this.goToSearch()}>
                   <MaterialIcons
                     name='search'
-                    size={26}
+                    size={this.state.search_size}
                     style = {{color:'#fff'}}>
                   </MaterialIcons>
                 </TouchableHighlight>

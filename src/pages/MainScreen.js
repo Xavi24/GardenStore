@@ -45,7 +45,8 @@ export default class MainScreen extends Component<{}>{
       total_sec: 0,
       sections: [],
       cms : [],
-      search_container_style : 0
+      search_container_style : 0,
+      search_size : 0
 
     }
   };
@@ -730,7 +731,7 @@ export default class MainScreen extends Component<{}>{
             </View>
             <View style = {styles.wishlistView}>
               <TouchableHighlight underlayColor = 'transparent'
-                                  onPress = {()=>this.setState({search_container_style:60})}>
+                                  onPress = {()=>this.setState({search_container_style:60,search_size:24})}>
                 <MaterialIcons
                     name='search'
                     size={22}
@@ -775,7 +776,7 @@ export default class MainScreen extends Component<{}>{
                                     onPress = {()=>this.goToSearch()}>
                   <MaterialIcons
                       name='search'
-                      size={26}
+                      size={this.state.search_size}
                       style = {{color:'#fff'}}>
                   </MaterialIcons>
                 </TouchableHighlight>
@@ -815,7 +816,7 @@ export default class MainScreen extends Component<{}>{
                 </View>
                 <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
                   <GridView
-                      itemDimension = {360}
+                      itemDimension = {320}
                       items = {CMS_layout}
                       spacing = {1}
                       renderItem = {item =>

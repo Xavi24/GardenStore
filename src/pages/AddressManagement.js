@@ -304,7 +304,9 @@ export default  class AddressManagement extends Component<{}>{
                     </View>
                     <Text style = {{fontSize:18,marginBottom:10,color:'#369'}}>Add New Address</Text>
                     <ScrollView style = {styles.scrollView}
-                                showsVerticalScrollIndicator={false}>
+                                showsVerticalScrollIndicator={false}
+                                keyboardDismissMode='on-drag'
+                                keyboardShouldPersistTaps={true}>
                         <View>
                             <View style = {styles.baseView}>
 

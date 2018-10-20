@@ -190,7 +190,9 @@ componentWillUnmount(){
             source = {require('../img/register.jpg')}>
           </Image>
           <View style = {styles.base_view}>
-            <ScrollView style = {{width:'100%'}}>
+            <ScrollView style = {{width:'100%'}}
+                        keyboardDismissMode='on-drag'
+                        keyboardShouldPersistTaps={true}>
               <View style = {styles.content_view}>
                 <TextInput style = {styles.input}
                   underlineColorAndroid='transparent'
