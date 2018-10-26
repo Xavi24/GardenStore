@@ -290,8 +290,8 @@ export default class Cart extends Component<{}>{
                   source = {require('../img/dislike.png')}>
                 </Image>
                   <Text style = {{fontSize:30,color:'#000',marginTop:10}}>Oops!</Text>
-                  <Text style = {{fontSize:18,marginTop:20,textAlign:'center'}}>Seems like you are note a member here</Text>
-                  <Text style = {{fontSize:18,textAlign:'center'}}>Your Attempt has failed. An error has occured, back and try again</Text>
+                  <Text style = {{fontSize:18,marginTop:20,textAlign:'center'}}>Seems like you are not a member here</Text>
+                  <Text style = {{fontSize:18,textAlign:'center'}}>Your Attempt has failed.</Text>
                   <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                     <Text style = {{fontSize:16,marginTop:20}}>Already have an account ?</Text>
                     <Text style = {{color:'#369',marginLeft:10,fontSize:16,marginTop:20}}
@@ -322,8 +322,8 @@ export default class Cart extends Component<{}>{
               </View>
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
-              <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
-                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+              <View style={{width:'70%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
                        source = {require('../img/productempty.png')}>
                 </Image>
               </View>

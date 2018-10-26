@@ -179,6 +179,7 @@ export default class Filter extends Component<{}>{
       url : params.url,
       selected_cat : params.name
     });
+    console.log('pppppppppppppppp',params.cat_data);
   }
   render() {
     const {goBack} = this.props.navigation;

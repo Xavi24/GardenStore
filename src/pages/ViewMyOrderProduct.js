@@ -328,7 +328,6 @@ export default class ViewMyOrderProduct extends Component<{}>{
                 <Text>{this.state.discount_text+''+this.state.discount+""+this.state.discountIcon}</Text>
                 <Text>Status - {this.state.pay_status}</Text>
                 <Text style={{fontSize:12}}>{this.state.pointText} {this.state.points}</Text>
-                <Text style={{fontSize:12}}>{this.state.pointText} {this.state.points}</Text>
                 <Text style = {{color:'#360',fontWeight:'bold'}}>Date - {this.state.pay_date}</Text>
                 <Text style = {{color:'#000',fontWeight:'bold',fontSize:12}}>Payment Method - {this.state.pay_payment_method}</Text>
               </View>

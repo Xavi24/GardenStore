@@ -313,21 +313,8 @@ export default class Cart extends Component<{}>{
   }
 
   placeOrder(){
-    this.setState({
-      placeOrderScreen:false
-    });
-    console.warn('access_token',this.state.access_token);
-    console.warn('user_address_id',this.state.user_address_id);
-    console.warn('payment_method',this.state.payment_method);
-    let checkOutData = {};
-    checkOutData.currency = 'INR',
-        checkOutData.address_id = this.state.user_address_id,
-        checkOutData.payment_method = this.state.payment_method
-    console.warn('checkOutData',checkOutData);
-    var url = config.API_URL+'user/checkout';
+    var url = config.API_URL+'user/viewCart';
     fetch(url, {
-      method : 'POST',
-      body : JSON.stringify(checkOutData),
       headers: new Headers({
         'Content-Type' : 'application/json',
         'Accept' : 'application/json',
@@ -335,19 +322,14 @@ export default class Cart extends Component<{}>{
       })
     })
         .then((response)=>response.json())
-        .catch((error)=>console.warn(error))
-        .then((response)=>{
-          console.warn('responseCart',response);
-          if (response.code == '200') {
-            this.setState({
-              success_screen : true
-            })
+        .then((response)=> {
+          console.warn('cartResponse--->>>',response);
+          if (response.data.length === 0){
+            Toast.show('Cart is Empty', Toast.LONG);
           } else {
-            this.setState({
-              placeorder_error_screen : true
-            })
+            this.props.navigation.navigate('cart_buy_now')
           }
-        })
+       });
   }
   payment_method(value){
     if (value == '0') {
@@ -420,6 +402,8 @@ export default class Cart extends Component<{}>{
             if (response.code == '200') {
               Toast.show('Product Removed From Cart', Toast.LONG);
               this.getCartData();
+            } if (response.code == '409') {
+              Toast.show(response.message, Toast.LONG);
             }
           }
         })
@@ -453,10 +437,13 @@ export default class Cart extends Component<{}>{
             }
             if (response.code == '409') {
               Toast.show('Product Already in Wishlist', Toast.LONG);
+            } if (response.code == '422'){
+              Toast.show(response.message, Toast.LONG);
             }
           }
         })
   }
+
   render(){
     const {goBack} = this.props.navigation;
     let data = [{value: '32'},{value: '38'},{value: '40'}];
@@ -562,7 +549,7 @@ export default class Cart extends Component<{}>{
                 alignItems:'center',justifyContent:'center'}}>
                 <TouchableHighlight style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
                                     underlayColor = 'transparent'
-                                    onPress = {()=>this.props.navigation.navigate('cart_buy_now')}>
+                                    onPress = {()=>this.placeOrder()}>
                   <Text style = {{fontSize:16,color:'#fff'}}>Place Order</Text>
                 </TouchableHighlight>
               </View>
@@ -622,8 +609,8 @@ export default class Cart extends Component<{}>{
               </View>
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
-              <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
-                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+              <View style={{width:'70%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
                        source = {require('../img/cartempty.png')}>
                 </Image>
               </View>

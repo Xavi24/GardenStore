@@ -127,7 +127,9 @@ export default class CartBuynow extends Component<{}>{
       p_underline : 'transparent',
       temp_prize :0,
       temp_points : '0',
-      checked : false
+      checked : false,
+      pin_code_text : '',
+      select_address : ''
     }
   }
   updatePointValue(data,value){
@@ -175,9 +177,6 @@ export default class CartBuynow extends Component<{}>{
     })
   }
   getAddress(){
-    this.setState({
-      show : true
-    });
     this.getPoints();
     var url = config.API_URL+'userAddresses';
     fetch(url, {
@@ -219,7 +218,9 @@ export default class CartBuynow extends Component<{}>{
               phone_no : data.phone_no,
               postcode : data.postcode,
               building : data.building,
-              area : data.area
+              area : data.area,
+              pin_code_text : 'Pin Code : ',
+              select_address : 'Select Address'
             })
           }
 
@@ -251,20 +252,38 @@ export default class CartBuynow extends Component<{}>{
                 })
                 console.warn('dataaaaaaaaaaaaaaaaaaaaaaa',this.state.dataValue);
         } else {
+          dataValue.user_address_id = '';
+          dataValue.name = '';
+          dataValue.street_address = '';
+          dataValue.city = '';
+          dataValue.district = '';
+          dataValue.state = '';
+          dataValue.country = '';
+          dataValue.landmark = '';
+          dataValue.phone_no = '';
+          dataValue.postcode = '';
           this.setState({
             address_height:0,
             address_padding : 0,
-            address_border_width : 0
+            address_border_width : 0,
+            dataValue : dataValue,
+            pin_code_text : '',
+            select_address : ''
           })
         }
       }
     })
   }
   payment_method(value){
+    console.warn('+++++++++++++++++',this.state.price);
     if (value == '1') {
-      this.setState({
-        payment_method : 'NOW'
-      })
+      if(this.state.price == 0){
+        Toast.show('Only COD is Available', Toast.LONG);
+      } else {
+        this.setState({
+          payment_method : 'NOW'
+        })
+      }
     } else if (value == '2') {
       this.setState({
         payment_method : 'COD'
@@ -294,6 +313,8 @@ export default class CartBuynow extends Component<{}>{
     })
   }
   convertPartialPoints(){
+    this.textInput.clear();
+    console.warn('-------///////',this.state.points);
     this.setState({
       price : this.state.temp_prize
     });
@@ -305,7 +326,7 @@ export default class CartBuynow extends Component<{}>{
       })
       console.warn('price',this.state.price);
       console.warn('Partialpoints---------',this.state.points1);
-      var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.price
+      var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.price;
       fetch(url, {
         headers : new Headers({
           'Content-Type' : 'application/json',
@@ -318,6 +339,9 @@ export default class CartBuynow extends Component<{}>{
       .then((response)=>{
         console.log('ConvertPointsresponse',response);
         if (response.code == '200') {
+          this.setState({
+            points : '0'
+          });
           if (response.data) {
             console.warn('value',response.data.value);
             this.setState({
@@ -341,18 +365,15 @@ export default class CartBuynow extends Component<{}>{
               discPoints : response.message
             })
           }
+        } if (response.code == '409') {
+          Toast.show(response.message, Toast.LONG);
         }
       })
     } else {
-      this.setState({
-        discPoints : 'Insufficient Points'
-      })
+      Toast.show('Enter Valid Points', Toast.LONG);
     }
   }
   getCartData(){
-    this.setState({
-      show : true
-    })
     var totalPrize = 0
     var url = config.API_URL+'user/viewCart'
     fetch(url, {
@@ -467,10 +488,8 @@ export default class CartBuynow extends Component<{}>{
             if (response.code == '200') {
               this.props.navigation.navigate('web',{api:response.redirect});
               console.warn('web_redirect',this.state.web_redirect);
-            } else {
-              this.setState({
-                placeorder_error_screen : true
-              })
+            } if (response.errors) {
+              Toast.show('Address Field is Empty', Toast.LONG);
             }
           })
     } else if (this.state.payment_method=='COD'){
@@ -492,16 +511,17 @@ export default class CartBuynow extends Component<{}>{
               this.setState({
                 emptyScreen : true
               })
-            } else {
-              this.setState({
-                placeorder_error_screen : true
-              })
+            } if (response.errors) {
+              Toast.show('Address Field is Empty', Toast.LONG);
             }
           })
     }
   }
 
   componentWillMount(){
+    this.setState({
+      show : true
+    });
     this._getAccessToken();
   }
   getView(){
@@ -964,7 +984,10 @@ export default class CartBuynow extends Component<{}>{
           p_width : 0,
           p_border : 0,
           p_padding : 0,
-          p_underline : 'transparent'
+          p_underline : 'transparent',
+          points : '0',
+          price : this.state.temp_prize,
+          convertedValue : '0'
         })
       }
       // else {
@@ -1099,7 +1122,7 @@ export default class CartBuynow extends Component<{}>{
                         {this.state.dataValue.name}
                     </Text>
                     <Text style={{color:'#369',fontWeight:'bold'}}>
-                        Pin Code : {this.state.dataValue.postcode}
+                      {this.state.pin_code_text}  {this.state.dataValue.postcode}
                     </Text>
                     <Text>
                         {this.state.dataValue.street_address+','+this.state.dataValue.city}
@@ -1114,7 +1137,7 @@ export default class CartBuynow extends Component<{}>{
                   <TouchableHighlight style={{padding:this.state.address_padding,alignItems:'center',justifyContent:'center',borderWidth:this.state.address_border_width,borderColor:'#369',width:100,height:this.state.address_height}}
                                       underlayColor='transparent'
                                       onPress = {()=>this.getUserAddress()}>
-                    <Text style={{color:'#369',fontWeight:'bold',fontSize:12}}>Select Address</Text>
+                    <Text style={{color:'#369',fontWeight:'bold',fontSize:12}}>{this.state.select_address}</Text>
                   </TouchableHighlight>
                     <TouchableHighlight style={{padding:3,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#369'}}
                         underlayColor='transparent'
@@ -1244,7 +1267,7 @@ export default class CartBuynow extends Component<{}>{
                     {/*<Text style={{fontSize:14,color:'#369',fontWeight:'bold',marginLeft:15,marginTop:2}}>Want To Use Points</Text>*/}
                     {/*</View>*/}
                     <CheckBox
-                        title='User Points'
+                        title='Use Points'
                         checked={this.state.checked}
                         containerStyle={{backgroundColor:'#fff',borderColor:'#fff'}}
                         onPress = {()=>this.pointCheck()}
@@ -1255,9 +1278,11 @@ export default class CartBuynow extends Component<{}>{
                       <TextInput style = {{width:'80%',height:this.state.p_height,paddingLeft:16,color:'#363a42',borderColor:'#363a42',
                         marginTop:10, alignItems:'center',justifyContent:'center',borderTopWidth:this.state.p_border,borderBottomWidth:this.state.p_border,
                         borderLeftWidth:this.state.p_border}}
+                                 ref={input => { this.textInput = input }}
                                  underlineColorAndroid={this.state.p_underline}
                                  placeholderTextColor="#360"
                                  placeholder='Enter Your Points'
+                                 keyboardType='numeric'
                                  onChangeText = {(text_point)=>this.updatePointValue(text_point,'point')}>
                       </TextInput>
                       <View style = {{width:'20%',height:this.state.p_height,marginTop:10,backgroundColor:'#2fdab8',borderTopWidth:this.state.p_border,
@@ -1266,7 +1291,7 @@ export default class CartBuynow extends Component<{}>{
                         <TouchableHighlight style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                             underlayColor = 'transparent'
                                             onPress = {()=>this.convertPartialPoints()}>
-                          <Text style = {{color:'#fff'}}>GO</Text>
+                          <Text style = {{color:'#fff'}}>Use</Text>
                         </TouchableHighlight>
                       </View>
                     </View>
@@ -2037,32 +2062,32 @@ export default class CartBuynow extends Component<{}>{
                   </View>
                 </ScrollView>
               </View>
-              <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',
-                position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}
-                                visible = {this.state.error_screen}>
-                <View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>
-                  <TouchableHighlight style = {{marginTop:20}}
-                                      underlayColor='transparent'>
-                    <MaterialIcons
-                        name='error'
-                        size={36 }
-                        style = {{color:'#800000'}}>
-                    </MaterialIcons>
-                  </TouchableHighlight>
-                  <Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your
-                    details correctly</Text>
-                  <View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>
-                    <Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>
-                  </View>
-                  <View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>
-                    <View>
+              {/*<AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',*/}
+                {/*position:'absolute',backgroundColor:'rgba(00, 00, 00, 0.7)'}}*/}
+                                {/*visible = {this.state.error_screen}>*/}
+                {/*<View style = {{width:'95%',alignItems:'center',justifyContent:'center',backgroundColor:'#fff'}}>*/}
+                  {/*<TouchableHighlight style = {{marginTop:20}}*/}
+                                      {/*underlayColor='transparent'>*/}
+                    {/*<MaterialIcons*/}
+                        {/*name='error'*/}
+                        {/*size={36 }*/}
+                        {/*style = {{color:'#800000'}}>*/}
+                    {/*</MaterialIcons>*/}
+                  {/*</TouchableHighlight>*/}
+                  {/*<Text style = {{fontSize:16,fontWeight:'bold',color:'#000',marginTop:10,textAlign:'center'}}>There is some problem with saving your address. Please enter Your*/}
+                    {/*details correctly</Text>*/}
+                  {/*<View style = {{width:'95%',alignItems:'center',justifyContent:'center',marginTop:10}}>*/}
+                    {/*<Text style = {{fontSize:14,textAlign:'center'}}>{this.state.err_msg}</Text>*/}
+                  {/*</View>*/}
+                  {/*<View style = {{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginTop:10,marginBottom:10}}>*/}
+                    {/*<View>*/}
 
-                    </View>
-                    <Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}
-                          onPress = {()=>this.setState({error_screen : false})}>OK</Text>
-                  </View>
-                </View>
-              </AnimatedHideView>
+                    {/*</View>*/}
+                    {/*<Text style = {{fontSize:16,fontWeight:'bold',color:'#660000'}}*/}
+                          {/*onPress = {()=>this.setState({error_screen : false})}>OK</Text>*/}
+                  {/*</View>*/}
+                {/*</View>*/}
+              {/*</AnimatedHideView>*/}
               <AnimatedHideView style = {{width:'100%',height:'100%',alignItems:'center',
                 justifyContent:'center',backgroundColor:'rgba(00, 00, 00, 0.7)',position:'absolute'}}
                                 visible = {this.state.success_screen}>

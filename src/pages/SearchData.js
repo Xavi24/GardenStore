@@ -529,8 +529,8 @@ export default class SearchData extends Component<{}>{
                   </View>
                 </View>
                 <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
-                  <View style={{width:'40%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
-                    <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+                  <View style={{width:'95%',height:'40%',alignItems:'center',justifyContent:'center',marginBottom:10}}>
+                    <Image style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center',resizeMode:'stretch'}}
                            source = {require('../img/productempty.png')}>
                     </Image>
                   </View>
