@@ -14,6 +14,7 @@ import {View,
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
 import config from '../API/config';
+import NavigationActions from 'react-navigation'
 
 export default class Login extends Component<{}>{
   static navigationOptions = {
@@ -32,7 +33,17 @@ export default class Login extends Component<{}>{
       cred1 : '',cred2 : '',
       err_msg : '',
       show : false,
+      page : '',
+      next : ''
     }
+  }
+  componentWillMount(){
+    const {params} = this.props.navigation.state;
+    console.warn('params',params);
+    this.setState({
+      page : params.page,
+      next : params.next
+    })
   }
 
   componentWillUnmount(){
@@ -84,7 +95,8 @@ export default class Login extends Component<{}>{
         if (response.code === 200) {
           let access_token = response.token;
           this._setAccessToken(access_token);
-          this.props.navigation.navigate('mainscreen');
+          this.props.navigation.navigate(this.state.next);
+          this.navigateToLogin();
         }
         else {
           this.setState({
@@ -93,6 +105,17 @@ export default class Login extends Component<{}>{
         }
       })
     }
+  navigateToLogin() {
+    const resetAction = NavigationActions.reset({
+      index: 1,
+      actions: [
+        this.props.navigation.navigate({ routeName: this.state.page }),
+        this.props.navigation.navigate({ routeName: this.state.next })
+      ]
+    });
+
+    this.props.navigation.dispatch(resetAction);
+  }
     reg(){
       this.textInput.clear();
       this.textInput2.clear();

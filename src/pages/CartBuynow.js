@@ -314,64 +314,71 @@ export default class CartBuynow extends Component<{}>{
   }
   convertPartialPoints(){
     this.textInput.clear();
-    console.warn('-------///////',this.state.points);
-    this.setState({
-      price : this.state.temp_prize
-    });
-    console.log('temppppppppp____points',this.state.temp_points);
-    console.log('temp___________prize',this.state.temp_prize);
-    if (this.state.points<=this.state.points1) {
-      this.setState({
-        user_point:this.state.points
-      })
-      console.warn('price',this.state.price);
-      console.warn('Partialpoints---------',this.state.points1);
-      var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.price;
-      fetch(url, {
-        headers : new Headers({
-          'Content-Type' : 'application/json',
-          'Accept' : 'application/json',
-          'Authorization' : this.state.access_token
+    if (this.state.points!=0){
+      if (this.state.price>0){
+        // this.setState({
+        //   price : this.state.temp_prize,
+        //   convertedValue : '0'
+        // });
+      }
+      console.log('temppppppppp____points',this.state.temp_points);
+      console.log('temp___________prize',this.state.temp_prize);
+      if (this.state.points<=this.state.points1) {
+        this.setState({
+          user_point:this.state.points
         })
-      })
-      .then((response)=>response.json())
-      .catch((error)=>console.warn(error))
-      .then((response)=>{
-        console.log('ConvertPointsresponse',response);
-        if (response.code == '200') {
-          this.setState({
-            points : '0'
-          });
-          if (response.data) {
-            console.warn('value',response.data.value);
-            this.setState({
-              convertedValue : response.data.value,
-              price : parseInt(this.state.price) - response.data.value,
-              discPoints : 'You will get Rs. '+response.data.value+' of discount for this product',
-              points1 : this.state.points1 - this.state.points
-            });
+        console.warn('price',this.state.price);
+        console.warn('Partialpoints---------',this.state.points1);
+        var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.temp_prize;
+        fetch(url, {
+          headers : new Headers({
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json',
+            'Authorization' : this.state.access_token
+          })
+        })
+            .then((response)=>response.json())
+            .catch((error)=>console.warn(error))
+            .then((response)=>{
+              console.log('ConvertPointsresponse',response);
+              if (response.code == '200') {
+                this.setState({
+                  points : '0'
+                });
+                if (response.data) {
+                  console.warn('value',response.data.value);
+                  this.setState({
+                    convertedValue : response.data.value,
+                    price : parseInt(this.state.temp_prize) - response.data.value,
+                    discPoints : 'You will get Rs. '+response.data.value+' of discount for this product',
+                    points1 : this.state.points1 - this.state.points
+                  });
 
-            Toast.show('You will get '+this.state.discPoints+' amount discount', Toast.LONG);
-            // this.setState({
-            //   p_height : 0,
-            //   p_width : 0,
-            //   p_border : 0,
-            //   p_padding : 0,
-            //   p_icon : 'check-box-outline-blank',
-            //   p_underline : 'transparent'
-            // })
-          } else {
-            this.setState({
-              discPoints : response.message
+                  Toast.show('You will get '+this.state.discPoints+' amount discount', Toast.LONG);
+                  // this.setState({
+                  //   p_height : 0,
+                  //   p_width : 0,
+                  //   p_border : 0,
+                  //   p_padding : 0,
+                  //   p_icon : 'check-box-outline-blank',
+                  //   p_underline : 'transparent'
+                  // })
+                } else {
+                  this.setState({
+                    discPoints : response.message
+                  })
+                }
+              } if (response.code == '409') {
+                Toast.show(response.message, Toast.LONG);
+              }
             })
-          }
-        } if (response.code == '409') {
-          Toast.show(response.message, Toast.LONG);
-        }
-      })
+      } else {
+        Toast.show('Enter Valid Points', Toast.LONG);
+      }
     } else {
-      Toast.show('Enter Valid Points', Toast.LONG);
+      console.warn('field Empty')
     }
+    console.warn('-------///////',this.state.points);
   }
   getCartData(){
     var totalPrize = 0
@@ -392,11 +399,12 @@ export default class CartBuynow extends Component<{}>{
         })
         cartData.length = 0;
         for(let data of response.data){
-          console.log('//////////\\\\\\\\\\',JSON.parse(data.measurements));
+          console.log('//////////\\\\\\\\\\',data.measurements);
           console.log('+++++++++++++++++',JSON.parse(data.measurements).length);
           if (JSON.parse(data.measurements).length>0){
             this.setState({
-              mes_data : 'Customised'
+              mes_data : 'Customised',
+              measurements : data.measurements
             })
           } else {
             this.setState({
@@ -468,7 +476,7 @@ export default class CartBuynow extends Component<{}>{
     checkOutData.address_id = this.state.user_address_id,
     checkOutData.payment_method = this.state.payment_method,
     checkOutData.measurements = this.state.measurements,
-    checkOutData.points = this.state.points
+    checkOutData.points = this.state.user_point
     console.warn('checkOutData',checkOutData);
     if (this.state.payment_method == 'NOW'){
       var url = config.API_URL+'user/checkout'
@@ -716,17 +724,7 @@ export default class CartBuynow extends Component<{}>{
           err_building : '',
           err_landmark : '',
           err_district : '',
-          postcode : '',
-          name : '',
-          street_address : '',
-          landmark : '',
-          city : '',
-          state : '',
-          district : '',
-          country : '',
-          phone_no : '',
-          area : '',
-          building : ''
+
       });
       console.warn('access/////save',this.state.access_token);
       let addressData = {};
@@ -767,7 +765,20 @@ export default class CartBuynow extends Component<{}>{
           .then((response)=>{
               console.warn('response',response);
               if (response.code == '200') {
-                  this.setState({add_new_screen:false});
+                  this.setState({
+                    add_new_screen:false,
+                    postcode : '',
+                    name : '',
+                    street_address : '',
+                    landmark : '',
+                    city : '',
+                    state : '',
+                    district : '',
+                    country : '',
+                    phone_no : '',
+                    area : '',
+                    building : ''
+                  });
                 this.getAddress();
               } else {
                   this.setState({

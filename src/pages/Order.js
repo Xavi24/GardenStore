@@ -315,7 +315,7 @@ export default class Order extends Component<{}>{
               <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                 <Text style = {{fontSize:16,marginTop:20}}>Already have an account ?</Text>
                 <Text style = {{color:'#369',marginLeft:10,fontSize:16,marginTop:20}}
-                      onPress = {()=>this.props.navigation.navigate('logn')}>Login Here</Text>
+                      onPress = {()=>this.props.navigation.navigate('logn',{page:'mainscreen',next:'order'})}>Login Here</Text>
               </View>
               <Text style = {{marginTop:10,marginBottom:10}}>OR</Text>
               <View style = {{width:'90%',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>

@@ -41,13 +41,16 @@ export default class Sort extends Component<{}>{
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    console.warn('params--shop--sort',params);
+    console.log('params--shop--sort',params);
     this.setState({
       url : params.urlPass,
       name : params.name
     })
   }
   getsortData(){
+    this.setState({
+      show : true
+    });
     console.warn('input',this.state.sortinput);
     console.log('url-->>//name',this.state.name);
     if (this.state.sortinput!='') {
@@ -57,7 +60,10 @@ export default class Sort extends Component<{}>{
        .then((response)=>response.json())
        .catch((error)=>console.warn(error))
        .then((response)=>{
-         console.warn('response',response);
+         this.setState({
+           show : false
+         });
+         console.warn('response..',response);
          if (response.data.length!=0) {
            this.props.navigation.navigate('sort_page',{data:response,url:this.state.url,name:this.state.name})
          }
@@ -266,6 +272,12 @@ export default class Sort extends Component<{}>{
               </TouchableHighlight>
             </View>
           </View>
+          <Spinner visible = {this.state.show}
+                   textContent = {"Loading..."}
+                   color = {'#369'}
+                   textStyle = {{color: '#369'}}
+                   overlayColor = {'#fff'}
+          />
         </View>
       );
     }

@@ -40,7 +40,8 @@ export default class Open extends Component<{}>{
         id : '',
         show : false,
         pay_height : 0,
-        next_page_url : ''
+        next_page_url : '',
+        retry_size : 0
       }
     }
     async _getAccessToken(){
@@ -58,7 +59,7 @@ export default class Open extends Component<{}>{
     getOrderDetails(){
       this.setState({
         show : true
-      })
+      });
       let openDataArray = [];
       // console.warn('entered into opn order method');
       var url = config.API_URL+'user/openOrders';
@@ -74,26 +75,32 @@ export default class Open extends Component<{}>{
       .then((response)=>{
         this.setState({
           show : false
-        })
+        });
         this.setState({
           next_page_url : response.data.next_page_url
-        })
+        });
         console.log('response//open orders............',this.state.next_page_url);
         if (response.data){
           if (response.data.data){
             if (response.data.data.length > 0){
               this.state.openData.length = 0;
               for (let data of response.data.data){
-                console.log('////////////////',data);
                 if (data.payment_method == 'NOW'){
-                  if (data.payment_data.payment_status === 'processing' || data.payment_data.payment_status === 'Processing'
-                      || data.payment_data.payment_status === 'failed' || data.payment_data.payment_status === 'Failed'){
+                  console.log('payment status./........../......//',data.payment_data.payment_status);
+                  if (data.payment_data.payment_status.toLocaleLowerCase() === 'failed' ){
                     this.setState({
-                      pay_height : 50
+                      pay_height : 50,
+                      retry_size : 24
                     })
-                  } else {
+                  } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'success') {
                     this.setState({
-                      pay_height : 0
+                      pay_height : 0,
+                      retry_size : 0
+                    })
+                  } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'Processing') {
+                    this.setState({
+                      pay_height : 50,
+                      retry_size : 24
                     })
                   }
                 }
@@ -112,6 +119,7 @@ export default class Open extends Component<{}>{
                 openData.product_order_id = data.first_orderproduct.order_product_id;
                 openData.product_count = data.orderproducts_count;
                 openData.height = this.state.pay_height;
+                openData.retry_size = this.state.retry_size;
 
                 openDataArray.push({
                   order_id : openData.order_id,
@@ -123,12 +131,13 @@ export default class Open extends Component<{}>{
                   name : openData.name,
                   product_order_id : openData.product_order_id,
                   product_count : openData.product_count,
-                  height : openData.height
+                  height : openData.height,
+                  retry_size : openData.retry_size
                 });
                 this.setState({
                   openData : openDataArray
                 });
-                console.log('777777777777777777777',this.state.openData)
+                //console.log('777777777777777777777',this.state.openData)
               }
             }
           }
@@ -164,14 +173,21 @@ export default class Open extends Component<{}>{
                   for (let data of response.data.data){
                     console.log('////////////////',data);
                     if (data.payment_method == 'NOW'){
-                      if (data.payment_data.payment_status === 'processing' || data.payment_data.payment_status === 'Processing'
-                          || data.payment_data.payment_status === 'failed' || data.payment_data.payment_status === 'Failed'){
+                      console.log('payment status./........../......//',data.payment_data.payment_status);
+                      if (data.payment_data.payment_status.toLocaleLowerCase() === 'failed' ){
                         this.setState({
-                          pay_height : 50
+                          pay_height : 50,
+                          retry_size : 24
                         })
-                      } else {
+                      } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'success') {
                         this.setState({
-                          pay_height : 0
+                          pay_height : 0,
+                          retry_size : 0
+                        })
+                      } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'Processing') {
+                        this.setState({
+                          pay_height : 50,
+                          retry_size : 24
                         })
                       }
                     }
@@ -316,7 +332,7 @@ export default class Open extends Component<{}>{
                                   onPress = {()=>this.reTryPayment(item.order_id)}>
                                   <MaterialIcons
                                       name='replay'
-                                      size={24}
+                                      size={item.retry_size}
                                       style = {{color:'#369'}}>
                                   </MaterialIcons>
                                 </TouchableHighlight>

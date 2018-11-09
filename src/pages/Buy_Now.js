@@ -301,7 +301,7 @@ export default class Buy_Now extends Component<{}>{
     if(this.state.payment_method === ''){
       Toast.show('Select Your Payment Method', Toast.LONG);
     }
-    console.warn('measurements',this.state.dataValue.user_address_id);
+    console.warn('measurements',this.state.user_point);
     checkOutData.currency = 'INR',
     checkOutData.address_id = this.state.dataValue.user_address_id,
     checkOutData.payment_method = this.state.payment_method,
@@ -415,56 +415,59 @@ export default class Buy_Now extends Component<{}>{
   }
   convertPartialPoints(){
     this.textInputpoint.clear();
-    console.warn('-------///////',this.state.points);
-    this.setState({
-      price : this.state.temp_prize
-    });
-    if (this.state.points<=this.state.points1) {
-      // this.setState({
-      //   user_point:this.state.points
-      // })
-      console.log('price',this.state.price);
-      console.warn('Partialpoints---------',this.state.points);
-      var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.price
-      fetch(url, {
-        headers : new Headers({
-          'Content-Type' : 'application/json',
-          'Accept' : 'application/json',
-          'Authorization' : this.state.access_token
+    if (this.state.points!=0) {
+      if (this.state.price>0){
+      }
+      if (this.state.points<=this.state.points1) {
+        this.setState({
+          user_point:this.state.points
+        });
+        console.log('price',this.state.price);
+        console.warn('Partialpoints---------',this.state.points);
+        var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.temp_prize
+        fetch(url, {
+          headers : new Headers({
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json',
+            'Authorization' : this.state.access_token
+          })
         })
-      })
-      .then((response)=>response.json())
-      .catch((error)=>console.warn(error))
-      .then((response)=>{
-        console.log('ConvertPointsresponse',response);
-        if (response.code == '200') {
-          this.setState({
-            points : '0'
-          });
-          if (response.data) {
-            console.warn('value',response.data.value);
-            this.setState({
-              convertedValue : response.data.value,
-              price : parseInt(this.state.price) - response.data.value,
-              discPoints : 'You will get Rs. '+response.data.value+' of discount for this product',
-              points1 : this.state.points1 - this.state.points
-            });
-            Toast.show('You will get '+this.state.discPoints+' amount discount', Toast.LONG);
-            this.setState({
-              p_padding : 0,
-              p_icon : 'check-box-outline-blank',
-              p_underline : 'transparent'
+            .then((response)=>response.json())
+            .catch((error)=>console.warn(error))
+            .then((response)=>{
+              console.log('ConvertPointsresponse',response);
+              if (response.code == '200') {
+                this.setState({
+                  points : '0'
+                });
+                if (response.data) {
+                  console.warn('value',response.data.value);
+                  this.setState({
+                    convertedValue : response.data.value,
+                    price : parseInt(this.state.temp_prize) - response.data.value,
+                    discPoints : 'You will get Rs. '+response.data.value+' of discount for this product',
+                    points1 : this.state.points1 - this.state.points
+                  });
+                  Toast.show('You will get '+this.state.discPoints+' amount discount', Toast.LONG);
+                  this.setState({
+                    p_padding : 0,
+                    p_icon : 'check-box-outline-blank',
+                    p_underline : 'transparent'
+                  })
+                }
+              }
+              if (response.code == '409') {
+                Toast.show(response.message, Toast.LONG);
+              }
             })
-          }
-        }
-        if (response.code == '409') {
-          Toast.show(response.message, Toast.LONG);
-        }
-      })
+      }
+      else {
+        Toast.show('Enter Valid Points', Toast.LONG);
+      }
+    } else {
+      console.warn('field Empty')
     }
-    else {
-      Toast.show('Enter Valid Points', Toast.LONG);
-    }
+    console.warn('-------///////',this.state.points);
   }
   componentWillMount(){
     this.setState({
@@ -759,7 +762,7 @@ export default class Buy_Now extends Component<{}>{
                   // })
                 } else {
                     this.setState({
-                        error_screen : true,
+                        // error_screen : true,
                         err_postcode : response.errors.postcode,
                         err_ph : response.errors.phone_no,
                         err_name : response.errors.name,

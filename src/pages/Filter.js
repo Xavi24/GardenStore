@@ -28,9 +28,9 @@ export default class Filter extends Component<{}>{
       grid_brands : [],
       grid_brands_color : '#369',
       selected_cat : '',
-      selected_item_color : '#360',
+      selected_item_color : '#fff',
       brand_data : [],
-      selected_brand_color : '#360',
+      selected_brand_color : '#fff',
       selected_brand : '',
       empty : [],
       grid_spec : [],
@@ -57,7 +57,8 @@ export default class Filter extends Component<{}>{
       cat_screen : false,
       cat_grid_color : '#eee',
       brand_screen : false,
-      brand_grid_color:'#eee'
+      brand_grid_color:'#eee',
+      params_setup : ''
     }
   }
   selFn(value){
@@ -74,7 +75,20 @@ export default class Filter extends Component<{}>{
   };
   componentWillMount(){
     const {params} = this.props.navigation.state;
-    this.getFilterData(params)
+    this.getFilterData(params);
+    this.setState({
+      params_setup : params
+    })
+  }
+  componentDidMount() {
+    console.warn('{{{{}}}}}}',this.state.params_setup);
+    this.props.navigation.addListener(
+        'didFocus',
+        payload => {
+          this.getFilterData(this.state.params_setup);
+        }
+    );
+
   }
   postFilterData(){
     console.warn('url//test',this.state.url);
@@ -100,7 +114,8 @@ export default class Filter extends Component<{}>{
                   emptyScreen : true
                 })
               } else {
-                this.props.navigation.navigate('filter_page',{data:response,url:url,name:this.state.pass_name});
+                console.warn('pass//..//..//',this.state.pass_name);
+                this.props.navigation.navigate('filter_page',{data:response,url:this.state.url,name:this.state.selected_cat,sort_url : url});
               }
             }
           }
@@ -179,7 +194,7 @@ export default class Filter extends Component<{}>{
       url : params.url,
       selected_cat : params.name
     });
-    console.log('pppppppppppppppp',params.cat_data);
+    console.warn('pppppppppppppppp',params.name);
   }
   render() {
     const {goBack} = this.props.navigation;
@@ -249,19 +264,19 @@ export default class Filter extends Component<{}>{
                   />
                 </View>
                 <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
-                  <View style={{width:'98%',backgroundColor:'#fff',marginTop:5,elevation:2,height:this.state.height}}>
+                  <View style={{width:'98%',backgroundColor:'#48c7f0',marginTop:5,elevation:2,height:this.state.height}}>
                     <TouchableHighlight style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                         underlayColor='transparent'
                                         onPress = {()=>this.setState({cat_screen:true,grid_data:this.state.cat_data,cat_grid_color:'#fff'})}>
                       <View style={{flexDirection:'row'}}>
-                        <Text style={{color:'#595656',fontSize:14}}>Category</Text>
+                        <Text style={{color:'#fff',fontSize:14}}>Category</Text>
                         <MaterialIcons
                             style = {{marginLeft:10}}
-                            name='keyboard-arrow-up'
+                            name='keyboard-arrow-down'
                             size={24}
-                            style = {{color:'#595656'}}>
+                            style = {{color:'#fff'}}>
                         </MaterialIcons>
-                        <Text style = {{color:this.state.selected_item_color,fontSize:12,marginLeft:10}}>{this.state.selected_cat}</Text>
+                        <Text style = {{color:this.state.selected_item_color,fontSize:12,marginLeft:10,marginTop:5}}>{this.state.selected_cat}</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
@@ -275,7 +290,7 @@ export default class Filter extends Component<{}>{
                         <Text style={{color:'#fff',fontSize:14}}>Category</Text>
                         <MaterialIcons
                             style = {{marginLeft:10}}
-                            name='keyboard-arrow-down'
+                            name='keyboard-arrow-up'
                             size={24}
                             style = {{color:'#fff'}}>
                         </MaterialIcons>
@@ -298,19 +313,19 @@ export default class Filter extends Component<{}>{
                   />
                 </View>
                 <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
-                  <View style={{width:'98%',backgroundColor:'#fff',marginTop:5,elevation:2,height:this.state.height}}>
+                  <View style={{width:'98%',backgroundColor:'#48c7f0',marginTop:5,elevation:2,height:this.state.height}}>
                     <TouchableHighlight style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}
                                         underlayColor='transparent'
                                         onPress = {()=>this.setState({brand_screen:true,grid_brands:this.state.brand_data,cat_grid_color:'#fff'})}>
                       <View style={{flexDirection:'row'}}>
-                        <Text style={{color:'#595656',fontSize:14}}>Brands</Text>
+                        <Text style={{color:'#fff',fontSize:14}}>Brands</Text>
                         <MaterialIcons
                             style = {{marginLeft:10}}
-                            name='keyboard-arrow-up'
+                            name='keyboard-arrow-down'
                             size={24}
-                            style = {{color:'#595656'}}>
+                            style = {{color:'#fff'}}>
                         </MaterialIcons>
-                        <Text style = {{color:this.state.selected_brand_color,fontSize:12,marginLeft:5}}>{this.state.selected_brand}</Text>
+                        <Text style = {{color:this.state.selected_brand_color,fontSize:12,marginLeft:5,marginTop:5}}>{this.state.selected_brand}</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
@@ -324,7 +339,7 @@ export default class Filter extends Component<{}>{
                         <Text style={{color:'#fff',fontSize:14}}>Brands</Text>
                         <MaterialIcons
                             style = {{marginLeft:10}}
-                            name='keyboard-arrow-down'
+                            name='keyboard-arrow-up'
                             size={24}
                             style = {{color:'#fff'}}>
                         </MaterialIcons>

@@ -42,6 +42,8 @@ import WebViewClass from './src/pages/WebViewClass'
 import ReplaceListView from './src/pages/ReplaceListView'
 import ViedioWeb from './src/pages/ViedioWeb'
 import SyncCartLogin from './src/pages/SyncCartLogin'
+import Reload from './src/pages/Reload'
+import QR_Page from  './src/pages/QRPage'
 
 const StackNavigator_Function = StackNavigator({
       get_started :{screen:Getstarted},
@@ -83,7 +85,9 @@ const StackNavigator_Function = StackNavigator({
       web : {screen : WebViewClass},
       replacelist_view : {screen : ReplaceListView},
       video_web : {screen:ViedioWeb},
-      sync_login : {screen:SyncCartLogin}
+      sync_login : {screen:SyncCartLogin},
+      rld : {screen:Reload},
+      qr_page : {screen:QR_Page}
     },
     {
       headerMode:'none'

@@ -81,7 +81,7 @@ export default class HomePage extends Component<{}>{
                     <View style = {styles.btn_container}>
                       <View style = {styles.btn_view}>
                       <TouchableHighlight underlayColor = 'transparent'
-                          onPress ={()=>this.props.navigation.navigate('logn')}>
+                          onPress ={()=>this.props.navigation.navigate('logn',{page : 'get_started',next : 'mainscreen'})}>
                       <View style = {styles.btn}>
                         <View style = {styles.register_icon_view}>
                           <MaterialIcons

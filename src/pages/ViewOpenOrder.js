@@ -176,7 +176,7 @@ export default class ViewOpenOrder extends Component<{}>{
                     discountText : this.state.discount_text,
                     discount : this.state.discount,
                     discountIcon : this.state.discountIcon,
-                    total : orderProduct.total
+                    total : orderProduct.total,
                   });
                   this.setState({
                     productArray : productArray
@@ -193,7 +193,7 @@ export default class ViewOpenOrder extends Component<{}>{
     this.setState({
       show : true,
       removeScreen : false
-    })
+    });
     console.warn('mainid',id);
     var url = config.API_URL+'user/cancelProduct/'+id
     fetch(url, {
@@ -209,7 +209,7 @@ export default class ViewOpenOrder extends Component<{}>{
         .then((response)=>{
           this.setState({
             show : false
-          })
+          });
           console.warn('response',response);
           if (response.code == '200') {
             this.getOrderDetails();
@@ -314,7 +314,8 @@ export default class ViewOpenOrder extends Component<{}>{
               </View>
               <View style = {{width:'95%',padding:10,backgroundColor:'#fff',marginBottom:10,elevation:1}}>
                 <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>Payment Details : </Text>
-                <Text style = {{marginTop:10,color:'#369',fontSize:15,fontWeight:'bold'}}>Payed - {this.state.pay_amount}</Text>
+                <Text style = {{marginTop:10,color:'#595656',fontSize:12,fontWeight:'bold'}}>{this.state.pointText+""+this.state.points}</Text>
+                <Text style = {{color:'#369',fontSize:15,fontWeight:'bold'}}>Payed - {this.state.pay_amount}</Text>
                 <Text>{this.state.discount_text+''+this.state.discount+""+this.state.discountIcon}</Text>
                 <Text>Status - {this.state.pay_status}</Text>
                 <Text style = {{color:'#360',fontWeight:'bold'}}>Date - {this.state.pay_date}</Text>

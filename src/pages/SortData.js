@@ -244,43 +244,43 @@ export default class SortData extends Component<{}>{
                console.warn('product_data',this.state.product_data);
              }
            }
-             if (response.filters.cat) {
-               if (response.filters.cat.sub_cat) {
-                 for(let sub_cat of response.filters.cat.sub_cat){
-                   cat_name.push({name:sub_cat.name})
-                 }
-                 this.setState({
-                   cat_data : cat_name
-                 })
-               }
-               if (response.filters.brands) {
-                 for(let brands of response.filters.brands){
-                   brand_name.push({name:brands.brand_details.name})
-                 }
-                 this.setState({
-                   brand_data : brand_name
-                 })
-               }
-               if (response.filters.specs) {
-                let spec_keys = Object.keys(response.filters.specs)
-                 for (var i = 0; i < spec_keys.length; i++) {
-                   spec_name.push({
-                     name:spec_keys[i],
-                     spec:response.filters.specs[spec_keys[i]]
-                   })
-                 }
-                 this.setState({
-                   spec_data : spec_name
-                 })
-               }
-               if (response.filters.price) {
-                 this.setState({
-                   min : parseInt(response.filters.price.min.split('.')[0]),
-                   max : parseInt(response.filters.price.max.split('.')[0]),
-                   url : url
-                 })
-               }
-             }
+             // if (response.filters.cat) {
+             //   if (response.filters.cat.sub_cat) {
+             //     for(let sub_cat of response.filters.cat.sub_cat){
+             //       cat_name.push({name:sub_cat.name})
+             //     }
+             //     this.setState({
+             //       cat_data : cat_name
+             //     })
+             //   }
+             //   if (response.filters.brands) {
+             //     for(let brands of response.filters.brands){
+             //       brand_name.push({name:brands.brand_details.name})
+             //     }
+             //     this.setState({
+             //       brand_data : brand_name
+             //     })
+             //   }
+             //   if (response.filters.specs) {
+             //    let spec_keys = Object.keys(response.filters.specs)
+             //     for (var i = 0; i < spec_keys.length; i++) {
+             //       spec_name.push({
+             //         name:spec_keys[i],
+             //         spec:response.filters.specs[spec_keys[i]]
+             //       })
+             //     }
+             //     this.setState({
+             //       spec_data : spec_name
+             //     })
+             //   }
+             //   if (response.filters.price) {
+             //     this.setState({
+             //       min : parseInt(response.filters.price.min.split('.')[0]),
+             //       max : parseInt(response.filters.price.max.split('.')[0]),
+             //       url : url
+             //     })
+             //   }
+             // }
          }
        })
     }
@@ -304,7 +304,7 @@ export default class SortData extends Component<{}>{
     }
   }
   render(){
-    const {goBack} = this.props.navigation
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <View style = {styles.toolbar}>
@@ -441,7 +441,7 @@ export default class SortData extends Component<{}>{
               brand_data:this.state.brand_data,
               cat_data:this.state.cat_data,
               spec_data:this.state.spec_data,
-              url:this.state.urlPass
+              url:'http://gardenstore.igenuz.com/api/products/search?category='
             })}>
             <View style = {{height:'100%',width:'100%',flexDirection:'row',borderLeftWidth:2,borderColor:'#eee',
                alignItems:'center',justifyContent:'center'}}>

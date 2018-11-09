@@ -19,7 +19,7 @@ import config from '../API/config'
 import Toast from 'react-native-simple-toast'
 
 var radio_props = [
-  {label: 'Male', value: 'male' },
+  {label: 'Male   ', value: 'male' },
   {label: 'Female', value: 'female' }
 ];
 
@@ -154,7 +154,7 @@ componentWillUnmount(){
 
           else {
               Toast.show('Registration Completed successfully', Toast.LONG);
-            this.props.navigation.navigate('logn')
+            this.props.navigation.navigate('logn',{page : 'get_started',next : 'mainscreen'})
           }
       })
     }
@@ -278,7 +278,7 @@ componentWillUnmount(){
                   <View style = {{flexDirection:'row',width:'100%',justifyContent:'center',alignItems:'center',marginBottom:40}}>
                     <Text style = {{color:'#ffffff',marginTop:20,fontSize:16}}>Already have an account.?</Text>
                     <Text style = {{marginTop:20,marginLeft:10,color:'#369',fontSize:16}}
-                      onPress = {()=> this.props.navigation.navigate('logn')}>Login</Text>
+                      onPress = {()=> this.props.navigation.navigate('logn',{page : 'get_started',next : 'mainscreen'})}>Login</Text>
                     </View>
                 </View>
               </ScrollView>

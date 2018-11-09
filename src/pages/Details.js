@@ -524,7 +524,17 @@ export default class Details extends Component<{}>{
         })
   }
   async localCart(){
-    // console.warn('entered into the local cart method');
+    try {
+      localCartData.length = 0;
+      const Data1 = await AsyncStorage.getItem('@MySuperCart:key');
+      if (Data1!==null) {
+        console.log('local data before add-------???',Data1);
+        localCartData = JSON.parse(Data1);
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+    console.log('entered into the local cart method',localCartData);
     Toast.show('Product added to cart', Toast.LONG);
     // console.warn('stock--------->>>',this.state.out_of_stock_count);
     if (this.state.out_of_stock_count<1){
@@ -533,6 +543,7 @@ export default class Details extends Component<{}>{
       this.setState({
         show_cart : false
       });
+
       localCartData.push({
         product_id : this.state.product_id,
         vendor_id : this.state.vendor_id,
@@ -563,7 +574,7 @@ export default class Details extends Component<{}>{
   async getLocalCart(){
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      if (localCartData !== null) {
+      if (JSON.parse(localCartData).length>0) {
         this.setState({
           local_cart_check : JSON.parse(localCartData),
           local_cart_view : true
@@ -1312,7 +1323,7 @@ export default class Details extends Component<{}>{
                     <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
                           onPress = {()=>this.props.navigation.navigate('reg')}>Sign Up</Text>
                     <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
-                          onPress = {()=>this.props.navigation.navigate('logn')}>Log In</Text>
+                          onPress = {()=>this.props.navigation.navigate('logn',{page : 'mainscreen', next : 'mainscreen'})}>Log In</Text>
                   </View>
                 </View>
               </View>

@@ -13,6 +13,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import {Thumbnail} from 'native-base'
 import AnimatedHideView from 'react-native-animated-hide-view'
 import Toast from 'react-native-simple-toast'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 // BackAndroid.addEventListener('hardwareBackPress', function() {
 //   if (!this.onMainScreen()) {
@@ -220,6 +221,17 @@ componentWillUnmount() {
                     onPress = {()=>this.props.navigation.navigate('add_manage')}>Address Management</Text>
                 </View>
               </View>
+              <View style = {{width:'100%',height:this.state.addres_view_height,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
+                <View style = {{width:'85%',flexDirection:'row'}}>
+                  <Ionicons
+                      name='md-qr-scanner'
+                      size={22}
+                      style = {{color:'#369'}}>
+                  </Ionicons>
+                  <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
+                        onPress = {()=>this.props.navigation.navigate('qr_page')}>My QR</Text>
+                </View>
+              </View>
               <View style = {{width:'100%',height:65,borderColor:'#eee',borderBottomWidth:1,alignItems:'center',justifyContent:'center'}}>
                 <View style = {{width:'85%',flexDirection:'row'}}>
                   <MaterialIcons
@@ -230,7 +242,7 @@ componentWillUnmount() {
                   <Text style = {{fontSize:16,color:'#369',marginLeft:30}}
                     onPress ={()=>{
                       if (this.state.userAction == 'Login') {
-                      this.props.navigation.navigate('logn')
+                      this.props.navigation.navigate('logn',{page : 'mainscreen',next : 'settings'})
                     } else {
                       this.setState({logConformscreen:true})
                     }

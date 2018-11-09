@@ -77,7 +77,7 @@ export default class SearchData extends Component<{}>{
      .then((response)=>response.json())
      .catch((error)=>console.warn(error))
      .then((response)=>{
-       console.warn('response',response);
+       console.warn('response..............????',response.filters);
        if (response.data!= '') {
          this.setState({
            show : false
@@ -172,7 +172,7 @@ export default class SearchData extends Component<{}>{
                  min : parseInt(response.filters.price.min.split('.')[0]),
                  max : parseInt(response.filters.price.max.split('.')[0]),
                  // urlPass : config.API_URL+'products/search?term=',
-                 urlPass : url
+                 urlPass : url+'&'+'category='
                });
                console.warn('url//pass-->filter',this.state.urlPass);
                console.warn('url//pass-->name',this.state.name);
@@ -201,6 +201,7 @@ export default class SearchData extends Component<{}>{
        .then((response)=>response.json())
        .catch((error)=>console.warn(error))
        .then((response)=>{
+         console.log('..................>>>>>>>>>>>>>>',response.filters);
          if (response.data!= '') {
            this.setState({
              show : false
@@ -256,43 +257,43 @@ export default class SearchData extends Component<{}>{
                console.warn('product_data',this.state.product_data);
              }
            }
-             if (response.filters.cat) {
-               if (response.filters.cat.sub_cat) {
-                 for(let sub_cat of response.filters.cat.sub_cat){
-                   cat_name.push({name:sub_cat.name})
-                 }
-                 this.setState({
-                   cat_data : cat_name
-                 })
-               }
-               if (response.filters.brands) {
-                 for(let brands of response.filters.brands){
-                   brand_name.push({name:brands.brand_details.name})
-                 }
-                 this.setState({
-                   brand_data : brand_name
-                 })
-               }
-               if (response.filters.specs) {
-                let spec_keys = Object.keys(response.filters.specs)
-                 for (var i = 0; i < spec_keys.length; i++) {
-                   spec_name.push({
-                     name:spec_keys[i],
-                     spec:response.filters.specs[spec_keys[i]]
-                   })
-                 }
-                 this.setState({
-                   spec_data : spec_name
-                 })
-               }
-               if (response.filters.price) {
-                 this.setState({
-                   min : parseInt(response.filters.price.min.split('.')[0]),
-                   max : parseInt(response.filters.price.max.split('.')[0]),
-                   url : url
-                 })
-               }
-             }
+             // if (response.filters.cat) {
+             //   if (response.filters.cat.sub_cat) {
+             //     for(let sub_cat of response.filters.cat.sub_cat){
+             //       cat_name.push({name:sub_cat.name})
+             //     }
+             //     this.setState({
+             //       cat_data : cat_name
+             //     })
+             //   }
+             //   if (response.filters.brands) {
+             //     for(let brands of response.filters.brands){
+             //       brand_name.push({name:brands.brand_details.name})
+             //     }
+             //     this.setState({
+             //       brand_data : brand_name
+             //     })
+             //   }
+             //   if (response.filters.specs) {
+             //    let spec_keys = Object.keys(response.filters.specs)
+             //     for (var i = 0; i < spec_keys.length; i++) {
+             //       spec_name.push({
+             //         name:spec_keys[i],
+             //         spec:response.filters.specs[spec_keys[i]]
+             //       })
+             //     }
+             //     this.setState({
+             //       spec_data : spec_name
+             //     })
+             //   }
+             //   if (response.filters.price) {
+             //     this.setState({
+             //       min : parseInt(response.filters.price.min.split('.')[0]),
+             //       max : parseInt(response.filters.price.max.split('.')[0]),
+             //       url : url
+             //     })
+             //   }
+             // }
          }
        })
     }

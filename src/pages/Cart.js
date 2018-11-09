@@ -62,7 +62,8 @@ export default class Cart extends Component<{}>{
       local_cart_check : [],
       local_mes : [],
       refresh_cart : false,
-      local_data : []
+      local_data : [],
+      local_cart_after_dlt : []
     }
   }
   updateSize = (size) => {
@@ -76,7 +77,7 @@ export default class Cart extends Component<{}>{
     })
   };
   getCartData(){
-    console.warn('enter in to get cart method')
+    console.warn('enter in to get cart method');
     this.setState({
       refresh_cart : false
     });
@@ -177,20 +178,19 @@ export default class Cart extends Component<{}>{
           local_data : JSON.parse(LocalData)
         });
         console.log('Data//For//Delete',this.state.local_data);
-        console.log('product_id//for//delete',product_id);
         let indx = this.state.local_data.findIndex(x => x.product_id === product_id);
         console.log('index//for//delete',indx);
         this.state.local_data.splice(indx, 1);
         console.log('Data//After//Delete',this.state.local_data);
-        // this._removeCartData();
-        this.dataAfterdelete(this.state.local_data);
+        this.state.local_cart_after_dlt = this.state.local_data;
+        this._removeCartData();
+        this.dataAfterdelete(this.state.local_cart_after_dlt);
       }
     } catch (e) {
 
     }
   }
   async dataAfterdelete(data){
-    console.warn('Enetr into dataAfterdelete Method....',data);
     try {
       await AsyncStorage.setItem('@MySuperCart:key', JSON.stringify(data));
     } catch (error) {
@@ -199,7 +199,7 @@ export default class Cart extends Component<{}>{
     var totalPrize = 0;
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      if (localCartData !== null) {
+      if (JSON.parse(localCartData).length!==0) {
         this.setState({
           local_cart_check : JSON.parse(localCartData),
           local_cart_view : true
@@ -210,41 +210,56 @@ export default class Cart extends Component<{}>{
         this.setState({
           total : totalPrize
         });
-        console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
+        //console.log('local_cart_check----------after delete>>>>>>',this.state.local_cart_check);
       } else {
+        console.warn('Enter....',JSON.parse(localCartData).length);
+        console.warn('Before///',this.state.emptyScreen);
         this.setState({
-          emptyScreen : true
+          emptyScreen : true,
+          local_cart_view : false
         })
+        console.warn('After///',this.state.emptyScreen);
       }
+      console.log('local_cart_check----------after delete>>>>>>',localCartData);
     } catch (error) {
       // Error retrieving data
     }
   }
   async getLocalCart(){
-    console.warn('get it..................');
+
     var totalPrize = 0;
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      console.warn(localCartData);
-      if (localCartData !== null) {
-        this.setState({
-          local_cart_check : JSON.parse(localCartData),
-          show : false,
-          local_cart_view : true
-        });
-        for (let data of this.state.local_cart_check) {
-          totalPrize = totalPrize+parseInt(data.sale_price)
-        }
-        this.setState({
-          total : totalPrize
-        });
-        console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
-      } else {
-        this.setState({
-          emptyScreen : true,
-          show : false
-        })
-      }
+       if (localCartData!=null){
+         console.warn('get it..................');
+         console.warn('ddddd',JSON.parse(localCartData).length);
+         if (JSON.parse(localCartData).length>0) {
+           this.setState({
+             local_cart_check : JSON.parse(localCartData),
+             show : false,
+             local_cart_view : true
+           });
+           for (let data of this.state.local_cart_check) {
+             totalPrize = totalPrize+parseInt(data.sale_price)
+           }
+           this.setState({
+             total : totalPrize
+           });
+           console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
+         } else {
+           this.setState({
+             emptyScreen : true,
+             show : false
+           })
+         }
+       } else {
+         console.warn('post it..................');
+         this.setState({
+           emptyScreen : true,
+           show : false
+         })
+       }
+
     } catch (error) {
       // Error retrieving data
     }
@@ -259,7 +274,7 @@ export default class Cart extends Component<{}>{
     }
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      if (localCartData !== null) {
+      if (JSON.parse(localCartData).length>0) {
         this.setState({
           local_cart_check : JSON.parse(localCartData),
           local_cart_view : false
@@ -368,7 +383,7 @@ export default class Cart extends Component<{}>{
   componentWillMount(){
     this.setState({
       show  : true
-    })
+    });
     this._getAccessToken();
   }
   getView(){
@@ -605,7 +620,7 @@ export default class Cart extends Component<{}>{
                 </MaterialIcons>
               </TouchableHighlight>
               <View style = {{width:'100%',alignItems:'center'}}>
-                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Garden Store</Text>
+                <Text style = {{color:'#fff',fontSize:18,fontWeight:'bold'}}>Cart</Text>
               </View>
             </View>
             <View style = {{width:'100%',height:'92%',justifyContent:'center',alignItems:'center'}}>
@@ -718,7 +733,7 @@ export default class Cart extends Component<{}>{
                     <GridView
                         showsVerticalScrollIndicator={false}
                         items={this.state.local_cart_check}
-                        itemDimension={180}
+                        itemDimension={150}
                         renderItem={item=> (
                             <View style = {{width:'100%',height:320,elevation:2,backgroundColor:'#fff',borderWidth:1,borderColor:'#eee'}}>
                               <TouchableHighlight style = {{height:'100%',width:'100%'}}>
