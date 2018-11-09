@@ -205,7 +205,7 @@ export default class Shop extends Component<{}>{
     this.setState({
       bottom : 'true'
     });
-    if (this.state.next_page_url != '') {
+    if (this.state.next_page_url) {
       console.warn('call url',this.state.next_page_url);
       let cat_name = [];
       let brand_name = [];

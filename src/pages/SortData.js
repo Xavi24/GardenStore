@@ -180,12 +180,12 @@ export default class SortData extends Component<{}>{
     this.setState({
       bottom : 'true'
     })
-    if (this.state.next_page_url != '') {
+    if (this.state.next_page_url) {
       console.warn('call url',this.state.next_page_url);
-      let cat_name = []
-      let brand_name = []
-      let spec_name = []
-      var url = this.state.next_page_url
+      let cat_name = [];
+      let brand_name = [];
+      let spec_name = [];
+      var url = this.state.next_page_url;
       fetch(url)
        .then((response)=>response.json())
        .catch((error)=>console.warn(error))

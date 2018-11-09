@@ -85,24 +85,31 @@ export default class Open extends Component<{}>{
             if (response.data.data.length > 0){
               this.state.openData.length = 0;
               for (let data of response.data.data){
-                if (data.payment_method == 'NOW'){
-                  console.log('payment status./........../......//',data.payment_data.payment_status);
-                  if (data.payment_data.payment_status.toLocaleLowerCase() === 'failed' ){
+                if (data.payment_method == 'NOW') {
+                  if (data.payment_data.payment_status.toLocaleLowerCase() === 'failed' ) {
+                    console.log('payment status./........../......//',data.payment_data.payment_status);
                     this.setState({
                       pay_height : 50,
                       retry_size : 24
                     })
                   } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'success') {
+                    console.log('payment status./........../......//',data.payment_data.payment_status);
                     this.setState({
                       pay_height : 0,
                       retry_size : 0
                     })
-                  } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'Processing') {
+                  } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'processing') {
+                    console.log('payment status./........../......//',data.payment_data.payment_status);
                     this.setState({
                       pay_height : 50,
                       retry_size : 24
                     })
                   }
+                } else {
+                  this.setState({
+                    pay_height : 0,
+                    retry_size : 0
+                  })
                 }
                 if (data.order_status == 'processing' || data.order_status == 'Processing') {
                   this.setState({
@@ -172,7 +179,7 @@ export default class Open extends Component<{}>{
                   this.state.openData.length = 0;
                   for (let data of response.data.data){
                     console.log('////////////////',data);
-                    if (data.payment_method == 'NOW'){
+                    if (data.payment_method === 'NOW'){
                       console.log('payment status./........../......//',data.payment_data.payment_status);
                       if (data.payment_data.payment_status.toLocaleLowerCase() === 'failed' ){
                         this.setState({
@@ -184,12 +191,17 @@ export default class Open extends Component<{}>{
                           pay_height : 0,
                           retry_size : 0
                         })
-                      } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'Processing') {
+                      } else if (data.payment_data.payment_status.toLocaleLowerCase() === 'processing') {
                         this.setState({
                           pay_height : 50,
                           retry_size : 24
                         })
                       }
+                    } else {
+                      this.setState({
+                        pay_height : 0,
+                        retry_size : 0
+                      })
                     }
                     if (data.order_status == 'processing' || data.order_status == 'Processing') {
                       this.setState({
