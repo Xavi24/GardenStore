@@ -51,7 +51,8 @@ export default class SearchData extends Component<{}>{
       color : '#333',
       price :'',
       empty_product_screen : false,
-      search_size : 0
+      search_size : 0,
+      urlCalled : false
     }
   }
   componentWillMount(){
@@ -191,8 +192,11 @@ export default class SearchData extends Component<{}>{
     this.setState({
       bottom : 'true'
     })
-    if (this.state.next_page_url) {
+    if (this.state.next_page_url && !this.state.urlCalled) {
       console.warn('call url',this.state.next_page_url);
+      this.setState({
+        urlCalled :  true
+      });
       let cat_name = [];
       let brand_name = [];
       let spec_name = [];
@@ -201,6 +205,9 @@ export default class SearchData extends Component<{}>{
        .then((response)=>response.json())
        .catch((error)=>console.warn(error))
        .then((response)=>{
+         this.setState({
+           urlCalled :  false
+         });
          console.log('..................>>>>>>>>>>>>>>',response.filters);
          if (response.data!= '') {
            this.setState({

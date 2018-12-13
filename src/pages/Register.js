@@ -161,7 +161,7 @@ componentWillUnmount(){
 
 
   render(){
-    const {goBack} = this.props.navigation
+    const {goBack} = this.props.navigation;
     return(
       <View style = {styles.container}>
         <StatusBar

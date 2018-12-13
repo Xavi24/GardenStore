@@ -58,7 +58,9 @@ export default class Shop extends Component<{}>{
       show_fav : false,
       like : false,
       access_token : '',
-      search_size : 0
+      search_size : 0,
+      urlCalled : false,
+      size : 12
     }
   }
   componentWillMount(){
@@ -101,7 +103,8 @@ export default class Shop extends Component<{}>{
                this.setState({
                  tem_disc : '',
                  price : '',
-                 color : '#fff'
+                 color : '#fff',
+                 size : 0
                })
              } else {
                console.warn('entered into the else loop');
@@ -109,7 +112,8 @@ export default class Shop extends Component<{}>{
                  off :'% off',
                  tem_disc : product.total_discount.toString()+this.state.off,
                  price : product.price,
-                 color : '#333'
+                 color : '#333',
+                 size : 10
                })
              }
              console.warn('discccccccccc',this.state.price);
@@ -117,14 +121,14 @@ export default class Shop extends Component<{}>{
              stockColor = '';
              if (product.stock == 0) {
                stk = true,
-               stockColor = '#800000',
+               stockColor = '#800000'
                this.setState({
                  out_of_stock_screen : true,
                  out_of_stock_screen_padding :2
                })
              } else {
-               stk = false,
-               stockColor='#0cb038',
+               stk = false;
+               stockColor='#0cb038'
                this.setState({
                  out_of_stock_screen : false
                })
@@ -140,12 +144,15 @@ export default class Shop extends Component<{}>{
                sale_price:product.sale_price,
                vendor_id:product.vendor_id,
                stock:stk,
-               color : this.state.color
-             })
-             this.setState({
-               product_data : product_data
-             })
+               color : this.state.color,
+               size : this.state.size
+             });
+
            }
+           this.setState({
+             product_data : product_data
+           });
+           console.warn("Products list",product_data);
          } else {
            this.setState({
              emptyScreen : true
@@ -205,8 +212,12 @@ export default class Shop extends Component<{}>{
     this.setState({
       bottom : 'true'
     });
-    if (this.state.next_page_url) {
+
+    if (this.state.next_page_url && !this.state.urlCalled) {
       console.warn('call url',this.state.next_page_url);
+      this.setState({
+        urlCalled :  true
+      });
       let cat_name = [];
       let brand_name = [];
       let spec_name = [];
@@ -215,6 +226,10 @@ export default class Shop extends Component<{}>{
        .then((response)=>response.json())
        .catch((error)=>console.warn(error))
        .then((response)=>{
+         this.setState({
+           urlCalled :  false
+         });
+
          if (response.data!= '') {
            this.setState({
              show : false
@@ -268,11 +283,12 @@ export default class Shop extends Component<{}>{
                  color:this.state.color,
                  like : false
                });
-               this.setState({
-                 product_data : product_data
-               });
+
                console.warn('product_data',this.state.product_data);
              }
+             this.setState({
+               product_data : product_data
+             });
            }
              // if (response.filters.cat) {
              //   if (response.filters.cat.sub_cat) {

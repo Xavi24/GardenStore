@@ -108,7 +108,8 @@ export default class Details extends Component<{}>{
       out_of_stock_count : 0,
       foo_color : '#2fdab8',
       foo_text : 'Buy Now',
-      availability_text : 'Product Available'
+      availability_text : 'Product Available',
+      p_size : 12
     }
   }
   addMyrating(rating){
@@ -259,20 +260,25 @@ export default class Details extends Component<{}>{
     // console.warn('measures////',this.state.measurements);
   }
   customNavigation(){
-
-    this.state.custom_nav_data.push({
-      product_name:this.state.product_name,
-      prize:this.state.prize,
-      img:this.state.header_image,
-      product:this.state.product_id,
-      vendor:this.state.vendor_id,
-      slug : this.state.slug,
-      spec : this.state.spec
-    });
-    this.setState({
-      customising_screen : true,
-      Data : this.state.measurementData
-    });
+    if (this.state.access_token){
+      this.state.custom_nav_data.push({
+        product_name:this.state.product_name,
+        prize:this.state.prize,
+        img:this.state.header_image,
+        product:this.state.product_id,
+        vendor:this.state.vendor_id,
+        slug : this.state.slug,
+        spec : this.state.spec
+      });
+      this.setState({
+        customising_screen : true,
+        Data : this.state.measurementData
+      });
+    } else {
+      this.setState({
+        login_cnfrm_screen : true
+      })
+    }
     // this.props.navigation.navigate('customization',{data:this.state.measurementData,p_data:this.state.custom_nav_data})
     // console.warn('custom_nav_data',this.state.custom_nav_data);
   }
@@ -344,7 +350,8 @@ export default class Details extends Component<{}>{
                   if (this.state.discount == 0) {
                     this.setState({
                       d_color : '#fff',
-                      p_color : '#fff'
+                      p_color : '#fff',
+                      p_size : 0
                     })
                   }
                   this.setState({
@@ -967,8 +974,8 @@ export default class Details extends Component<{}>{
                            source = {require('../img/curr.png')}>
                     </Image>
                     <Text style = {{color:'#595656',fontSize:14,marginLeft:4}}>{this.state.prize}</Text>
-                    <Text style = {{color:this.state.p_color,fontSize:12,marginLeft:10,textDecorationLine:'line-through'}}>{this.state.sale_price}</Text>
-                    <Text style = {{color:this.state.d_color,fontSize:12,marginLeft:10}}>{this.state.discount}% off</Text>
+                    <Text style = {{color:this.state.p_color,fontSize:this.state.p_size,marginLeft:10,textDecorationLine:'line-through'}}>{this.state.sale_price}</Text>
+                    <Text style = {{color:this.state.d_color,fontSize:this.state.p_size,marginLeft:10}}>{this.state.discount}% off</Text>
                   </View>
                   <View>
                     <Text style={{fontSize:12,color:'#360',fontWeight:'bold',marginTop:6}}>{this.state.availability_text}</Text>
@@ -1116,68 +1123,7 @@ export default class Details extends Component<{}>{
                   </View>
                 </View>
                 <View style={{width:'100%',backgroundColor:'#fff'}}>
-                  {/*<View style={{width:'100%',marginTop:20}}>*/}
-                  {/*<GridView*/}
-                  {/*itemDimension = {360}*/}
-                  {/*items = {this.state.selected_size_array}*/}
-                  {/*style = {styles.gridView}*/}
-                  {/*spacing = {1}*/}
-                  {/*renderItem = {item =>*/}
-                  {/*<View style = {{elevation:3,height:150,width:'100%'}}>*/}
-                  {/*<Text style={{marginBottom:5,marginLeft:10,color:'#369',fontWeight:'bold'}}>{item.name}</Text>*/}
-                  {/*<ScrollView*/}
-                  {/*horizontal={true}*/}
-                  {/*showsHorizontalScrollIndicator={false}>*/}
-                  {/*<FlatList style = {{marginTop:10}}*/}
-                  {/*data={item.value}*/}
-                  {/*numColumns={item.value.length}*/}
-                  {/*renderItem={({ item, index })=> (*/}
-                  {/*<TouchableHighlight underlayColor='transparent'*/}
-                  {/*onPress={()=>this.SelectedSpec(item.variation_slug)}*/}
-                  {/*style = {{width:60,height:60,borderRadius:60/2,backgroundColor:'#fff',marginLeft:10,alignItems:'center',justifyContent:'center',elevation:3}}>*/}
-                  {/*<Text style={{fontWeight:'bold',fontSize:18,color:'#360'}}>{item.variation_spec_value}</Text>*/}
-                  {/*</TouchableHighlight>*/}
-                  {/*)}*/}
-                  {/*/>*/}
-                  {/*</ScrollView>*/}
-                  {/*</View>*/}
-                  {/*}*/}
-                  {/*/>*/}
-                  {/*</View>*/}
-                  {/*<GridView*/}
-                  {/*itemDimension = {360}*/}
-                  {/*items = {var_spec_data}*/}
-                  {/*style = {styles.gridView}*/}
-                  {/*spacing = {1}*/}
-                  {/*renderItem = {item =>*/}
-                  {/*<View style = {{elevation:3,height:150,width:'100%'}}>*/}
-                  {/*<Text style={{marginBottom:5,marginLeft:10}}>{item.name}</Text>*/}
-                  {/*<ScrollView*/}
-                  {/*horizontal={true}*/}
-                  {/*showsHorizontalScrollIndicator={false}>*/}
-                  {/*<FlatList*/}
-                  {/*data={item.value}*/}
-                  {/*numColumns={item.value.length}*/}
-                  {/*renderItem={({ item, index })=> (*/}
-                  {/*<View style = {{width:80,height:100,backgroundColor:'#fff',marginLeft:10,alignItems:'center',justifyContent:'center'}}>*/}
-                  {/*<TouchableHighlight style={{borderWidth:item.cardBorder,borderColor:item.cardViewBorder,height:'60%',width:'70%',borderTopRightRadius:6,borderTopLeftRadius:6,*/}
-                  {/*borderBottomRightRadius:6,borderBottomLeftRadius:6}}*/}
-                  {/*underlayColor='transparent'*/}
-                  {/*onPress = {()=>this.SelectedSpec(item.variation_slug)}>*/}
-                  {/*<Image style = {{height:'100%',width:'100%',justifyContent:'center',alignItems:'center',resizeMode:'stretch'}}*/}
-                  {/*source={{uri:config.IMG_URL+item.img}}>*/}
-                  {/*</Image>*/}
-                  {/*</TouchableHighlight>*/}
-                  {/*<View style={{height:'20%',alignItems:'center',justifyContent:'center'}}>*/}
-                  {/*<Text style={{marginTop:5}}>{item.variation_spec_value}</Text>*/}
-                  {/*</View>*/}
-                  {/*</View>*/}
-                  {/*)}*/}
-                  {/*/>*/}
-                  {/*</ScrollView>*/}
-                  {/*</View>*/}
-                  {/*}*/}
-                  {/*/>*/}
+
                 </View>
                 <View style = {{width:'100%'}}>
                   <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
