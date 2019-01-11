@@ -85,7 +85,7 @@ export default class Details extends Component<{}>{
       d_color : '#360',
       emptyScreen : false,
       show_rate : false,
-      rate_view_width:'25%',
+      rate_view_width:'33%',
       rate_icon_size:22,
       rate_text_size :12,
       slug_check_Data : [],
@@ -483,7 +483,7 @@ export default class Details extends Component<{}>{
                   })
                 } if (response.data.has_bought){
                   this.setState({
-                    rate_view_width:'25%',
+                    rate_view_width:'33%',
                     rate_icon_size:22,
                     rate_text_size :12
                   })
@@ -554,7 +554,7 @@ export default class Details extends Component<{}>{
       localCartData.push({
         product_id : this.state.product_id,
         vendor_id : this.state.vendor_id,
-        sale_price : this.state.sale_price,
+        sale_price : this.state.prize,
         product_name : this.state.product_name,
         header_image : this.state.header_image,
         slug : this.state.slug
@@ -1035,7 +1035,7 @@ export default class Details extends Component<{}>{
                     </TouchableHighlight>
 
                   </View>
-                  <View style = {{width:'25%',height:'100%',borderRightWidth:1,borderRightColor:'#eee',alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{width:'38%',height:'100%',borderRightWidth:1,borderRightColor:'#eee',alignItems:'center',justifyContent:'center'}}>
                     <View style = {{flexDirection:'row'}}>
                       <View>
                         <TouchableHighlight
@@ -1072,7 +1072,7 @@ export default class Details extends Component<{}>{
                       <Text style = {{marginLeft:5,color:'#605e5e',marginTop:3,fontSize:12}}>Wishlist</Text>
                     </View>
                   </View>
-                  <View style = {{width:'25%',height:'100%',borderRightWidth:1,borderRightColor:'#eee'}}>
+                  {/* <View style = {{width:'25%',height:'100%',borderRightWidth:1,borderRightColor:'#eee'}}>
                     <TouchableHighlight underlayColor = 'transparent'
                                         style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                       <View style = {{flexDirection:'row'}}>
@@ -1084,9 +1084,9 @@ export default class Details extends Component<{}>{
                         <Text style = {{marginLeft:5,color:'#605e5e',marginTop:3,fontSize:12}}>Share</Text>
                       </View>
                     </TouchableHighlight>
-                  </View>
+                  </View> */}
 
-                  <View style = {{width:'25%',height:'100%',alignItems:'center',justifyContent:'center'}}>
+                  <View style = {{width:'29%',height:'100%',alignItems:'center',justifyContent:'center'}}>
                     <View style = {{flexDirection:'row'}}>
                       <View>
                         <TouchableHighlight underlayColor = 'transparent'

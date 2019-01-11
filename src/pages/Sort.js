@@ -53,7 +53,7 @@ export default class Sort extends Component<{}>{
     });
     console.warn('input',this.state.sortinput);
     console.log('url-->>//name',this.state.name);
-    if (this.state.sortinput!='') {
+    // if (this.state.sortinput!='') {
       var url = this.state.url+'&'+'sort='+this.state.sortinput;
       console.warn('url',url);
       fetch(url)
@@ -68,7 +68,7 @@ export default class Sort extends Component<{}>{
            this.props.navigation.navigate('sort_page',{data:response,url:this.state.url,name:this.state.name})
          }
        })
-    }
+    // }
   }
   getPopularityData(input){
     this.setState({

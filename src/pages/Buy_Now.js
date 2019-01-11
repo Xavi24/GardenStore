@@ -1037,8 +1037,7 @@ export default class Buy_Now extends Component<{}>{
       err_area : '',
       err_building : '',
       err_landmark : '',
-      err_district : '',
-      edit_add_screen : false
+      err_district : ''
     });
     console.warn('access/////save',this.state.access_token);
     let addressData = {};
