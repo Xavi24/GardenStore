@@ -87,7 +87,15 @@ componentWillUnmount(){
 }
   submit(){
     this.setState({
-      show:true
+      show:true,
+      err_name:'',
+      err_email:'',
+      err_pass:'',
+      err_cnf_pass:'',
+      err_user:'',
+      err_ph:'',
+      err_cc:'',
+      err_gender:''
     });
     let collection = {};
     collection.name = this.state.name;
@@ -149,6 +157,11 @@ componentWillUnmount(){
                   err_ph : 'The phone number field is require'
                 })
               }
+              if (obj.indexOf('phone_no') > -1) {
+                this.setState({
+                  err_ph:response.errors.phone_no[0]
+                })
+              }
 
           }
 
@@ -187,7 +200,7 @@ componentWillUnmount(){
         </View>
         <View style = {styles.baseContainer}>
           <Image style = {styles.background_img}
-            source = {require('../img/register.jpg')}>
+            source = {require('../img/login.jpg')}>
           </Image>
           <View style = {styles.base_view}>
             <ScrollView style = {{width:'100%'}}

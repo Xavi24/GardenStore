@@ -581,25 +581,27 @@ export default class Details extends Component<{}>{
   async getLocalCart(){
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-      if (JSON.parse(localCartData).length>0) {
-        this.setState({
-          local_cart_check : JSON.parse(localCartData),
-          local_cart_view : true
-        });
-        console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
-        for (let data of this.state.local_cart_check) {
-          // console.warn('local product_id-------->>', data.product_id);
-          // console.warn('product_id-------->>', id);
-          if (id === data.product_id){
-            this.setState({
-              show_cart : false
-            })
+      if(JSON.parse(localCartData).length!==null){
+        if (JSON.parse(localCartData).length>0) {
+          this.setState({
+            local_cart_check : JSON.parse(localCartData),
+            local_cart_view : true
+          });
+          console.log('local_cart_check---------->>>>>>',this.state.local_cart_check);
+          for (let data of this.state.local_cart_check) {
+            // console.warn('local product_id-------->>', data.product_id);
+            // console.warn('product_id-------->>', id);
+            if (id === data.product_id){
+              this.setState({
+                show_cart : false
+              })
+            }
           }
+        } else {
+          // this.setState({
+          //   emptyScreen : true
+          // })
         }
-      } else {
-        // this.setState({
-        //   emptyScreen : true
-        // })
       }
     } catch (error) {
       // Error retrieving data
@@ -1162,8 +1164,6 @@ export default class Details extends Component<{}>{
                       <Text style = {{color:'#363a42',fontSize:12}}>100% Pure Material</Text>
                       <Text style = {{color:'#363a42',fontSize:12}}>Machine-wash</Text>
                       <Text style = {{color:'#363a42',marginTop:10,fontSize:12}}>Cash on delivery might be available</Text>
-                      <Text style = {{color:'#363a42',fontSize:12}}>Easy 30 days return & 30 days exchange</Text>
-                      <Text style = {{color:'#363a42',marginBottom:10,fontSize:12}}>Try & buy might be available</Text>
                     </View>
                   </View>
                 </View>

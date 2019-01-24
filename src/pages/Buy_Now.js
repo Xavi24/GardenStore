@@ -35,6 +35,7 @@ export default class Buy_Now extends Component<{}>{
   constructor(props){
     super(props);
     this.state = {
+      orgnl_price : 0,
       user_address_id : '',
       name : '',
       street_address : '',
@@ -302,6 +303,8 @@ export default class Buy_Now extends Component<{}>{
       Toast.show('Select Your Payment Method', Toast.LONG);
     }
     console.warn('measurements',this.state.user_point);
+    console.warn('..............',this.state.coupon);
+    checkOutData.coupon_code = this.state.coupon,
     checkOutData.currency = 'INR',
     checkOutData.address_id = this.state.dataValue.user_address_id,
     checkOutData.payment_method = this.state.payment_method,
@@ -416,7 +419,7 @@ export default class Buy_Now extends Component<{}>{
   convertPartialPoints(){
     this.textInputpoint.clear();
     if (this.state.points!=0) {
-      if (this.state.price>0){
+      if (this.state.temp_prize>0){
       }
       if (this.state.points<=this.state.points1) {
         this.setState({
@@ -488,7 +491,8 @@ export default class Buy_Now extends Component<{}>{
       spec : params.spec
     });
     this.setState({
-      temp_prize : params.prize
+      temp_prize : params.prize,
+      orgnl_price : params.prize
     })
   }
   updateValue(text,field){
@@ -853,41 +857,49 @@ export default class Buy_Now extends Component<{}>{
     }
     ApplyCoupon(){
       if (this.state.points == '0') {
-        let Data = {};
-        Data.coupon_code = this.state.coupon,
-        Data.product = this.state.product_id,
-        Data.total_price = this.state.price,
-        Data.vendor = this.state.vendor_id
-        console.warn('Data',Data);
-        var url = config.API_URL+'coupon/apply';
-        console.log('url',url);
-        fetch(url,{
-          method : 'POST',
-          body : JSON.stringify(Data),
-          headers : new Headers({
-            'Content-Type' : 'application/json',
-            'Accept' : 'application/json',
-            'Authorization' : this.state.access_token
+        if(this.state.coupon !== ''){
+          this.setState({
+            price : this.state.orgnl_price
           })
-        })
-        .then((response)=>response.json())
-        .catch((error)=>console.warn(error))
-        .then((response)=>{
-          console.warn('response',response);
-          if (response.code == '200') {
-            if (response.data) {
-              this.setState({
-                coupon_disc : response.data.coupon_details.amount,
-                price : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount)
-              });
-              Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
-              console.warn('coupon',this.state.coupon_disc);
+          let Data = {};
+          Data.coupon_code = this.state.coupon,
+          Data.product = this.state.product_id,
+          Data.total_price = this.state.orgnl_price,
+          Data.vendor = this.state.vendor_id
+          console.warn('Data',Data);
+          var url = config.API_URL+'coupon/apply';
+          console.log('url',url);
+          fetch(url,{
+            method : 'POST',
+            body : JSON.stringify(Data),
+            headers : new Headers({
+              'Content-Type' : 'application/json',
+              'Accept' : 'application/json',
+              'Authorization' : this.state.access_token
+            })
+          })
+          .then((response)=>response.json())
+          .catch(  (error)=>console.warn(error))
+          .then((response)=>{
+            console.warn('response',response);
+            if (response.code == '200') {
+              if (response.data) {
+                this.setState({
+                  coupon_disc : response.data.coupon_details.amount,
+                  price : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount),
+                  temp_prize : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount),
+                  coupon : ''
+                });
+                Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
+                console.warn('coupon',this.state.coupon_disc);
+              }
+            } 
+            if (response.code == '409'){
+              console.warn("gdhdgdfgsdghdghsdgghsddghsdgdgghsdgdghfg",response.message);
+              Toast.show(response.message, Toast.LONG);
             }
-          }
-          if (response.code == '409'){
-            Toast.show(response.message, Toast.LONG);
-          }
-        })
+          })
+        }
       } else {
         this.setState({
           points : '0',
@@ -910,7 +922,7 @@ export default class Buy_Now extends Component<{}>{
           value:''
         });
         this.getPoints();
-        Toast.show('Applay the coupon first', Toast.LONG);
+        Toast.show('Apply the coupon first', Toast.LONG);
       }
       console.warn('ApplyCoupon=>points',this.state.points);
     }
@@ -1693,7 +1705,7 @@ export default class Buy_Now extends Component<{}>{
                                                underlineColorAndroid = 'transparent'
                                                multiline={true}
                                                editable = {true}
-                                               placeholder="Address"
+                                               placeholder="Street Address"
                                                onChangeText = {(text_address)=>this.updateValue2(text_address,'street_address')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
@@ -2015,7 +2027,7 @@ export default class Buy_Now extends Component<{}>{
                                  underlineColorAndroid = 'transparent'
                                  multiline={true}
                                  editable = {true}
-                                 placeholder="Address"
+                                 placeholder="Street address"
                                  value={this.state.street_address}
                                  onChangeText = {(text_address)=>this.updateValue3(text_address,'street_address')}>
                       </TextInput>

@@ -44,6 +44,7 @@ import ViedioWeb from './src/pages/ViedioWeb'
 import SyncCartLogin from './src/pages/SyncCartLogin'
 import Reload from './src/pages/Reload'
 import QR_Page from  './src/pages/QRPage'
+import Success from './src/pages/Success'
 
 const StackNavigator_Function = StackNavigator({
       get_started :{screen:Getstarted},
@@ -87,7 +88,8 @@ const StackNavigator_Function = StackNavigator({
       video_web : {screen:ViedioWeb},
       sync_login : {screen:SyncCartLogin},
       rld : {screen:Reload},
-      qr_page : {screen:QR_Page}
+      qr_page : {screen:QR_Page},
+      suc : {screen:Success}
     },
     {
       headerMode:'none'

@@ -230,7 +230,7 @@ export default class Cart extends Component<{}>{
     var totalPrize = 0;
     try {
       const localCartData = await AsyncStorage.getItem('@MySuperCart:key');
-       if (localCartData!=null){
+       if (JSON.parse(localCartData)!=null){
          console.warn('get it..................');
          console.warn('ddddd',JSON.parse(localCartData).length);
          if (JSON.parse(localCartData).length>0) {

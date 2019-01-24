@@ -399,7 +399,7 @@ export default  class AddressManagement extends Component<{}>{
                                                underlineColorAndroid = 'transparent'
                                                multiline={true}
                                                editable = {true}
-                                               placeholder="Address"
+                                               placeholder="Street Address"
                                                onChangeText = {(text_address)=>this.updateValue(text_address,'street_address')}>
                                     </TextInput>
                                     <View style={{width:'90%',alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>

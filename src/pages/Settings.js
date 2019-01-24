@@ -269,7 +269,7 @@ componentWillUnmount() {
                   <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
                     onPress = {()=>this.props.navigation.navigate('reg')}>Sign Up</Text>
                   <Text style = {{color:'#2fdab8',fontWeight:'bold',fontSize:14}}
-                    onPress = {()=>this.props.navigation.navigate('logn')}>Log In</Text>
+                    onPress = {()=>this.props.navigation.navigate('logn',{page : 'settings',next : 'mainscreen'})}>Log In</Text>
                 </View>
               </View>
             </View>

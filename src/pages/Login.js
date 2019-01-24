@@ -168,7 +168,7 @@ export default class Login extends Component<{}>{
           <View style = {styles.base_view}>
             <ScrollView style = {{width:'100%'}}
                         keyboardDismissMode='on-drag'
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={"always"}>
             <View style = {styles.content_view}>
               <TextInput style = {styles.input}
                 underlineColorAndroid='transparent'

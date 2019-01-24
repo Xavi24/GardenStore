@@ -82,31 +82,6 @@ export default class MainScreen extends Component<{}>{
             }
         })
   }
-  // componentDidMount() {
-  //   const {goBack} = this.props.navigation
-  //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-  //     if (this.state.pressed == '') {
-  //       goBack();
-  //     } else {
-  //       this.exitFunction();
-  //     }
-  //     console.warn('pressed');
-  //     return true;
-  //   });
-  // }
-  // componentWillUnmount() {
-  //   BackHandler.removeEventListener('hardwareBackPress');
-  // }
-
-  // exitFunction(){
-  //   this.setState({
-  //     visible : true
-  //   })
-  // }
-  //
-  // kickOut(){
-  //   BackAndroid.exitApp()
-  // }
 
   getMenu(){
     

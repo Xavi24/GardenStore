@@ -34,6 +34,7 @@ export default class CartBuynow extends Component<{}>{
   constructor(props){
     super(props);
     this.state = {
+      orgnl_price : 0,
       access_token : '',
       crtData : [],
       size:'',
@@ -140,41 +141,77 @@ export default class CartBuynow extends Component<{}>{
     }
   }
   ApplyCoupon(){
-    let Data = {};
-    Data.coupon_code = this.state.coupon,
-    Data.product = this.state.product_id,
-    Data.total_price = this.state.price,
-    Data.vendor = this.state.vendor_id
-    console.warn('Data',Data);
-    var url = config.API_URL+'coupon/apply'
-    console.log('url',url);
-    fetch(url,{
-      method : 'POST',
-      body : JSON.stringify(Data),
-      headers : new Headers({
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        'Authorization' : this.state.access_token
+    console.warn("fjfdfjffjhfjhjghdfh",this.state.points)
+    if(this.state.points == '0'){
+      if(this.state.coupon!==''){
+        console.warn("original price",this.state.temp_prize);
+      console.warn("original price///",this.state.orgnl_price);
+      this.setState({
+        price : this.state.orgnl_price,
+        temp_prize : this.state.orgnl_price
       })
-    })
-    .then((response)=>response.json())
-    .catch((error)=>console.warn(error))
-    .then((response)=>{
-      console.warn('response',response);
-      if (response.code == '200') {
-        if (response.data) {
-          this.setState({
-            coupon_disc : response.data.coupon_details.amount,
-            price : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount)
-          });
-          Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
-          console.warn('coupon',this.state.coupon_disc);
+      let Data = {};
+      Data.coupon_code = this.state.coupon,
+      Data.product = this.state.product_id,
+      Data.total_price = this.state.temp_prize,
+      Data.vendor = this.state.vendor_id
+      console.warn('Data',Data);
+      var url = config.API_URL+'coupon/apply'
+      console.log('url',url);
+      fetch(url,{ 
+        method : 'POST',
+        body : JSON.stringify(Data),
+        headers : new Headers({
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization' : this.state.access_token
+        })
+      })
+      .then((response)=>response.json())
+      .catch((error)=>console.warn(error))
+      .then((response)=>{
+        console.warn('response',response);
+        if (response.code == '200') {
+          if (response.data) {
+            this.setState({
+              coupon_disc : response.data.coupon_details.amount,
+              price : parseInt(this.state.price) - parseInt(response.data.coupon_details.amount),
+              temp_prize : parseInt(this.state.temp_prize) - parseInt(response.data.coupon_details.amount),
+              coupon : ''
+            });
+             Toast.show('You will get '+this.state.coupon_disc+' amount discount', Toast.LONG);
+            console.warn('coupon',this.state.coupon_disc);
+          }
         }
-      } 
-      if (response.code == '409'){
-        Toast.show(response.message, Toast.LONG);
+        if (response.code == '409'){
+          Toast.show(response.message, Toast.LONG);
+        }
+      })
       }
-    })
+    } else {
+      this.setState({
+        points : '0',
+        point_screen : false,
+        pointViewHeight : 0,
+        pointsBorder : 0,
+        partialPointColor : '#7a7979',
+        allPointColor : '#7a7979',
+        partialpointSubView : 0,
+        inputpoints : 0,
+        partialBtn : 0,
+        placeholder : '',
+        discountSize : 0,
+        allpointsubView : 0,
+        underlayColor : '#eee',
+        ptrl_font : 0,
+        convertedValue : '0',
+        discPoints : '',
+        price : this.state.prizee,
+        value:''
+      });
+      this.getPoints();
+      Toast.show('Apply the coupon first', Toast.LONG);
+    }
   }
   getAddress(){
     this.getPoints();
@@ -312,23 +349,25 @@ export default class CartBuynow extends Component<{}>{
       }
     })
   }
-  convertPartialPoints(){
+  convertPartialPoints(){ 
     this.textInput.clear();
     if (this.state.points!=0){
-      if (this.state.price>0){
+      console.warn('temp___________prize',this.state.temp_prize);
+      if (this.state.temp_prize>0){
         // this.setState({
         //   price : this.state.temp_prize,
         //   convertedValue : '0'
         // });
       }
       console.log('temppppppppp____points',this.state.temp_points);
-      console.log('temp___________prize',this.state.temp_prize);
       if (this.state.points<=this.state.points1) {
         this.setState({
-          user_point:this.state.points
+          user_point:this.state.points,
+          temp_prize : this.state.price
         })
         console.warn('price',this.state.price);
         console.warn('Partialpoints---------',this.state.points1);
+      console.warn('temp___________prize',this.state.temp_prize);
         var url = config.API_URL+'user/points/convertToInr/'+this.state.points+'/'+this.state.temp_prize;
         fetch(url, {
           headers : new Headers({
@@ -349,7 +388,7 @@ export default class CartBuynow extends Component<{}>{
                   console.warn('value',response.data.value);
                   this.setState({
                     convertedValue : response.data.value,
-                    price : parseInt(this.state.temp_prize) - response.data.value,
+                    temp_prize : parseInt(this.state.temp_prize) - response.data.value,
                     discPoints : 'You will get Rs. '+response.data.value+' of discount for this product',
                     points1 : this.state.points1 - this.state.points
                   });
@@ -413,6 +452,7 @@ export default class CartBuynow extends Component<{}>{
           }
           this.setState({
             temp_prize :data.variation_details.price,
+            orgnl_price : data.variation_details.price
           });
           cartData.push({
             name:data.variation_details.name,
@@ -434,7 +474,8 @@ export default class CartBuynow extends Component<{}>{
         }
         this.setState({
           price : totalPrize,
-          temp_prize : totalPrize
+          temp_prize : totalPrize,
+          orgnl_price : totalPrize
         })
       } else {
         console.warn('array is empty');
@@ -472,12 +513,14 @@ export default class CartBuynow extends Component<{}>{
     console.warn('user_address_id',this.state.user_address_id);
     console.warn('payment_method',this.state.payment_method);
     let checkOutData = {};
+    
     checkOutData.currency = 'INR',
     checkOutData.address_id = this.state.user_address_id,
     checkOutData.payment_method = this.state.payment_method,
     checkOutData.measurements = this.state.measurements,
-    checkOutData.points = this.state.user_point
-    console.warn('checkOutData',checkOutData);
+    checkOutData.points = this.state.user_point,
+    checkOutData.coupon_code = this.state.coupon,
+    console.warn('..............',this.state.coupon);
     if (this.state.payment_method == 'NOW'){
       var url = config.API_URL+'user/checkout'
       fetch(url, {
@@ -518,6 +561,7 @@ export default class CartBuynow extends Component<{}>{
             if (response.code == '200') {
               this.setState({
                 emptyScreen : true
+               
               })
             } if (response.errors) {
               Toast.show('Address Field is Empty', Toast.LONG);
@@ -1357,7 +1401,7 @@ export default class CartBuynow extends Component<{}>{
             </ScrollView>
             <View style = {styles.footer}>
               <View style = {{width:'50%',alignItems:'center',justifyContent:'center'}}>
-                <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>INR. {this.state.price}</Text>
+                <Text style = {{color:'#000',fontSize:16,fontWeight:'bold'}}>INR. {this.state.temp_prize}</Text>
               </View>
               <TouchableHighlight style = {styles.paybtn}
                 underlayColor = 'transparent'
@@ -1985,7 +2029,7 @@ export default class CartBuynow extends Component<{}>{
                                    underlineColorAndroid = 'transparent'
                                    multiline={true}
                                    editable = {true}
-                                   placeholder="Address"
+                                   placeholder="Street address"
                                    value={this.state.street_address}
                                    onChangeText = {(text_address)=>this.updateValue3(text_address,'street_address')}>
                         </TextInput>
