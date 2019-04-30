@@ -277,7 +277,7 @@ export default  class Add_New_Address extends Component<{}>{
                     <ScrollView style = {styles.scrollView}
                                 showsVerticalScrollIndicator={false}
                                 keyboardDismissMode='on-drag'
-                                keyboardShouldPersistTaps={true}>
+                                keyboardShouldPersistTaps={"always"}>
                         <View>
                             <View style = {styles.baseView}>
 

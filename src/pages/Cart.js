@@ -508,7 +508,6 @@ export default class Cart extends Component<{}>{
                                 <View style={{flexDirection:'row',width:'95%',marginTop:10,alignItems:'center'}}>
                                   <Text style={{marginRight: 10}}>Quantity</Text>
                                   <TextInput style={{height:40,width:40,borderColor:'#595656',borderWidth:1,marginLeft:10,fontSize:12}}
-                                             underlineColorAndroid='transparent'
                                              maxLength={1}
                                              keyboardType='numeric'
                                              onChangeText = {(text_name)=>{

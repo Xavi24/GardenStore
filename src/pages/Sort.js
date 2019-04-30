@@ -37,7 +37,7 @@ export default class Sort extends Component<{}>{
     }
   }
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    // BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
   }
   componentWillMount(){
     const {params} = this.props.navigation.state;

@@ -83,7 +83,7 @@ forgotPassword(){
         <View style = {styles.baseContainer}>
           <ScrollView style = {{width:'100%',height:'100%'}}
                       keyboardDismissMode='on-drag'
-                      keyboardShouldPersistTaps={true}>
+                      keyboardShouldPersistTaps={"always"}>
             <View style = {{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}>
               <Image style = {{height:120,width:120,alignItems:'center',justifyContent:'center',marginTop:30}}
                 source = {require('../img/forgot_pass.png')}>

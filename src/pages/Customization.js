@@ -141,7 +141,6 @@ export default class Customization extends Component<{}>{
                                   <Text style = {{color:'#369',fontSize:16,fontWeight:'bold',marginTop:10}}>{item.name}</Text>
                                   <View style = {{width:'100%',alignItems:'center',flexDirection:'row',marginBottom:10}}>
                                     <TextInput style = {styles.input}
-                                               underlineColorAndroid='transparent'
                                                placeholderTextColor="#369"
                                                keyboardType = 'numeric'
                                                onChangeText = {(text_data)=>this.updateValue(text_data, item.product_measurement_id, item.name, index)}>

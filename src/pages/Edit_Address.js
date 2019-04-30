@@ -324,7 +324,7 @@ export default class Edit_Address extends Component<{}>{
                     <ScrollView style = {styles.scrollView}
                                 showsVerticalScrollIndicator={false}
                                 keyboardDismissMode='on-drag'
-                                keyboardShouldPersistTaps={true}>
+                                keyboardShouldPersistTaps={"always"}>
                         <View>
                             <Text style = {{fontSize:18,marginTop:20,marginLeft:20,color:'#000'}}>Edit Your Address</Text>
                             <View style = {styles.baseView}>

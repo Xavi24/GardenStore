@@ -130,7 +130,7 @@ export default class Change_Password extends Component<{}>{
         <View style = {styles.baseContainer}>
           <ScrollView style = {{width:'100%',height:'100%'}}
                       keyboardDismissMode='on-drag'
-                      keyboardShouldPersistTaps={true}>
+                      keyboardShouldPersistTaps={"always"}>
             <View style = {{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
               <Text style = {{color:'#369',fontSize:20,fontWeight:'bold',marginTop:30}}>Change Your Password</Text>
               <View style = {{width:'90%',alignItems:'center',justifyContent:'center',borderColor:'#eee',borderWidth:1,padding:10,marginTop:30}}>

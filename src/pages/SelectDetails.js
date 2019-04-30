@@ -1052,7 +1052,6 @@ export default class SelectDetails extends Component<{}>{
                         <Text style = {{color:'#363a42',fontSize:14,fontWeight:'bold',marginTop:10}}>{item.name} (inches)</Text>
                         <View style = {{width:'100%',alignItems:'center',flexDirection:'row',marginBottom:10}}>
                           <TextInput style = {styles.input1}
-                                     underlineColorAndroid='transparent'
                                      placeholderTextColor="#eee"
                                      keyboardType = 'numeric'
                                      onChangeText = {(text_data)=>this.updateValue1(text_data, item.product_measurement_id, item.name, index)}>

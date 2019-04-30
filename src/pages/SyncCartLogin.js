@@ -134,13 +134,11 @@ export default class SyncCartLogin extends Component<{}>{
               <ScrollView style = {{width:'100%'}}>
                 <View style = {styles.content_view}>
                   <TextInput style = {styles.input}
-                             underlineColorAndroid='transparent'
                              placeholder="E-mail"
                              placeholderTextColor="#ffffff"
                              onChangeText = {(text)=>this.updateValue(text,'cred1')}>
                   </TextInput>
                   <TextInput style = {styles.input}
-                             underlineColorAndroid='transparent'
                              placeholder="Password"
                              secureTextEntry={true}
                              placeholderTextColor="#ffffff"

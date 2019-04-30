@@ -306,7 +306,7 @@ export default  class AddressManagement extends Component<{}>{
                     <ScrollView style = {styles.scrollView}
                                 showsVerticalScrollIndicator={false}
                                 keyboardDismissMode='on-drag'
-                                keyboardShouldPersistTaps={true}>
+                                keyboardShouldPersistTaps={"always"}>
                         <View>
                             <View style = {styles.baseView}>
 

@@ -205,10 +205,9 @@ componentWillUnmount(){
           <View style = {styles.base_view}>
             <ScrollView style = {{width:'100%'}}
                         keyboardDismissMode='on-drag'
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={"always"}>
               <View style = {styles.content_view}>
                 <TextInput style = {styles.input}
-                  underlineColorAndroid='transparent'
                   placeholder="Full Name"
                   returnKeyType={ "done" }
                   placeholderTextColor="#ffffff"
@@ -218,7 +217,6 @@ componentWillUnmount(){
                   <Text style = {{color:'#c7011a'}}>{this.state.err_name}</Text>
                 </View>
                 <TextInput style = {styles.input}
-                  underlineColorAndroid='transparent'
                   placeholder="E-mail"
                   returnKeyType={ "next" }
                   placeholderTextColor="#ffffff"
@@ -228,7 +226,6 @@ componentWillUnmount(){
                   <Text style = {{color:'#c7011a'}}>{this.state.err_email}</Text>
                 </View>
                 <TextInput style = {styles.input}
-                  underlineColorAndroid='transparent'
                   placeholder="Username"
                   placeholderTextColor="#ffffff"
                   onChangeText = {(text_username)=>this.updateValue(text_username,'user_name')}>
@@ -237,7 +234,6 @@ componentWillUnmount(){
                   <Text style = {{color:'#c7011a'}}>{this.state.err_user}</Text>
                 </View>
                 <TextInput style = {styles.input}
-                  underlineColorAndroid='transparent'
                   placeholder="Password"
                   secureTextEntry={true}
                   placeholderTextColor="#ffffff"
@@ -247,7 +243,6 @@ componentWillUnmount(){
                   <Text style = {{color:'#c7011a'}}>{this.state.err_pass}</Text>
                 </View>
                 <TextInput style = {styles.input}
-                  underlineColorAndroid='transparent'
                   placeholder="Confirm Password"
                   secureTextEntry={true}
                   placeholderTextColor="#ffffff"
@@ -271,7 +266,6 @@ componentWillUnmount(){
                   <Text style = {{color:'#c7011a'}}>{this.state.err_gender}</Text>
                 </View>
                   <TextInput style = {styles.input}
-                    underlineColorAndroid='transparent'
                     placeholder="Mobile Number"
                     keyboardType='numeric'
                     placeholderTextColor="#ffffff"

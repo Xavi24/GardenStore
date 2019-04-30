@@ -1168,7 +1168,9 @@ export default class CartBuynow extends Component<{}>{
               </View>
             </View>
             <ScrollView style = {{width:'100%',height:'100%'}}
-              showsVerticalScrollIndicator = {false}>
+              showsVerticalScrollIndicator = {false}
+              keyboardDismissMode='on-drag'
+              keyboardShouldPersistTaps={"always"}>
               <View style = {{alignItems:'center',justifyContent:'center',width:'100%'}}>
                 <View style={{width:'95%',backgroundColor:'#ffffff',justifyContent:'center',elevation:0,marginBottom:10,
                   borderTopLeftRadius:6,borderTopRightRadius:6,borderBottomLeftRadius:6,borderBottomRightRadius:6,  borderWidth:this.state.width,
@@ -1229,7 +1231,6 @@ export default class CartBuynow extends Component<{}>{
               <View style = {{width:'100%',alignItems:'center',justifyContent:'center'}}>
                 <View style = {{width:'95%',flexDirection:'row',backgroundColor:'#fff',elevation:2,alignItems:'center',justifyContent:'center'}}>
                   <TextInput style = {styles.input1}
-                    underlineColorAndroid='transparent'
                     placeholderTextColor="#360"
                     placeholder='Your coupon'
                     onChangeText = {(text_coupon)=>this.updateCouponValue(text_coupon,'coupon')}>
@@ -1576,7 +1577,7 @@ export default class CartBuynow extends Component<{}>{
                     <ScrollView style = {styles.scrollView}
                                 showsVerticalScrollIndicator={false}
                                 keyboardDismissMode='on-drag'
-                                keyboardShouldPersistTaps={true}>
+                                keyboardShouldPersistTaps={"always"}>
                         <View>
                             <View style = {styles.baseView}>
 
@@ -1864,7 +1865,7 @@ export default class CartBuynow extends Component<{}>{
                 <ScrollView style = {styles.scrollView}
                             showsVerticalScrollIndicator={false}
                             keyboardDismissMode='on-drag'
-                            keyboardShouldPersistTaps={true}>
+                            keyboardShouldPersistTaps={"always"}>
                   <View style = {{marginBottom:20}}>
                     <Text style = {{fontSize:18,marginTop:20,marginLeft:20,color:'#000'}}>Edit Your Address</Text>
                     <View style = {styles.baseView}>
